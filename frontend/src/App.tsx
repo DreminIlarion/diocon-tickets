@@ -33,7 +33,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const NewProjectPage = lazy(() => import('./pages/NewProjectPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
-const ProductsTab = lazy(() => import('./pages/ProductsTab'));
+const ProductsTab = lazy(() => import('./pages/ProductsPage'));
 const CreateProductPage = lazy(() => import('./pages/CreateProductPage'));
 export default function App() {
   return (

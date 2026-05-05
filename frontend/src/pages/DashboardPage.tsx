@@ -120,9 +120,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={() => navigate('/tickets/new')}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-800 hover:bg-red-700
-                     text-white text-base font-semibold transition-colors
-                      flex-shrink-0"
+          className="btn-primary py-4 px-8 text-[16px] font-semibold"
         >
           <Plus className="w-5 h-5" />
           Создать заявку
@@ -134,7 +132,7 @@ export default function DashboardPage() {
         {[
           { label: 'Всего заявок',  value: stats.total,      icon: FileText,     iconColor: 'text-white',    extra: null },
           { label: 'В работе',      value: stats.inProgress,  icon: Clock,        iconColor: 'text-blue-400',    extra: stats.new > 0 ? `+${stats.new} новых` : null },
-          { label: 'Критических',   value: stats.critical,    icon: AlertTriangle,iconColor: 'text-orange-400',  extra: stats.waiting > 0 ? `${stats.waiting} ждут ответа` : null },
+          { label: 'Критических',   value: stats.critical,    icon: AlertTriangle,iconColor: 'text-red-400',  extra: stats.waiting > 0 ? `${stats.waiting} ждут ответа` : null },
           { label: 'Решено',        value: stats.resolved,    icon: CheckCircle2, iconColor: 'text-emerald-400', extra: stats.total > 0 ? `${Math.round((stats.resolved / stats.total) * 100)}%` : null },
         ].map(card => (
           <div key={card.label}

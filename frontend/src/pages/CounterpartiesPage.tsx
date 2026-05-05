@@ -398,8 +398,7 @@ export default function CounterpartiesPage() {
 
         <button
           onClick={() => navigate('/counterparties/new')}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-800 hover:bg-red-700
-                     text-white text-base font-semibold transition-colors "
+          className="btn-primary py-4 px-8 text-[16px] font-semibold"
         >
           <Plus className="w-5 h-5" />
           Добавить контрагента
