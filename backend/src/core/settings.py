@@ -133,7 +133,7 @@ class YandexCloudSettings(BaseSettings):
 class LanguageToolSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="LANGTOOL_")
 
-    host: str = "localhost"
+    host: str = "languagetool"
     port: int = 8010
     language: str = "ru-RU"
 
