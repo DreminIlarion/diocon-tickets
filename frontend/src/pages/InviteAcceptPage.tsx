@@ -22,7 +22,7 @@ export default function InviteAcceptPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -46,7 +46,7 @@ export default function InviteAcceptPage() {
         full_name: data.full_name,
         password: data.password,
       });
-      
+
       setSuccess(true);
       setTimeout(() => {
         navigate('/login');

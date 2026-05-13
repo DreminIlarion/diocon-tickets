@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { 
-  Bell, 
+import {
+  Bell,
   Settings,
   Trash2,
   Check,

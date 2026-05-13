@@ -34,11 +34,11 @@ interface CommentItemProps {
 }
 
 const REACTIONS_CONFIG = [
-  { type: 'like',        emoji: '/media/icons/like.svg',        label: 'Нравится',  isImage: true },
-  { type: 'thanks',      emoji: '/media/icons/thanks.svg',      label: 'Спасибо',   isImage: true },
-  { type: 'in_progress', emoji: '/media/icons/in_progress.svg', label: 'В работе',  isImage: true },
-  { type: 'resolved',    emoji: '/media/icons/resolved.svg',    label: 'Решено',    isImage: true },
-  { type: 'important',   emoji: '/media/icons/important.svg',   label: 'Важно',     isImage: true },
+  { type: 'like', emoji: '/media/icons/like.svg', label: 'Нравится', isImage: true },
+  { type: 'thanks', emoji: '/media/icons/thanks.svg', label: 'Спасибо', isImage: true },
+  { type: 'in_progress', emoji: '/media/icons/in_progress.svg', label: 'В работе', isImage: true },
+  { type: 'resolved', emoji: '/media/icons/resolved.svg', label: 'Решено', isImage: true },
+  { type: 'important', emoji: '/media/icons/important.svg', label: 'Важно', isImage: true },
 ];
 
 const getReactionChipClass = (isActive: boolean) =>
@@ -132,36 +132,36 @@ export const CommentItem = React.memo(({
   onReplyEdited,
   onReactionUpdated,
 }: CommentItemProps) => {
-  const [replies, setReplies]                 = useState<any[]>([]);
-  const [loadingReplies, setLoadingReplies]   = useState(false);
-  const [showReplies, setShowReplies]         = useState(false);
-  const [isEditing, setIsEditing]             = useState(false);
-  const [editText, setEditText]               = useState(comment.text);
-  const [showActions, setShowActions]         = useState(false);
+  const [replies, setReplies] = useState<any[]>([]);
+  const [loadingReplies, setLoadingReplies] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.text);
+  const [showActions, setShowActions] = useState(false);
   const [localReplyCount, setLocalReplyCount] = useState(comment.reply_count || 0);
-  const [reactionCounts, setReactionCounts]   = useState<Record<string, number>>(comment.reaction_counts || {});
-  const [userReactions, setUserReactions]     = useState<string[]>(comment.user_reactions || []);
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>(comment.reaction_counts || {});
+  const [userReactions, setUserReactions] = useState<string[]>(comment.user_reactions || []);
   const [loadingReaction, setLoadingReaction] = useState(false);
-  const [contextMenu, setContextMenu]         = useState<{ x: number; y: number } | null>(null);
-  const [showReactionPicker, setShowReactionPicker]         = useState(false);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [reactionPickerPosition, setReactionPickerPosition] = useState<{ x: number; y: number } | null>(null);
-  const [isHovered, setIsHovered]             = useState(false);
-  const [repliesDirty, setRepliesDirty]       = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [repliesDirty, setRepliesDirty] = useState(false);
 
   // ── Файлы для ответа ──────────────────────────────────────────────────────
-  const [replyFiles, setReplyFiles]           = useState<File[]>([]);
-  const [uploadingReply, setUploadingReply]   = useState(false);
-  const replyFileInputRef                     = useRef<HTMLInputElement>(null);
+  const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  const [uploadingReply, setUploadingReply] = useState(false);
+  const replyFileInputRef = useRef<HTMLInputElement>(null);
 
-  const replyTextareaRef  = useRef<HTMLTextAreaElement>(null);
-  const actionsRef        = useRef<HTMLDivElement>(null);
-  const contextMenuRef    = useRef<HTMLDivElement>(null);
+  const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
   const reactionPickerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const isInternal    = comment.type === 'internal';
+  const isInternal = comment.type === 'internal';
   const isCurrentUser = comment.author_id === currentUser?.user_id;
-  const canEdit       = isCurrentUser || currentUser?.role === 'admin';
+  const canEdit = isCurrentUser || currentUser?.role === 'admin';
 
   // ── Закрытие по клику вне ─────────────────────────────────────────────────
   useEffect(() => {
@@ -356,57 +356,57 @@ export const CommentItem = React.memo(({
   };
 
   // ── Отправка ответа с файлами ─────────────────────────────────────────────
- const handleLocalSendReply = async (parentId: string, text: string) => {
-  const hasText  = text.trim().length > 0;
-  const hasFiles = replyFiles.length > 0;
+  const handleLocalSendReply = async (parentId: string, text: string) => {
+    const hasText = text.trim().length > 0;
+    const hasFiles = replyFiles.length > 0;
 
-  if (!hasText && !hasFiles) return null;
+    if (!hasText && !hasFiles) return null;
 
-  setUploadingReply(true);
-  try {
-    // 1. Отправляем текстовый ответ
-    const newReply = await onSendReply(parentId, hasText ? text : '(вложения)');
-    if (!newReply) return null;
+    setUploadingReply(true);
+    try {
+      // 1. Отправляем текстовый ответ
+      const newReply = await onSendReply(parentId, hasText ? text : '(вложения)');
+      if (!newReply) return null;
 
-    // 2. Загружаем файлы если есть
-    if (hasFiles && newReply.id) {
-      const uploadPromises = replyFiles.map(file =>
-        attachmentsApi.uploadAttachment(
-          file,
-          'comment',   // owner_type — тип владельца
-          newReply.id  // owner_id — ID только что созданного ответа
-        ).catch(err => {
-          console.error(`Failed to upload ${file.name}:`, err);
-          toast({
-            title: 'Ошибка загрузки',
-            description: `Не удалось загрузить файл «${file.name}»`,
-            variant: 'destructive',
-          });
-          return null;
-        })
-      );
-      await Promise.all(uploadPromises);
+      // 2. Загружаем файлы если есть
+      if (hasFiles && newReply.id) {
+        const uploadPromises = replyFiles.map(file =>
+          attachmentsApi.uploadAttachment(
+            file,
+            'comment',   // owner_type — тип владельца
+            newReply.id  // owner_id — ID только что созданного ответа
+          ).catch(err => {
+            console.error(`Failed to upload ${file.name}:`, err);
+            toast({
+              title: 'Ошибка загрузки',
+              description: `Не удалось загрузить файл «${file.name}»`,
+              variant: 'destructive',
+            });
+            return null;
+          })
+        );
+        await Promise.all(uploadPromises);
+      }
+
+      // 3. Обновляем UI
+      handleReplyAdded(newReply);
+      setReplyText('');
+      setReplyFiles([]);
+      setReplyingTo(null);
+
+      return newReply;
+    } catch (error) {
+      console.error('Failed to send reply:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось отправить ответ',
+        variant: 'destructive',
+      });
+      return null;
+    } finally {
+      setUploadingReply(false);
     }
-
-    // 3. Обновляем UI
-    handleReplyAdded(newReply);
-    setReplyText('');
-    setReplyFiles([]);
-    setReplyingTo(null);
-
-    return newReply;
-  } catch (error) {
-    console.error('Failed to send reply:', error);
-    toast({
-      title: 'Ошибка',
-      description: 'Не удалось отправить ответ',
-      variant: 'destructive',
-    });
-    return null;
-  } finally {
-    setUploadingReply(false);
-  }
-};
+  };
 
   // ── Редактирование ────────────────────────────────────────────────────────
   const handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -552,7 +552,7 @@ export const CommentItem = React.memo(({
             {/* Реакции и действия */}
             <div className="flex items-center gap-1.5 mt-2 flex-wrap">
               {REACTIONS_CONFIG.map(reaction => {
-                const count    = reactionCounts[reaction.type] || 0;
+                const count = reactionCounts[reaction.type] || 0;
                 const isActive = userReactions.includes(reaction.type);
                 if (count === 0 && !isActive) return null;
                 return (

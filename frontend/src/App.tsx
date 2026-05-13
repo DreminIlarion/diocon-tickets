@@ -49,7 +49,7 @@ export default function App() {
             <RegisterPage />
           </LazyRoute>
         } />
-        
+
         <Route element={<Layout />}>
           <Route path="/dashboard" element={
             <LazyRoute>
@@ -116,12 +116,12 @@ export default function App() {
               <NotificationsPage />
             </LazyRoute>
           } />
-           <Route path="/products" element={
+          <Route path="/products" element={
             <LazyRoute>
               <ProductsTab />
             </LazyRoute>
           } />
-           <Route path="/products/new" element={
+          <Route path="/products/new" element={
             <LazyRoute>
               <CreateProductPage />
             </LazyRoute>

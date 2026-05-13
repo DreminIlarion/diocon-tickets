@@ -115,9 +115,9 @@ function FilterDropdown({
 
   const filtered = query
     ? options.filter(o =>
-        o.label.toLowerCase().includes(query.toLowerCase()) ||
-        (o.sublabel && o.sublabel.toLowerCase().includes(query.toLowerCase()))
-      )
+      o.label.toLowerCase().includes(query.toLowerCase()) ||
+      (o.sublabel && o.sublabel.toLowerCase().includes(query.toLowerCase()))
+    )
     : options;
 
   return (
@@ -247,19 +247,19 @@ export default function CounterpartiesPage() {
   const navigate = useNavigate();
 
   const [counterparties, setCounterparties] = useState<Counterparty[]>([]);
-  const [loading, setLoading]               = useState(false);
-  const [page, setPage]                     = useState(1);
-  const [totalPages, setTotalPages]         = useState(1);
-  const [totalItems, setTotalItems]         = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const [search, setSearch]                 = useState('');
-  const [typeFilter, setTypeFilter]         = useState('');
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
   const [expandedCompanies, setExpandedCompanies] = useState<Set<string>>(new Set());
 
   const loadCounterparties = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await counterpartiesApi.getAll(page, 10);
+      const response = await counterpartiesApi.getAll(page, 1);
       setCounterparties(response.items);
       setTotalPages(response.total_pages);
       setTotalItems(response.total_items);
@@ -541,207 +541,206 @@ export default function CounterpartiesPage() {
           )}
 
 
-{filteredCompanies.map(company => {
-  const branches = branchesByParent.get(company.id) || [];
-  const hasBranches = branches.length > 0;
-  const matchedBranch = normalizedSearch
-    ? branches.some(branchMatchesSearch)
-    : false;
-  const isExpanded = expandedCompanies.has(company.id) || matchedBranch;
+          {filteredCompanies.map(company => {
+            const branches = branchesByParent.get(company.id) || [];
+            const hasBranches = branches.length > 0;
+            const matchedBranch = normalizedSearch
+              ? branches.some(branchMatchesSearch)
+              : false;
+            const isExpanded = expandedCompanies.has(company.id) || matchedBranch;
 
-  const contactPerson =
-    (company as any).contact_person ||
-    ((company as any).contact_persons?.[0] ?? null);
+            const contactPerson =
+              (company as any).contact_person ||
+              ((company as any).contact_persons?.[0] ?? null);
 
-  return (
-    <div
-      key={company.id}
-      className="glass-card rounded-2xl border border-white/[0.08] overflow-hidden"
-    >
-      {/* Main company - весь блок кликабельный */}
-      <div 
-        className="p-5 sm:p-6 cursor-pointer transition-all hover:bg-white/[0.02]"
-        onClick={() => navigate(`/counterparties/${company.id}`)}
-      >
-        <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-            {getTypeIcon(company.counterparty_type)}
-          </div>
+            return (
+              <div
+                key={company.id}
+                className="glass-card rounded-2xl border border-white/[0.08] overflow-hidden"
+              >
+                {/* Main company - весь блок кликабельный */}
+                <div
+                  className="p-5 sm:p-6 cursor-pointer transition-all hover:bg-white/[0.02]"
+                  onClick={() => navigate(`/counterparties/${company.id}`)}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                      {getTypeIcon(company.counterparty_type)}
+                    </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                  <h2 className="text-xl font-bold text-white truncate">
-                    {company.name}
-                  </h2>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                            <h2 className="text-xl font-bold text-white truncate">
+                              {company.name}
+                            </h2>
 
-                  <span className={`px-2.5 py-1 rounded-lg text-sm font-medium border ${
-                    company.is_active
-                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                      : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-                  }`}>
-                    {company.is_active ? 'Активен' : 'Неактивен'}
-                  </span>
+                            <span className={`px-2.5 py-1 rounded-lg text-sm font-medium border ${company.is_active
+                                ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                                : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
+                              }`}>
+                              {company.is_active ? 'Активен' : 'Неактивен'}
+                            </span>
 
-                  {hasBranches && (
-                    <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-white/[0.06] text-white/50 border border-white/[0.08]">
-                      {branches.length} подраздел.
-                    </span>
-                  )}
-                </div>
+                            {hasBranches && (
+                              <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-white/[0.06] text-white/50 border border-white/[0.08]">
+                                {branches.length} подраздел.
+                              </span>
+                            )}
+                          </div>
 
-                {company.legal_name && (
-                  <p className="text-white/45 text-base truncate">{company.legal_name}</p>
-                )}
+                          {company.legal_name && (
+                            <p className="text-white/45 text-base truncate">{company.legal_name}</p>
+                          )}
 
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06]">
-                    {company.counterparty_type}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
-                    ИНН {company.inn}
-                  </span>
-                  {company.kpp && (
-                    <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
-                      КПП {company.kpp}
-                    </span>
-                  )}
-                </div>
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06]">
+                              {company.counterparty_type}
+                            </span>
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
+                              ИНН {company.inn}
+                            </span>
+                            {company.kpp && (
+                              <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
+                                КПП {company.kpp}
+                              </span>
+                            )}
+                          </div>
 
-                <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-sm text-white/40">
-                  {company.phone && (
-                    <span className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      <Phone className="w-3.5 h-3.5" />
-                      {company.phone}
-                    </span>
-                  )}
-                  {company.email && (
-                    <span className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      <Mail className="w-3.5 h-3.5" />
-                      {company.email}
-                    </span>
-                  )}
-                  {contactPerson?.full_name && (
-                    <span className="flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5" />
-                      {contactPerson.full_name}
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {formatDate(company.created_at)}
-                  </span>
-                </div>
-              </div>
+                          <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-sm text-white/40">
+                            {company.phone && (
+                              <span className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                <Phone className="w-3.5 h-3.5" />
+                                {company.phone}
+                              </span>
+                            )}
+                            {company.email && (
+                              <span className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                <Mail className="w-3.5 h-3.5" />
+                                {company.email}
+                              </span>
+                            )}
+                            {contactPerson?.full_name && (
+                              <span className="flex items-center gap-1.5">
+                                <Users className="w-3.5 h-3.5" />
+                                {contactPerson.full_name}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="w-3.5 h-3.5" />
+                              {formatDate(company.created_at)}
+                            </span>
+                          </div>
+                        </div>
 
-              <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                {hasBranches && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleCompany(company.id);
-                    }}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl
+                        <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {hasBranches && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCompany(company.id);
+                              }}
+                              className="flex items-center gap-2 px-3.5 py-2 rounded-xl
                                bg-white/[0.05] hover:bg-white/[0.08]
                                text-white/65 hover:text-white transition-colors"
-                  >
-                    {isExpanded ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" />
-                        <span className="text-sm font-medium">Скрыть</span>
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" />
-                        <span className="text-sm font-medium">Подразделения</span>
-                      </>
-                    )}
-                  </button>
-                )}
+                            >
+                              {isExpanded ? (
+                                <>
+                                  <ChevronUp className="w-4 h-4" />
+                                  <span className="text-sm font-medium">Скрыть</span>
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="w-4 h-4" />
+                                  <span className="text-sm font-medium">Подразделения</span>
+                                </>
+                              )}
+                            </button>
+                          )}
 
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/counterparties/${company.id}`);
-                  }}
-                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/counterparties/${company.id}`);
+                            }}
+                            className="flex items-center gap-2 px-3.5 py-2 rounded-xl
                              bg-red-700/15 hover:bg-red-700/25
                              text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <span className="text-sm font-medium">Открыть</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                          >
+                            <span className="text-sm font-medium">Открыть</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-      {/* Branches - остаётся без изменений */}
-      {hasBranches && isExpanded && (
-        <div className="border-t border-white/[0.08] bg-white/[0.02] px-5 sm:px-6 py-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 rounded-full bg-red-500" />
-            <p className="text-sm font-semibold text-white/70 flex items-center gap-2">
-              <GitBranch className="w-4 h-4" />
-              Подразделения
-            </p>
-          </div>
+                {/* Branches - остаётся без изменений */}
+                {hasBranches && isExpanded && (
+                  <div className="border-t border-white/[0.08] bg-white/[0.02] px-5 sm:px-6 py-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-1 h-5 rounded-full bg-red-500" />
+                      <p className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                        <GitBranch className="w-4 h-4" />
+                        Подразделения
+                      </p>
+                    </div>
 
-          <div className="space-y-2.5">
-            {branches.map(branch => {
-              const branchIsMatched = normalizedSearch ? branchMatchesSearch(branch) : false;
-              return (
-                <button
-                  key={branch.id}
-                  type="button"
-                  onClick={() => navigate(`/counterparties/${branch.id}`)}
-                  className={`
+                    <div className="space-y-2.5">
+                      {branches.map(branch => {
+                        const branchIsMatched = normalizedSearch ? branchMatchesSearch(branch) : false;
+                        return (
+                          <button
+                            key={branch.id}
+                            type="button"
+                            onClick={() => navigate(`/counterparties/${branch.id}`)}
+                            className={`
                     w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all
                     ${branchIsMatched
-                      ? 'bg-red-500/[0.06] border-red-500/20'
-                      : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]'
-                    }
+                                ? 'bg-red-500/[0.06] border-red-500/20'
+                                : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]'
+                              }
                   `}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-                    {getTypeIcon(branch.counterparty_type, 'sm')}
-                  </div>
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                              {getTypeIcon(branch.counterparty_type, 'sm')}
+                            </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-white font-semibold text-base truncate">
-                        {branch.name}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-xs bg-white/[0.05] text-white/40 border border-white/[0.06]">
-                        подразделение
-                      </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <span className="text-white font-semibold text-base truncate">
+                                  {branch.name}
+                                </span>
+                                <span className="px-2 py-0.5 rounded text-xs bg-white/[0.05] text-white/40 border border-white/[0.06]">
+                                  подразделение
+                                </span>
+                              </div>
+
+                              {branch.legal_name && (
+                                <p className="text-white/40 text-sm truncate mb-2">{branch.legal_name}</p>
+                              )}
+
+                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/35">
+                                <span className="font-mono">ИНН {branch.inn}</span>
+                                {branch.kpp && <span className="font-mono">КПП {branch.kpp}</span>}
+                                {branch.phone && <span>{branch.phone}</span>}
+                              </div>
+                            </div>
+
+                            <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0 mt-1" />
+                          </button>
+                        );
+                      })}
                     </div>
-
-                    {branch.legal_name && (
-                      <p className="text-white/40 text-sm truncate mb-2">{branch.legal_name}</p>
-                    )}
-
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/35">
-                      <span className="font-mono">ИНН {branch.inn}</span>
-                      {branch.kpp && <span className="font-mono">КПП {branch.kpp}</span>}
-                      {branch.phone && <span>{branch.phone}</span>}
-                    </div>
                   </div>
-
-                  <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0 mt-1" />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-})}
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -767,11 +766,10 @@ export default function CounterpartiesPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${
-                    pageNum === page
+                  className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
                       ? 'bg-red-700 text-white'
                       : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
-                  }`}
+                    }`}
                 >
                   {pageNum}
                 </button>

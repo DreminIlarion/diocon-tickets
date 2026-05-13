@@ -32,20 +32,20 @@ function Avatar({ name, size = 'md' }: { name?: string | null; size?: 'sm' | 'md
 }
 
 const statusClr = (s: string) => ({
-  'Новый':          'bg-blue-500/15 text-blue-400 border-blue-500/30',
-  'На согласовании':'bg-purple-500/15 text-purple-400 border-purple-500/30',
-  'Открыт':         'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-  'В работе':       'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  'Новый': 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  'На согласовании': 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+  'Открыт': 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
+  'В работе': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
   'Ожидает ответа': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  'Решён':          'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-  'Закрыт':         'bg-neutral-500/15 text-neutral-400 border-neutral-500/30',
-  'Переоткрыт':     'bg-red-500/15 text-red-400 border-red-500/30',
+  'Решён': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  'Закрыт': 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30',
+  'Переоткрыт': 'bg-red-500/15 text-red-400 border-red-500/30',
 }[s] ?? 'bg-white/5 text-white/50 border-white/10');
 
 const priorityClr = (p: string) => ({
-  'Низкий':      'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-  'Средний':     'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
-  'Высокий':     'bg-orange-500/15 text-orange-400 border-orange-500/30',
+  'Низкий': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  'Средний': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  'Высокий': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   'Критический': 'bg-red-500/15 text-red-400 border-red-500/30',
 }[p] ?? 'bg-white/5 text-white/50 border-white/10');
 
@@ -93,7 +93,7 @@ export default function MyCompanyPage() {
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('info');
-  
+
   const canViewEmployees = user?.role === 'customer_admin' || user?.role === 'admin';
   const canViewTickets = user?.role === 'customer_admin' || user?.role === 'customer' || user?.role === 'admin';
 
@@ -155,35 +155,35 @@ export default function MyCompanyPage() {
 
   const TICKETS_PER_PAGE = 10;
 
-const loadTickets = useCallback(async (page = 1) => {
-  if (!company?.id) return;
-  setLoadingTickets(true);
-  try {
-    const res = await ticketsApi.getAllWithFilters(page, TICKETS_PER_PAGE, {
-      counterparty_id: company.id,
-    });
-    setTickets(res.items);
-    setTicketsPage(res.page);
-    setTicketsTotalPages(res.total_pages);
-    setTicketsTotalItems(res.total_items);
-  } catch {
-    setTickets([]);
-    setTicketsTotalItems(0);
-    setTicketsTotalPages(1);
-  } finally {
-    setLoadingTickets(false);
-  }
-}, [company?.id]);
+  const loadTickets = useCallback(async (page = 1) => {
+    if (!company?.id) return;
+    setLoadingTickets(true);
+    try {
+      const res = await ticketsApi.getAllWithFilters(page, TICKETS_PER_PAGE, {
+        counterparty_id: company.id,
+      });
+      setTickets(res.items);
+      setTicketsPage(res.page);
+      setTicketsTotalPages(res.total_pages);
+      setTicketsTotalItems(res.total_items);
+    } catch {
+      setTickets([]);
+      setTicketsTotalItems(0);
+      setTicketsTotalPages(1);
+    } finally {
+      setLoadingTickets(false);
+    }
+  }, [company?.id]);
 
-// Загружаем общее количество заявок сразу при загрузке компании (для статистики)
-useEffect(() => {
-  if (company?.id) loadTickets(1);
-}, [company?.id, loadTickets]);
+  // Загружаем общее количество заявок сразу при загрузке компании (для статистики)
+  useEffect(() => {
+    if (company?.id) loadTickets(1);
+  }, [company?.id, loadTickets]);
 
-// При переключении страницы
-useEffect(() => {
-  if (activeTab === 'tickets') loadTickets(ticketsPage);
-}, [ticketsPage]);
+  // При переключении страницы
+  useEffect(() => {
+    if (activeTab === 'tickets') loadTickets(ticketsPage);
+  }, [ticketsPage]);
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
 
@@ -244,7 +244,7 @@ useEffect(() => {
                           flex items-center justify-center shadow-lg shadow-red-900/30 flex-shrink-0">
             {company.avatar_url ? (
               <img src={company.avatar_url} alt={company.name}
-                   className="w-16 h-16 rounded-2xl object-cover" />
+                className="w-16 h-16 rounded-2xl object-cover" />
             ) : (
               <Building2 className="w-8 h-8 text-white" />
             )}
@@ -252,11 +252,10 @@ useEffect(() => {
           <div>
             <div className="flex items-center gap-3 flex-wrap mb-2">
               <h1 className="text-3xl font-bold text-white">{company.name}</h1>
-              <span className={`px-3 py-1 rounded-lg text-base font-medium border ${
-                company.is_active
+              <span className={`px-3 py-1 rounded-lg text-base font-medium border ${company.is_active
                   ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                   : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-              }`}>
+                }`}>
                 {company.is_active ? 'Активен' : 'Неактивен'}
               </span>
               {hasBranches && (
@@ -271,7 +270,7 @@ useEffect(() => {
         </div>
 
         <Link to="/tickets/new"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl
                          bg-red-800 hover:bg-red-700 text-white text-base font-medium
                          transition-colors shadow-lg shadow-red-900/30 flex-shrink-0">
           <Plus className="w-4 h-4" />
@@ -283,12 +282,11 @@ useEffect(() => {
       <div className="flex gap-1.5 border-b border-white/[0.08] overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'bg-red-800/50 text-white border-b-2 border-red-500'
-                      : 'text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
-                  }`}>
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id
+                ? 'bg-red-800/50 text-white border-b-2 border-red-500'
+                : 'text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
+              }`}>
             <tab.icon className="w-4 h-4" />
             <span className="text-base font-medium">{tab.label}</span>
             {(tab.count ?? 0) > 0 && (
@@ -315,7 +313,7 @@ useEffect(() => {
                   { label: 'Тип', value: company.counterparty_type },
                 ].map(field => (
                   <div key={field.label}
-                       className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
+                    className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
                     <p className="text-xs uppercase tracking-widest text-white/30 mb-2">{field.label}</p>
                     <p className="text-base font-semibold text-white">{field.value || '—'}</p>
                   </div>
@@ -343,10 +341,10 @@ useEffect(() => {
                 {[
                   { icon: GitBranch, value: branches.length, label: 'Подразделений' },
                   { icon: Ticket, value: ticketsTotalItems, label: 'Заявок' },
-                  { icon: Clock,     value: activeTickets,   label: 'Активных' },
+                  { icon: Clock, value: activeTickets, label: 'Активных' },
                 ].map(s => (
                   <div key={s.label}
-                       className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5 text-center">
+                    className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5 text-center">
                     <s.icon className="w-5 h-5 text-white/30 mx-auto mb-3" />
                     <p className="text-3xl font-bold text-white mb-1">{s.value}</p>
                     <p className="text-sm text-white/40">{s.label}</p>
@@ -377,7 +375,7 @@ useEffect(() => {
                   <div className="space-y-3">
                     {company.contact_person.phone && (
                       <a href={`tel:${company.contact_person.phone}`}
-                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <Phone className="w-5 h-5 text-emerald-400" />
                         <span className="text-base text-white">{company.contact_person.phone}</span>
@@ -385,7 +383,7 @@ useEffect(() => {
                     )}
                     {company.contact_person.email && (
                       <a href={`mailto:${company.contact_person.email}`}
-                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <Mail className="w-5 h-5 text-red-400" />
                         <span className="text-base text-white">{company.contact_person.email}</span>
@@ -393,8 +391,8 @@ useEffect(() => {
                     )}
                     {company.contact_person.messengers?.telegram && (
                       <a href={`https://t.me/${company.contact_person.messengers.telegram}`}
-                         target="_blank" rel="noopener noreferrer"
-                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <MessageSquare className="w-5 h-5 text-sky-400" />
                         <span className="text-base text-white flex-1">
@@ -493,9 +491,8 @@ useEffect(() => {
 
                       return (
                         <div key={emp.id}
-                             className={`flex items-center gap-4 py-4 px-2 rounded-xl ${
-                               isMe ? 'bg-red-500/[0.04]' : ''
-                             }`}>
+                          className={`flex items-center gap-4 py-4 px-2 rounded-xl ${isMe ? 'bg-red-500/[0.04]' : ''
+                            }`}>
                           <Avatar name={emp.full_name || emp.username} />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -538,7 +535,7 @@ useEffect(() => {
                   )}
                 </h2>
                 <Link to="/tickets/new"
-                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-700
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-700
                                  text-white text-base font-medium transition-colors shadow-md shadow-red-900/30">
                   <Plus className="w-4 h-4" />
                   Создать
@@ -558,7 +555,7 @@ useEffect(() => {
                       У вашей компании пока нет заявок
                     </p>
                     <Link to="/tickets/new"
-                          className="text-red-400 hover:text-red-300 transition-colors text-base">
+                      className="text-red-400 hover:text-red-300 transition-colors text-base">
                       Создать первую заявку →
                     </Link>
                   </div>
@@ -566,7 +563,7 @@ useEffect(() => {
                   <div className="divide-y divide-white/[0.05]">
                     {tickets.map(ticket => (
                       <Link key={ticket.id} to={`/tickets/${ticket.number}`}
-                            className="flex items-start justify-between gap-4 py-4 px-2
+                        className="flex items-start justify-between gap-4 py-4 px-2
                                        hover:bg-white/[0.03] rounded-xl transition-colors group">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -594,7 +591,7 @@ useEffect(() => {
                                                  flex-shrink-0 mt-1" />
                       </Link>
                     ))}
-                                   </div>
+                  </div>
                 )}
 
                 {/* Пагинация */}
@@ -620,11 +617,10 @@ useEffect(() => {
                           <button
                             key={pageNum}
                             onClick={() => setTicketsPage(pageNum)}
-                            className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${
-                              pageNum === ticketsPage
+                            className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === ticketsPage
                                 ? 'bg-red-700 text-white'
                                 : 'bg-white/[0.04] text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
-                            }`}
+                              }`}
                           >
                             {pageNum}
                           </button>
@@ -659,19 +655,20 @@ useEffect(() => {
             </p>
             <div className="divide-y divide-white/[0.06]">
               {[
-                { label: 'Тип',           value: <span className="text-white/80">{company.counterparty_type}</span> },
-                { label: 'Статус',        value: (
-                  <span className={`text-sm px-2.5 py-1 rounded-lg font-medium border ${
-                    company.is_active
-                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                      : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-                  }`}>
-                    {company.is_active ? 'Активен' : 'Неактивен'}
-                  </span>
-                )},
+                { label: 'Тип', value: <span className="text-white/80">{company.counterparty_type}</span> },
+                {
+                  label: 'Статус', value: (
+                    <span className={`text-sm px-2.5 py-1 rounded-lg font-medium border ${company.is_active
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
+                      }`}>
+                      {company.is_active ? 'Активен' : 'Неактивен'}
+                    </span>
+                  )
+                },
                 { label: 'Подразделений', value: <span className="text-white font-bold">{branches.length}</span> },
                 { label: 'Заявок', value: <span className="text-white font-bold">{ticketsTotalItems}</span> },
-                { label: 'Активных',      value: <span className="text-white font-bold">{activeTickets}</span> },
+                { label: 'Активных', value: <span className="text-white font-bold">{activeTickets}</span> },
                 { label: 'Зарегистрирован', value: <span className="text-white/70 text-sm">{fmtDate(company.created_at)}</span> },
               ].map(row => (
                 <div key={row.label} className="flex items-center justify-between py-3">
@@ -690,7 +687,7 @@ useEffect(() => {
             <div className="space-y-3">
               {company.phone ? (
                 <a href={`tel:${company.phone}`}
-                   className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base">
+                  className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base">
                   <Phone className="w-4 h-4" /> {company.phone}
                 </a>
               ) : (
@@ -698,7 +695,7 @@ useEffect(() => {
               )}
               {company.email ? (
                 <a href={`mailto:${company.email}`}
-                   className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base break-all">
+                  className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base break-all">
                   <Mail className="w-4 h-4" /> {company.email}
                 </a>
               ) : (

@@ -131,7 +131,7 @@ function RemoteImage({ attachmentId }: { attachmentId: string }) {
   );
 
   return <img src={src} alt="attachment"
-              className="my-4 max-w-full max-h-[400px] rounded-2xl border border-white/[0.08] object-contain" />;
+    className="my-4 max-w-full max-h-[400px] rounded-2xl border border-white/[0.08] object-contain" />;
 }
 
 // ─── Основной компонент ──────────────────────────────────────────────────────
@@ -158,7 +158,7 @@ export function TicketDescriptionContent({ text, className, localImageBlocks }: 
           const lb = localImageBlocks?.find(b => b.id === seg.localId);
           return lb?.localPreview
             ? <img key={i} src={lb.localPreview} alt="preview"
-                   className="my-4 max-w-full max-h-[280px] rounded-2xl border border-white/[0.08] object-contain" />
+              className="my-4 max-w-full max-h-[280px] rounded-2xl border border-white/[0.08] object-contain" />
             : null;
         }
         return null;

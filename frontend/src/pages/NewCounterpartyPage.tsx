@@ -110,11 +110,11 @@ function parseBackendErrors(err: any): { general: string; fields: FieldError[] }
     const fields: FieldError[] = [];
     const lower = detail.toLowerCase();
 
-    if (lower.includes('inn') || lower.includes('инн'))  fields.push({ field: 'inn', message: detail });
-    if (lower.includes('kpp') || lower.includes('кпп'))  fields.push({ field: 'kpp', message: detail });
+    if (lower.includes('inn') || lower.includes('инн')) fields.push({ field: 'inn', message: detail });
+    if (lower.includes('kpp') || lower.includes('кпп')) fields.push({ field: 'kpp', message: detail });
     if (lower.includes('okpo') || lower.includes('окпо')) fields.push({ field: 'okpo', message: detail });
     if (lower.includes('phone') || lower.includes('телефон')) fields.push({ field: 'phone', message: detail });
-    if (lower.includes('email'))                         fields.push({ field: 'email', message: detail });
+    if (lower.includes('email')) fields.push({ field: 'email', message: detail });
 
     return { general: detail, fields };
   }
@@ -159,8 +159,8 @@ function hasFieldError(fieldErrors: FieldError[], fieldName: string): boolean {
 
 const COUNTERPARTY_TYPES: { value: CounterpartyType; label: string; desc: string; icon: React.ReactNode }[] = [
   { value: 'Юридическое лицо', label: 'Юридическое лицо', desc: 'ИНН 10 цифр, КПП обязателен', icon: <Building2 className="w-7 h-7" /> },
-  { value: 'Физическое лицо',  label: 'Физическое лицо',  desc: 'ИНН 12 цифр, КПП не нужен',   icon: <User className="w-7 h-7" /> },
-  { value: 'Индивидуальный предприниматель',               label: 'Индивидуальный предприниматель', desc: 'ИНН 12 цифр, КПП не нужен', icon: <Briefcase className="w-7 h-7" /> },
+  { value: 'Физическое лицо', label: 'Физическое лицо', desc: 'ИНН 12 цифр, КПП не нужен', icon: <User className="w-7 h-7" /> },
+  { value: 'Индивидуальный предприниматель', label: 'Индивидуальный предприниматель', desc: 'ИНН 12 цифр, КПП не нужен', icon: <Briefcase className="w-7 h-7" /> },
 ];
 
 const PRODUCT_CATEGORIES = [
@@ -174,9 +174,9 @@ const PRODUCT_CATEGORIES = [
 ] as const;
 
 const ENVIRONMENTS = [
-  { value: 'production',  label: 'Production' },
-  { value: 'staging',     label: 'Staging' },
-  { value: 'testing',     label: 'Testing' },
+  { value: 'production', label: 'Production' },
+  { value: 'staging', label: 'Staging' },
+  { value: 'testing', label: 'Testing' },
   { value: 'development', label: 'Development' },
 ] as const;
 
@@ -184,9 +184,9 @@ const catMeta = (v: string) => PRODUCT_CATEGORIES.find(c => c.value === v);
 const envLabel = (v: string) => ENVIRONMENTS.find(e => e.value === v)?.label ?? v;
 
 const envBadgeClass = (e: string) => {
-  if (e === 'production')  return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-  if (e === 'staging')     return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-  if (e === 'testing')     return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+  if (e === 'production') return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+  if (e === 'staging') return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+  if (e === 'testing') return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
   if (e === 'development') return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
   return 'bg-white/5 text-white/40 border border-white/10';
 };
@@ -220,10 +220,9 @@ interface LinkedProduct {
 
 const inputCls = (hasError = false) =>
   `w-full px-4 py-3.5 text-base bg-white/[0.04] border rounded-xl text-white
-   placeholder-white/30 focus:outline-none focus:ring-2 transition-all ${
-    hasError
-      ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/20'
-      : 'border-white/[0.08] focus:border-red-500/40 focus:ring-red-500/10'
+   placeholder-white/30 focus:outline-none focus:ring-2 transition-all ${hasError
+    ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/20'
+    : 'border-white/[0.08] focus:border-red-500/40 focus:ring-red-500/10'
   }`;
 
 const labelCls = 'block text-base font-medium text-white/80 mb-2';
@@ -233,10 +232,10 @@ const labelCls = 'block text-base font-medium text-white/80 mb-2';
 export default function NewCounterpartyPage() {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading]     = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
-  const [step, setStep]               = useState(1);
+  const [step, setStep] = useState(1);
 
   // Шаг 1
   const [formData, setFormData] = useState<CreateCounterpartyInput>({
@@ -274,7 +273,7 @@ export default function NewCounterpartyPage() {
       setLoadingProducts(true);
       productsApi.getProducts({ page: 1, size: 15 })
         .then(res => setAllProducts(res.items ?? []))
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => setLoadingProducts(false));
     }
   }, [showProductForm]);
@@ -282,12 +281,12 @@ export default function NewCounterpartyPage() {
   // Фильтрация продуктов по запросу
   const filteredProducts = productFilter.trim()
     ? allProducts.filter(p => {
-        const q = productFilter.toLowerCase();
-        return (
-          (p.display_name || p.name || '').toLowerCase().includes(q) ||
-          (p.vendor || '').toLowerCase().includes(q)
-        );
-      })
+      const q = productFilter.toLowerCase();
+      return (
+        (p.display_name || p.name || '').toLowerCase().includes(q) ||
+        (p.vendor || '').toLowerCase().includes(q)
+      );
+    })
     : allProducts;
 
   // Исключаем уже добавленные
@@ -350,7 +349,7 @@ export default function NewCounterpartyPage() {
         email: formData.email.trim(),
       };
       if (isKppAllowed(formData.counterparty_type) && formData.kpp) payload.kpp = formData.kpp;
-      if (formData.okpo)    payload.okpo    = formData.okpo;
+      if (formData.okpo) payload.okpo = formData.okpo;
       if (formData.address?.trim()) payload.address = formData.address.trim();
 
       if (includeContacts && contactPersons.length > 0) {
@@ -411,7 +410,7 @@ export default function NewCounterpartyPage() {
 
   // ─── Валидация ────────────────────────────────────────────────────────────
 
-  const innLength  = getInnMaxLength(formData.counterparty_type);
+  const innLength = getInnMaxLength(formData.counterparty_type);
   const isInnValid = formData.inn.length === innLength && /^\d+$/.test(formData.inn);
   const isKppValid = isKppRequired(formData.counterparty_type)
     ? !!formData.kpp && formData.kpp.length === 9 && /^\d+$/.test(formData.kpp)
@@ -437,7 +436,7 @@ export default function NewCounterpartyPage() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <button onClick={() => navigate('/counterparties')}
-                className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]
+          className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]
                            text-white/60 hover:text-white transition-all">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -454,13 +453,12 @@ export default function NewCounterpartyPage() {
             <button
               onClick={() => { if (s < step) setStep(s); }}
               disabled={s > step}
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-semibold transition-all ${
-                step === s
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-semibold transition-all ${step === s
                   ? 'bg-red-700 text-white shadow-lg shadow-red-900/30'
                   : step > s
                     ? 'bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500'
                     : 'bg-white/[0.06] text-white/30'
-              }`}
+                }`}
             >
               {step > s ? <Check className="w-4 h-4" /> : s}
             </button>
@@ -504,11 +502,10 @@ export default function NewCounterpartyPage() {
                   key={type.value}
                   type="button"
                   onClick={() => handleTypeChange(type.value)}
-                  className={`p-5 rounded-xl border-2 text-left transition-all ${
-                    formData.counterparty_type === type.value
+                  className={`p-5 rounded-xl border-2 text-left transition-all ${formData.counterparty_type === type.value
                       ? 'border-red-500/60 bg-red-500/[0.06]'
                       : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]'
-                  }`}
+                    }`}
                 >
                   <div className={`mb-2 ${formData.counterparty_type === type.value ? 'text-red-400' : 'text-white/40'}`}>
                     {type.icon}
@@ -527,17 +524,17 @@ export default function NewCounterpartyPage() {
             <div>
               <label className={labelCls}>Краткое название <span className="text-red-400">*</span></label>
               <input type="text" value={formData.name}
-                     onChange={e => { clearErrors(); setFormData({ ...formData, name: e.target.value }); }}
-                     placeholder={formData.counterparty_type === 'Физическое лицо' ? 'Иванов И.И.' : formData.counterparty_type === 'Индивидуальный предприниматель' ? 'ИП Иванов' : 'ООО Компания'}
-                     className={inputCls(hasFieldError(fieldErrors, 'name'))} />
+                onChange={e => { clearErrors(); setFormData({ ...formData, name: e.target.value }); }}
+                placeholder={formData.counterparty_type === 'Физическое лицо' ? 'Иванов И.И.' : formData.counterparty_type === 'Индивидуальный предприниматель' ? 'ИП Иванов' : 'ООО Компания'}
+                className={inputCls(hasFieldError(fieldErrors, 'name'))} />
               <FieldErrorMsg fieldErrors={fieldErrors} fieldName="name" />
             </div>
             <div>
               <label className={labelCls}>Полное наименование <span className="text-red-400">*</span></label>
               <input type="text" value={formData.legal_name}
-                     onChange={e => { clearErrors(); setFormData({ ...formData, legal_name: e.target.value }); }}
-                     placeholder={formData.counterparty_type === 'Юридическое лицо' ? 'ООО «Компания»' : 'Полное ФИО'}
-                     className={inputCls(hasFieldError(fieldErrors, 'legal_name'))} />
+                onChange={e => { clearErrors(); setFormData({ ...formData, legal_name: e.target.value }); }}
+                placeholder={formData.counterparty_type === 'Юридическое лицо' ? 'ООО «Компания»' : 'Полное ФИО'}
+                className={inputCls(hasFieldError(fieldErrors, 'legal_name'))} />
               <FieldErrorMsg fieldErrors={fieldErrors} fieldName="legal_name" />
             </div>
           </div>
@@ -547,14 +544,14 @@ export default function NewCounterpartyPage() {
             <div>
               <label className={labelCls}>ИНН <span className="text-red-400">*</span></label>
               <input type="text" value={formData.inn}
-                     onChange={e => {
-                       clearErrors();
-                       const val = e.target.value.replace(/\D/g, '');
-                       if (val.length <= innLength) setFormData({ ...formData, inn: val });
-                     }}
-                     placeholder={getInnPlaceholder(formData.counterparty_type)}
-                     maxLength={innLength}
-                     className={inputCls(!isInnValid && formData.inn.length > 0 || hasFieldError(fieldErrors, 'inn'))} />
+                onChange={e => {
+                  clearErrors();
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.length <= innLength) setFormData({ ...formData, inn: val });
+                }}
+                placeholder={getInnPlaceholder(formData.counterparty_type)}
+                maxLength={innLength}
+                className={inputCls(!isInnValid && formData.inn.length > 0 || hasFieldError(fieldErrors, 'inn'))} />
               {formData.inn && !isInnValid && (
                 <p className="mt-1.5 text-sm text-amber-400">ИНН: {formData.inn.length}/{innLength} цифр</p>
               )}
@@ -565,13 +562,13 @@ export default function NewCounterpartyPage() {
               <div>
                 <label className={labelCls}>КПП <span className="text-red-400">*</span></label>
                 <input type="text" value={formData.kpp}
-                       onChange={e => {
-                         clearErrors();
-                         const val = e.target.value.replace(/\D/g, '');
-                         if (val.length <= 9) setFormData({ ...formData, kpp: val });
-                       }}
-                       placeholder="9 цифр" maxLength={9}
-                       className={inputCls((!!formData.kpp && formData.kpp.length !== 9) || hasFieldError(fieldErrors, 'kpp'))} />
+                  onChange={e => {
+                    clearErrors();
+                    const val = e.target.value.replace(/\D/g, '');
+                    if (val.length <= 9) setFormData({ ...formData, kpp: val });
+                  }}
+                  placeholder="9 цифр" maxLength={9}
+                  className={inputCls((!!formData.kpp && formData.kpp.length !== 9) || hasFieldError(fieldErrors, 'kpp'))} />
                 {formData.kpp && formData.kpp.length !== 9 && (
                   <p className="mt-1.5 text-sm text-amber-400">КПП: {formData.kpp.length}/9 цифр</p>
                 )}
@@ -582,20 +579,20 @@ export default function NewCounterpartyPage() {
             <div>
               <label className={labelCls}>ОКПО</label>
               <input type="text" value={formData.okpo}
-                     onChange={e => {
-                       clearErrors();
-                       const val = e.target.value.replace(/\D/g, '');
-                       if (val.length <= 10) setFormData({ ...formData, okpo: val });
-                     }}
-                     placeholder="8–10 цифр" maxLength={10}
-                     className={inputCls(hasFieldError(fieldErrors, 'okpo'))} />
+                onChange={e => {
+                  clearErrors();
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.length <= 10) setFormData({ ...formData, okpo: val });
+                }}
+                placeholder="8–10 цифр" maxLength={10}
+                className={inputCls(hasFieldError(fieldErrors, 'okpo'))} />
               <FieldErrorMsg fieldErrors={fieldErrors} fieldName="okpo" />
             </div>
           </div>
 
           <div className="flex justify-end pt-2">
             <button onClick={() => setStep(2)} disabled={!isStep1Valid}
-                    className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -634,9 +631,9 @@ export default function NewCounterpartyPage() {
                 Email <span className="text-red-400">*</span>
               </label>
               <input type="email" value={formData.email}
-                     onChange={e => { clearErrors(); setFormData({ ...formData, email: e.target.value }); }}
-                     placeholder="info@company.ru"
-                     className={inputCls(hasFieldError(fieldErrors, 'email'))} />
+                onChange={e => { clearErrors(); setFormData({ ...formData, email: e.target.value }); }}
+                placeholder="info@company.ru"
+                className={inputCls(hasFieldError(fieldErrors, 'email'))} />
               <FieldErrorMsg fieldErrors={fieldErrors} fieldName="email" />
             </div>
           </div>
@@ -647,18 +644,18 @@ export default function NewCounterpartyPage() {
               Адрес
             </label>
             <textarea value={formData.address}
-                      onChange={e => setFormData({ ...formData, address: e.target.value })}
-                      placeholder="г. Москва, ул. Примерная, д. 1" rows={3}
-                      className={`${inputCls()} resize-none`} />
+              onChange={e => setFormData({ ...formData, address: e.target.value })}
+              placeholder="г. Москва, ул. Примерная, д. 1" rows={3}
+              className={`${inputCls()} resize-none`} />
           </div>
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(1)}
-                    className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(3)} disabled={!isStep2Valid}
-                    className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -695,7 +692,7 @@ export default function NewCounterpartyPage() {
                 <p className="text-base font-medium text-white">Контакт #{i + 1}</p>
                 {contactPersons.length > 1 && (
                   <button onClick={() => removeContactPerson(i)}
-                          className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
+                    className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
@@ -705,17 +702,17 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>Фамилия <span className="text-red-400">*</span></label>
                   <input type="text" value={cp.last_name} onChange={e => updateContactPerson(i, { ...cp, last_name: e.target.value })}
-                         placeholder="Иванов" className={inputCls()} />
+                    placeholder="Иванов" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Имя <span className="text-red-400">*</span></label>
                   <input type="text" value={cp.first_name} onChange={e => updateContactPerson(i, { ...cp, first_name: e.target.value })}
-                         placeholder="Иван" className={inputCls()} />
+                    placeholder="Иван" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Отчество</label>
                   <input type="text" value={cp.middle_name} onChange={e => updateContactPerson(i, { ...cp, middle_name: e.target.value })}
-                         placeholder="Иванович" className={inputCls()} />
+                    placeholder="Иванович" className={inputCls()} />
                 </div>
               </div>
 
@@ -723,12 +720,12 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>Телефон</label>
                   <input type="tel" value={cp.phone} onChange={e => updateContactPerson(i, { ...cp, phone: e.target.value })}
-                         placeholder="+7 (999) 123-45-67" className={inputCls()} />
+                    placeholder="+7 (999) 123-45-67" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Email</label>
                   <input type="email" value={cp.email} onChange={e => updateContactPerson(i, { ...cp, email: e.target.value })}
-                         placeholder="ivanov@company.ru" className={inputCls()} />
+                    placeholder="ivanov@company.ru" className={inputCls()} />
                 </div>
               </div>
 
@@ -736,14 +733,14 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}><MessageSquare className="w-3.5 h-3.5 inline mr-1.5 text-white/40" />Telegram</label>
                   <input type="text" value={cp.messengers?.telegram || ''}
-                         onChange={e => updateContactPerson(i, { ...cp, messengers: { ...cp.messengers, telegram: e.target.value } })}
-                         placeholder="@username" className={inputCls()} />
+                    onChange={e => updateContactPerson(i, { ...cp, messengers: { ...cp.messengers, telegram: e.target.value } })}
+                    placeholder="@username" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>VK</label>
                   <input type="text" value={cp.messengers?.vk || ''}
-                         onChange={e => updateContactPerson(i, { ...cp, messengers: { ...cp.messengers, vk: e.target.value } })}
-                         placeholder="vk.com/id" className={inputCls()} />
+                    onChange={e => updateContactPerson(i, { ...cp, messengers: { ...cp.messengers, vk: e.target.value } })}
+                    placeholder="vk.com/id" className={inputCls()} />
                 </div>
               </div>
             </div>
@@ -751,7 +748,7 @@ export default function NewCounterpartyPage() {
 
           {includeContacts && (
             <button onClick={addContactPerson}
-                    className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
+              className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
                                bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/[0.1]
                                hover:border-white/[0.2] rounded-xl transition-all w-full justify-center">
               <Plus className="w-4 h-4" /> Добавить ещё
@@ -760,11 +757,11 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(2)}
-                    className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(4)}
-                    className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -803,7 +800,7 @@ export default function NewCounterpartyPage() {
                 </p>
                 {branches.length > 1 && (
                   <button onClick={() => removeBranch(i)}
-                          className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
+                    className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
@@ -819,12 +816,12 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>Название <span className="text-red-400">*</span></label>
                   <input type="text" value={branch.name} onChange={e => updateBranch(i, { ...branch, name: e.target.value })}
-                         placeholder="Филиал в СПб" className={inputCls()} />
+                    placeholder="Филиал в СПб" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Полное наименование <span className="text-red-400">*</span></label>
                   <input type="text" value={branch.legal_name} onChange={e => updateBranch(i, { ...branch, legal_name: e.target.value })}
-                         placeholder="Филиал ООО «Компания»" className={inputCls()} />
+                    placeholder="Филиал ООО «Компания»" className={inputCls()} />
                 </div>
               </div>
 
@@ -832,9 +829,9 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>КПП <span className="text-red-400">*</span></label>
                   <input type="text" value={branch.kpp}
-                         onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 9) updateBranch(i, { ...branch, kpp: v }); }}
-                         placeholder="9 цифр" maxLength={9}
-                         className={inputCls(!!branch.kpp && branch.kpp.length !== 9)} />
+                    onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 9) updateBranch(i, { ...branch, kpp: v }); }}
+                    placeholder="9 цифр" maxLength={9}
+                    className={inputCls(!!branch.kpp && branch.kpp.length !== 9)} />
                   {branch.kpp && branch.kpp.length !== 9 && (
                     <p className="mt-1.5 text-sm text-amber-400">КПП: {branch.kpp.length}/9</p>
                   )}
@@ -842,8 +839,8 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>ОКПО</label>
                   <input type="text" value={branch.okpo}
-                         onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 10) updateBranch(i, { ...branch, okpo: v }); }}
-                         placeholder="8–10 цифр" maxLength={10} className={inputCls()} />
+                    onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 10) updateBranch(i, { ...branch, okpo: v }); }}
+                    placeholder="8–10 цифр" maxLength={10} className={inputCls()} />
                 </div>
               </div>
 
@@ -851,26 +848,26 @@ export default function NewCounterpartyPage() {
                 <div>
                   <label className={labelCls}>Телефон <span className="text-red-400">*</span></label>
                   <input type="tel" value={branch.phone} onChange={e => updateBranch(i, { ...branch, phone: e.target.value })}
-                         placeholder="+7 (999) 123-45-67" className={inputCls()} />
+                    placeholder="+7 (999) 123-45-67" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Email <span className="text-red-400">*</span></label>
                   <input type="email" value={branch.email} onChange={e => updateBranch(i, { ...branch, email: e.target.value })}
-                         placeholder="branch@company.ru" className={inputCls()} />
+                    placeholder="branch@company.ru" className={inputCls()} />
                 </div>
               </div>
 
               <div>
                 <label className={labelCls}>Адрес</label>
                 <input type="text" value={branch.address} onChange={e => updateBranch(i, { ...branch, address: e.target.value })}
-                       placeholder="г. Санкт-Петербург, ул..." className={inputCls()} />
+                  placeholder="г. Санкт-Петербург, ул..." className={inputCls()} />
               </div>
             </div>
           ))}
 
           {includeBranches && (
             <button onClick={addBranch}
-                    className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
+              className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
                                bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/[0.1]
                                hover:border-white/[0.2] rounded-xl transition-all w-full justify-center">
               <Plus className="w-4 h-4" /> Добавить филиал
@@ -879,11 +876,11 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(3)}
-                    className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(5)}
-                    className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -928,7 +925,7 @@ export default function NewCounterpartyPage() {
                       <p className="text-sm text-white/40">{selectedProductToLink.vendor}</p>
                     </div>
                     <button onClick={() => setSelectedProductToLink(null)}
-                            className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
+                      className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
@@ -937,9 +934,9 @@ export default function NewCounterpartyPage() {
                     <div className="relative">
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
                       <input value={productFilter}
-                             onChange={e => setProductFilter(e.target.value)}
-                             placeholder="Фильтр по названию или вендору..."
-                             className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-base text-white
+                        onChange={e => setProductFilter(e.target.value)}
+                        placeholder="Фильтр по названию или вендору..."
+                        className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-base text-white
                                         placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10 transition-all" />
                     </div>
 
@@ -957,30 +954,30 @@ export default function NewCounterpartyPage() {
                         </div>
                       ) : (
                         availableProducts.slice(0, 30).map(p => {
-  const PIcon = catMeta(p.category)?.icon || Package;
-  return (
-    <button 
-      key={p.id} 
-      onClick={() => {
-        // Автоматически добавляем в список
-        setLinkedProducts(prev => [...prev, {
-          product: p,
-          environment: productEnv,
-          is_primary: productIsPrimary,
-        }]);
-        // Очищаем поиск
-        setProductFilter('');
-      }}
-      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors"
-    >
-      <PIcon className="w-4 h-4 text-white/30 flex-shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-base text-white truncate">{p.display_name || p.name}</p>
-        <p className="text-sm text-white/30">{p.vendor}</p>
-      </div>
-    </button>
-  );
-})
+                          const PIcon = catMeta(p.category)?.icon || Package;
+                          return (
+                            <button
+                              key={p.id}
+                              onClick={() => {
+                                // Автоматически добавляем в список
+                                setLinkedProducts(prev => [...prev, {
+                                  product: p,
+                                  environment: productEnv,
+                                  is_primary: productIsPrimary,
+                                }]);
+                                // Очищаем поиск
+                                setProductFilter('');
+                              }}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors"
+                            >
+                              <PIcon className="w-4 h-4 text-white/30 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-base text-white truncate">{p.display_name || p.name}</p>
+                                <p className="text-sm text-white/30">{p.vendor}</p>
+                              </div>
+                            </button>
+                          );
+                        })
                       )}
                     </div>
                   </>
@@ -994,11 +991,10 @@ export default function NewCounterpartyPage() {
                       <div className="grid grid-cols-2 gap-2">
                         {ENVIRONMENTS.map(env => (
                           <button key={env.value} onClick={() => setProductEnv(env.value)}
-                                  className={`px-3 py-2.5 rounded-xl text-base font-medium transition-all ${
-                                    productEnv === env.value
-                                      ? envBadgeClass(env.value)
-                                      : 'border border-white/[0.06] bg-white/[0.02] text-white/40 hover:bg-white/[0.04]'
-                                  }`}>
+                            className={`px-3 py-2.5 rounded-xl text-base font-medium transition-all ${productEnv === env.value
+                                ? envBadgeClass(env.value)
+                                : 'border border-white/[0.06] bg-white/[0.02] text-white/40 hover:bg-white/[0.04]'
+                              }`}>
                             {env.label}
                           </button>
                         ))}
@@ -1011,13 +1007,13 @@ export default function NewCounterpartyPage() {
                         <p className="text-sm text-white/30">Отмечает как основной</p>
                       </div>
                       <button onClick={() => setProductIsPrimary(!productIsPrimary)}
-                              className={`relative w-11 h-6 rounded-full transition-colors ${productIsPrimary ? 'bg-red-600' : 'bg-white/10'}`}>
+                        className={`relative w-11 h-6 rounded-full transition-colors ${productIsPrimary ? 'bg-red-600' : 'bg-white/10'}`}>
                         <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${productIsPrimary ? 'translate-x-5' : ''}`} />
                       </button>
                     </div>
 
                     <button onClick={addLinkedProduct}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
                                        bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08]
                                        text-white text-base font-medium transition-colors">
                       <Plus className="w-4 h-4" /> Добавить в список
@@ -1049,7 +1045,7 @@ export default function NewCounterpartyPage() {
                           </div>
                         </div>
                         <button onClick={() => removeLinkedProduct(idx)}
-                                className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
+                          className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -1062,11 +1058,11 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(productsPrevStep)}
-                    className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={handleSubmit} disabled={isLoading}
-                    className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700
+              className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700
                                rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isLoading ? 'Сохранение...' : 'Создать контрагента'}

@@ -44,7 +44,7 @@ export const SpellCheckDiff: React.FC<SpellCheckDiffProps> = ({
   onApply,
   onDismiss,
 }) => {
-    const correctedSegments = useMemo(() => {
+  const correctedSegments = useMemo(() => {
     if (!result.suggestions.length) {
       return [{ type: 'text' as const, value: result.corrected_text }];
     }
@@ -162,9 +162,8 @@ export const SpellCheckDiff: React.FC<SpellCheckDiffProps> = ({
 
         <div className="rounded-lg   px-3 py-2.5">
           <div
-            className={`relative ${
-              !showFullText && isLongText ? 'max-h-[160px] overflow-hidden' : ''
-            }`}
+            className={`relative ${!showFullText && isLongText ? 'max-h-[160px] overflow-hidden' : ''
+              }`}
           >
             <p className="text-[16px] leading-relaxed text-white/90 whitespace-pre-wrap break-words">
               {correctedSegments.map((seg, i) => {

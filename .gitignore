@@ -20,6 +20,7 @@ venv/
 ENV/
 env/
 
+node_modules
 # Дистрибуция и установка
 build/
 develop-eggs/

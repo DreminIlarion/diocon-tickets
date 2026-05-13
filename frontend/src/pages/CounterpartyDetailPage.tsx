@@ -35,38 +35,38 @@ const shouldShowKpp = (type?: string) =>
 // ─── Продукты: константы ──────────────────────────────────────────────────────
 
 const PRODUCT_CATEGORIES = [
-  { value: 'ERP',      label: 'ERP',      icon: Server,     color: 'text-orange-400',  bg: 'bg-orange-500/10' },
-  { value: 'WEB',      label: 'Web',      icon: Globe,      color: 'text-blue-400',    bg: 'bg-blue-500/10' },
-  { value: 'MOBILE',   label: 'Mobile',   icon: Smartphone, color: 'text-green-400',   bg: 'bg-green-500/10' },
-  { value: 'API',      label: 'API',      icon: Code,       color: 'text-violet-400',  bg: 'bg-violet-500/10' },
-  { value: 'DESKTOP',  label: 'Desktop',  icon: Monitor,    color: 'text-cyan-400',    bg: 'bg-cyan-500/10' },
-  { value: 'HARDWARE', label: 'Hardware',  icon: Cpu,        color: 'text-amber-400',   bg: 'bg-amber-500/10' },
-  { value: 'OTHER',    label: 'Прочее',    icon: HelpCircle, color: 'text-white/50',    bg: 'bg-white/[0.06]' },
+  { value: 'ERP', label: 'ERP', icon: Server, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+  { value: 'WEB', label: 'Web', icon: Globe, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+  { value: 'MOBILE', label: 'Mobile', icon: Smartphone, color: 'text-green-400', bg: 'bg-green-500/10' },
+  { value: 'API', label: 'API', icon: Code, color: 'text-violet-400', bg: 'bg-violet-500/10' },
+  { value: 'DESKTOP', label: 'Desktop', icon: Monitor, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+  { value: 'HARDWARE', label: 'Hardware', icon: Cpu, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+  { value: 'OTHER', label: 'Прочее', icon: HelpCircle, color: 'text-white/50', bg: 'bg-white/[0.06]' },
 ] as const;
 
 const ENVIRONMENTS = [
-  { value: 'production',  label: 'Production' },
-  { value: 'staging',     label: 'Staging' },
-  { value: 'testing',     label: 'Testing' },
+  { value: 'production', label: 'Production' },
+  { value: 'staging', label: 'Staging' },
+  { value: 'testing', label: 'Testing' },
   { value: 'development', label: 'Development' },
 ] as const;
 
 const PRODUCT_STATUSES = [
-  { value: 'active',     label: 'Активный',   dot: 'bg-emerald-400', color: 'text-emerald-400' },
-  { value: 'beta',       label: 'Бета',       dot: 'bg-blue-400',    color: 'text-blue-400' },
-  { value: 'deprecated', label: 'Устаревший', dot: 'bg-white/30',    color: 'text-white/40' },
+  { value: 'active', label: 'Активный', dot: 'bg-emerald-400', color: 'text-emerald-400' },
+  { value: 'beta', label: 'Бета', dot: 'bg-blue-400', color: 'text-blue-400' },
+  { value: 'deprecated', label: 'Устаревший', dot: 'bg-white/30', color: 'text-white/40' },
 ] as const;
 
-const catMeta    = (v: string) => PRODUCT_CATEGORIES.find(c => c.value === v);
+const catMeta = (v: string) => PRODUCT_CATEGORIES.find(c => c.value === v);
 const statusMeta = (v: string) => PRODUCT_STATUSES.find(s => s.value === v);
 const statusLabel = (v: string) => statusMeta(v)?.label ?? v;
-const statusDot   = (s: string) => statusMeta(s)?.dot ?? 'bg-white/20';
-const envLabel    = (v: string) => ENVIRONMENTS.find(e => e.value === v)?.label ?? v;
+const statusDot = (s: string) => statusMeta(s)?.dot ?? 'bg-white/20';
+const envLabel = (v: string) => ENVIRONMENTS.find(e => e.value === v)?.label ?? v;
 
 const envBadgeClass = (e: string) => {
-  if (e === 'production')  return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-  if (e === 'staging')     return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-  if (e === 'testing')     return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+  if (e === 'production') return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+  if (e === 'staging') return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+  if (e === 'testing') return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
   if (e === 'development') return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
   return 'bg-white/5 text-white/40 border border-white/10';
 };
@@ -78,7 +78,7 @@ const ATTRIBUTE_LABELS: Record<string, string> = {
   tech_stack: 'Стек', ssl_expiry_date: 'SSL до', cdn_enabled: 'CDN',
   platform: 'Платформа', auth_method: 'Авторизация',
 };
-const getAttrLabel   = (k: string) => ATTRIBUTE_LABELS[k] || k.replace(/_/g, ' ');
+const getAttrLabel = (k: string) => ATTRIBUTE_LABELS[k] || k.replace(/_/g, ' ');
 const formatAttrValue = (v: any): string => {
   if (v === true) return 'Да';
   if (v === false) return 'Нет';
@@ -102,7 +102,7 @@ function DeleteModal({ name, loading, onConfirm, onClose }: {
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !loading && onClose()} />
       <div className="relative w-full max-w-md bg-[#1a1a1a] border border-white/[0.1] rounded-2xl overflow-hidden"
-           style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.7)' }}>
+        style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.7)' }}>
         <div className="pt-8 flex justify-center">
           <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
             <AlertTriangle className="w-8 h-8 text-red-400" />
@@ -117,12 +117,12 @@ function DeleteModal({ name, loading, onConfirm, onClose }: {
         </div>
         <div className="flex gap-3 p-6">
           <button onClick={onClose} disabled={loading}
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.09]
+            className="flex-1 px-4 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.09]
                              text-white/70 text-base font-medium transition-colors disabled:opacity-50">
             Отмена
           </button>
           <button onClick={onConfirm} disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl
                              bg-red-600/20 hover:bg-red-600/30 border border-red-600/30
                              text-red-400 text-base font-medium transition-all
                              disabled:opacity-50 disabled:cursor-not-allowed">
@@ -138,23 +138,23 @@ function DeleteModal({ name, loading, onConfirm, onClose }: {
 // ─── Вкладка продуктов ────────────────────────────────────────────────────────
 
 function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
-  const [products, setProducts]     = useState<any[]>([]);
-  const [loading, setLoading]       = useState(false);
-  const [error, setError]           = useState<string | null>(null);
-  const [page, setPage]             = useState(1);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const [showForm, setShowForm]           = useState(false);
-  const [allProducts, setAllProducts]     = useState<any[]>([]);
-  const [loadingAll, setLoadingAll]       = useState(false);
-  const [filterQuery, setFilterQuery]     = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [loadingAll, setLoadingAll] = useState(false);
+  const [filterQuery, setFilterQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
-  const [linkEnv, setLinkEnv]             = useState('production');
-  const [linkPrimary, setLinkPrimary]     = useState(false);
-  const [linking, setLinking]             = useState(false);
-  const [linkError, setLinkError]         = useState<string | null>(null);
+  const [linkEnv, setLinkEnv] = useState('production');
+  const [linkPrimary, setLinkPrimary] = useState(false);
+  const [linking, setLinking] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true); setError(null);
@@ -173,7 +173,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
     (async () => {
       setLoadingAll(true);
       try { const res = await productsApi.getProducts({ page: 1, size: 100 }); if (!cancelled) setAllProducts(res.items); }
-      catch {}
+      catch { }
       finally { if (!cancelled) setLoadingAll(false); }
     })();
     return () => { cancelled = true; };
@@ -181,8 +181,8 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
 
   const filtered = filterQuery.trim()
     ? allProducts.filter(p =>
-        (p.display_name || p.name || '').toLowerCase().includes(filterQuery.toLowerCase()) ||
-        (p.vendor || '').toLowerCase().includes(filterQuery.toLowerCase()))
+      (p.display_name || p.name || '').toLowerCase().includes(filterQuery.toLowerCase()) ||
+      (p.vendor || '').toLowerCase().includes(filterQuery.toLowerCase()))
     : allProducts;
 
   const handleLink = async () => {
@@ -221,11 +221,10 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
             <RefreshCcw size={16} />
           </button>
           <button onClick={() => showForm ? closeForm() : setShowForm(true)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-base font-medium transition-all ${
-                    showForm
-                      ? 'bg-white/[0.06] text-white/70'
-                      : 'bg-red-800 hover:bg-red-700 text-white shadow-md shadow-red-900/30'
-                  }`}>
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-base font-medium transition-all ${showForm
+                ? 'bg-white/[0.06] text-white/70'
+                : 'bg-red-800 hover:bg-red-700 text-white shadow-md shadow-red-900/30'
+              }`}>
             {showForm ? <X size={16} /> : <Link2 size={16} />}
             {showForm ? 'Отмена' : 'Привязать'}
           </button>
@@ -244,7 +243,8 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
             <label className="block text-base text-white/60 mb-2">Выберите продукт <span className="text-red-400">*</span></label>
             {selectedProduct ? (
               <div className="flex items-center gap-3 p-4 bg-white/[0.04] border border-white/[0.08] rounded-xl">
-                {(() => { const c = catMeta(selectedProduct.category); const I = c?.icon || Package;
+                {(() => {
+                  const c = catMeta(selectedProduct.category); const I = c?.icon || Package;
                   return <div className={`w-11 h-11 rounded-xl ${c?.bg || 'bg-white/[0.06]'} flex items-center justify-center ${c?.color || 'text-white/40'} flex-shrink-0`}><I size={20} /></div>;
                 })()}
                 <div className="flex-1 min-w-0">
@@ -252,7 +252,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                   <p className="text-sm text-white/40">{selectedProduct.vendor}</p>
                 </div>
                 <button onClick={() => { setSelectedProduct(null); setFilterQuery(''); }}
-                        className="p-1.5 rounded-lg text-white/30 hover:text-red-400 transition-colors">
+                  className="p-1.5 rounded-lg text-white/30 hover:text-red-400 transition-colors">
                   <X size={16} />
                 </button>
               </div>
@@ -261,11 +261,11 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                 <div className="relative">
                   <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
                   <input value={filterQuery} onChange={e => setFilterQuery(e.target.value)}
-                         placeholder="Фильтр по названию..."
-                         className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-base text-white placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10 transition-all" />
+                    placeholder="Фильтр по названию..."
+                    className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-base text-white placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10 transition-all" />
                 </div>
                 <div className="max-h-56 overflow-y-auto rounded-xl border border-white/[0.08] bg-[#1a1a1a] divide-y divide-white/[0.04]"
-                     style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.4)' }}>
+                  style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.4)' }}>
                   {loadingAll ? (
                     <div className="flex justify-center py-10"><Loader2 size={20} className="text-white/20 animate-spin" /></div>
                   ) : filtered.length === 0 ? (
@@ -274,7 +274,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                     const c = catMeta(p.category); const I = c?.icon || Package;
                     return (
                       <button key={p.id} onClick={() => { setSelectedProduct(p); setFilterQuery(''); }}
-                              className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-white/[0.04] transition-colors">
+                        className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-white/[0.04] transition-colors">
                         <div className={`w-10 h-10 rounded-lg ${c?.bg || 'bg-white/[0.06]'} flex items-center justify-center ${c?.color || 'text-white/30'} flex-shrink-0`}><I size={18} /></div>
                         <div className="flex-1 min-w-0">
                           <p className="text-base text-white truncate">{p.display_name || p.name}</p>
@@ -295,21 +295,20 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {ENVIRONMENTS.map(env => (
                     <button key={env.value} onClick={() => setLinkEnv(env.value)}
-                            className={`px-3 py-3 rounded-xl text-base font-medium transition-all ${
-                              linkEnv === env.value ? envBadgeClass(env.value) : 'border border-white/[0.06] bg-white/[0.02] text-white/40 hover:bg-white/[0.04]'
-                            }`}>{env.label}</button>
+                      className={`px-3 py-3 rounded-xl text-base font-medium transition-all ${linkEnv === env.value ? envBadgeClass(env.value) : 'border border-white/[0.06] bg-white/[0.02] text-white/40 hover:bg-white/[0.04]'
+                        }`}>{env.label}</button>
                   ))}
                 </div>
               </div>
               <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/[0.06] rounded-xl">
                 <div><p className="text-base text-white/80">Основной продукт</p><p className="text-sm text-white/40">Отмечает как основной</p></div>
                 <button onClick={() => setLinkPrimary(!linkPrimary)}
-                        className={`relative w-11 h-6 rounded-full transition-colors ${linkPrimary ? 'bg-red-700' : 'bg-white/10'}`}>
+                  className={`relative w-11 h-6 rounded-full transition-colors ${linkPrimary ? 'bg-red-700' : 'bg-white/10'}`}>
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform ${linkPrimary ? 'translate-x-5' : ''}`} />
                 </button>
               </div>
               <button onClick={handleLink} disabled={linking}
-                      className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
                 {linking ? <Loader2 size={18} className="animate-spin" /> : <Link2 size={18} />}
                 Привязать продукт
               </button>
@@ -331,7 +330,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
             <p className="text-white/40 text-sm mb-5">Привяжите продукты к контрагенту</p>
             {!showForm && (
               <button onClick={() => setShowForm(true)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-800/20 hover:bg-red-800/30 border border-red-800/30 text-red-400 text-base font-medium transition-colors">
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-800/20 hover:bg-red-800/30 border border-red-800/30 text-red-400 text-base font-medium transition-colors">
                 <Link2 size={16} /> Привязать
               </button>
             )}
@@ -347,7 +346,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
           return (
             <div key={product.id} className={isExpanded ? 'bg-white/[0.02]' : ''}>
               <button onClick={() => setExpandedId(isExpanded ? null : product.id)}
-                      className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-white/[0.03] transition-colors group">
+                className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-white/[0.03] transition-colors group">
                 <div className={`w-11 h-11 rounded-xl ${cat?.bg || 'bg-white/[0.06]'} flex items-center justify-center ${cat?.color || 'text-white/40'} group-hover:scale-105 transition-transform flex-shrink-0`}>
                   <Icon size={20} />
                 </div>
@@ -425,24 +424,24 @@ export default function CounterpartyDetailPage() {
   const navigate = useNavigate();
 
   const [counterparty, setCounterparty] = useState<Counterparty | null>(null);
-  const [customers, setCustomers]       = useState<CounterpartyCustomer[]>([]);
-  const [tickets, setTickets]           = useState<TicketListItem[]>([]);
-  const [loading, setLoading]           = useState(true);
-  const [activeTab, setActiveTab]       = useState<TabType>('info');
+  const [customers, setCustomers] = useState<CounterpartyCustomer[]>([]);
+  const [tickets, setTickets] = useState<TicketListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabType>('info');
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleting, setDeleting]               = useState(false);
-    // Контактное лицо
+  const [deleting, setDeleting] = useState(false);
+  // Контактное лицо
   const [showContactForm, setShowContactForm] = useState(false);
   const [contactForm, setContactForm] = useState({
-  last_name: '',
-  first_name: '',
-  middle_name: '',
-  phone: '',
-  email: '',
-  telegram: '',
-  vk: '',
-});
+    last_name: '',
+    first_name: '',
+    middle_name: '',
+    phone: '',
+    email: '',
+    telegram: '',
+    vk: '',
+  });
   const [savingContact, setSavingContact] = useState(false);
 
   useEffect(() => { if (id) loadData(); }, [id]);
@@ -458,62 +457,62 @@ export default function CounterpartyDetailPage() {
     finally { setLoading(false); }
   };
 
-const openContactForm = (person?: any) => {
-  if (person) {
-    // Если приходит full_name — пробуем разбить на части
-    let lastName = person.last_name || '';
-    let firstName = person.first_name || '';
-    let middleName = person.middle_name || '';
+  const openContactForm = (person?: any) => {
+    if (person) {
+      // Если приходит full_name — пробуем разбить на части
+      let lastName = person.last_name || '';
+      let firstName = person.first_name || '';
+      let middleName = person.middle_name || '';
 
-    if (!lastName && !firstName && person.full_name) {
-      const parts = person.full_name.trim().split(/\s+/);
-      lastName = parts[0] || '';
-      firstName = parts[1] || '';
-      middleName = parts.slice(2).join(' ') || '';
+      if (!lastName && !firstName && person.full_name) {
+        const parts = person.full_name.trim().split(/\s+/);
+        lastName = parts[0] || '';
+        firstName = parts[1] || '';
+        middleName = parts.slice(2).join(' ') || '';
+      }
+
+      setContactForm({
+        last_name: lastName,
+        first_name: firstName,
+        middle_name: middleName,
+        phone: person.phone || '',
+        email: person.email || '',
+        telegram: person.messengers?.telegram?.replace('@', '') || '',
+        vk: person.messengers?.vk || '',
+      });
+    } else {
+      setContactForm({
+        last_name: '', first_name: '', middle_name: '',
+        phone: '', email: '', telegram: '', vk: '',
+      });
     }
+    setShowContactForm(true);
+  };
 
-    setContactForm({
-      last_name: lastName,
-      first_name: firstName,
-      middle_name: middleName,
-      phone: person.phone || '',
-      email: person.email || '',
-      telegram: person.messengers?.telegram?.replace('@', '') || '',
-      vk: person.messengers?.vk || '',
-    });
-  } else {
-    setContactForm({
-      last_name: '', first_name: '', middle_name: '',
-      phone: '', email: '', telegram: '', vk: '',
-    });
-  }
-  setShowContactForm(true);
-};
+  const handleSaveContact = async () => {
+    if (!contactForm.last_name.trim() || !contactForm.first_name.trim()) return;
+    setSavingContact(true);
+    try {
+      const messengers: Record<string, string> = {};
+      if (contactForm.telegram.trim()) messengers.telegram = contactForm.telegram.trim();
+      if (contactForm.vk.trim()) messengers.vk = contactForm.vk.trim();
 
-const handleSaveContact = async () => {
-  if (!contactForm.last_name.trim() || !contactForm.first_name.trim()) return;
-  setSavingContact(true);
-  try {
-    const messengers: Record<string, string> = {};
-    if (contactForm.telegram.trim()) messengers.telegram = contactForm.telegram.trim();
-    if (contactForm.vk.trim()) messengers.vk = contactForm.vk.trim();
-
-    await counterpartiesApi.updateContactPerson(id!, {
-      first_name: contactForm.first_name.trim(),
-      last_name: contactForm.last_name.trim(),
-      middle_name: contactForm.middle_name.trim() || undefined,
-      phone: contactForm.phone.trim() || undefined,
-      email: contactForm.email.trim() || undefined,
-      messengers: Object.keys(messengers).length > 0 ? messengers : undefined,
-    });
-    setShowContactForm(false);
-    loadData();
-  } catch (e) {
-    console.error('Failed to save contact person:', e);
-  } finally {
-    setSavingContact(false);
-  }
-};
+      await counterpartiesApi.updateContactPerson(id!, {
+        first_name: contactForm.first_name.trim(),
+        last_name: contactForm.last_name.trim(),
+        middle_name: contactForm.middle_name.trim() || undefined,
+        phone: contactForm.phone.trim() || undefined,
+        email: contactForm.email.trim() || undefined,
+        messengers: Object.keys(messengers).length > 0 ? messengers : undefined,
+      });
+      setShowContactForm(false);
+      loadData();
+    } catch (e) {
+      console.error('Failed to save contact person:', e);
+    } finally {
+      setSavingContact(false);
+    }
+  };
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -523,19 +522,19 @@ const handleSaveContact = async () => {
   };
 
   const statusClr = (s: string) => ({
-    'Новый':          'bg-blue-500/15 text-blue-400 border-blue-500/30',
-    'Открыт':         'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-    'В работе':       'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+    'Новый': 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+    'Открыт': 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
+    'В работе': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
     'Ожидает ответа': 'bg-purple-500/15 text-purple-400 border-purple-500/30',
-    'Решён':          'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    'Закрыт':         'bg-neutral-500/15 text-neutral-400 border-neutral-500/30',
-    'Переоткрыт':     'bg-orange-500/15 text-orange-400 border-orange-500/30',
+    'Решён': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    'Закрыт': 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30',
+    'Переоткрыт': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   }[s] ?? 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30');
 
   const priorityClr = (p: string) => ({
-    'Низкий':      'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-    'Средний':     'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
-    'Высокий':     'bg-orange-500/15 text-orange-400 border-orange-500/30',
+    'Низкий': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    'Средний': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+    'Высокий': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
     'Критический': 'bg-red-500/15 text-red-400 border-red-500/30',
   }[p] ?? 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30');
 
@@ -547,12 +546,12 @@ const handleSaveContact = async () => {
   });
 
   const tabs: { id: TabType; label: string; icon: any; count?: number }[] = [
-    { id: 'info',      label: 'Информация',      icon: Info },
-    { id: 'contact',   label: 'Контактные лица',  icon: UserCheck },
-    { id: 'products',  label: 'Продукты',         icon: Layers },
-    { id: 'customers', label: 'Сотрудники',       icon: Users,  count: customers.length },
-    { id: 'tickets',   label: 'Заявки',           icon: Ticket, count: tickets.length },
-    { id: 'history',   label: 'История',          icon: History },
+    { id: 'info', label: 'Информация', icon: Info },
+    { id: 'contact', label: 'Контактные лица', icon: UserCheck },
+    { id: 'products', label: 'Продукты', icon: Layers },
+    { id: 'customers', label: 'Сотрудники', icon: Users, count: customers.length },
+    { id: 'tickets', label: 'Заявки', icon: Ticket, count: tickets.length },
+    { id: 'history', label: 'История', icon: History },
   ];
 
   if (loading) return (
@@ -566,7 +565,7 @@ const handleSaveContact = async () => {
       <Building2 className="w-20 h-20 text-white/15 mx-auto mb-5" />
       <h2 className="text-2xl font-bold text-white mb-3">Контрагент не найден</h2>
       <button onClick={() => navigate('/counterparties')}
-              className="px-6 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors">
+        className="px-6 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors">
         Вернуться к списку
       </button>
     </div>
@@ -579,7 +578,7 @@ const handleSaveContact = async () => {
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex items-start gap-4">
           <button onClick={() => navigate('/counterparties')}
-                  className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]
+            className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]
                              text-white/60 hover:text-white transition-all mt-1">
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -591,11 +590,10 @@ const handleSaveContact = async () => {
             <div>
               <div className="flex items-center gap-3 flex-wrap mb-2">
                 <h1 className="text-3xl font-bold text-white">{counterparty.name}</h1>
-                <span className={`px-3 py-1 rounded-lg text-base font-medium border ${
-                  counterparty.is_active
+                <span className={`px-3 py-1 rounded-lg text-base font-medium border ${counterparty.is_active
                     ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                     : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-                }`}>{counterparty.is_active ? 'Активен' : 'Неактивен'}</span>
+                  }`}>{counterparty.is_active ? 'Активен' : 'Неактивен'}</span>
               </div>
               <p className="text-white/60 text-base">{counterparty.legal_name}</p>
               <div className="flex items-center gap-3 mt-2">
@@ -613,7 +611,7 @@ const handleSaveContact = async () => {
             <Edit size={16} /> Редактировать
           </button>
           <button onClick={() => setShowDeleteModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-900/15
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-900/15
                              hover:bg-red-900/30 border border-red-800/20 text-red-400
                              text-base font-medium transition-colors">
             <Trash2 size={16} /> Удалить
@@ -625,11 +623,10 @@ const handleSaveContact = async () => {
       <div className="flex gap-1.5 border-b border-white/[0.08] overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'bg-red-800/50 text-white border-b-2 border-red-500'
-                      : 'text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
-                  }`}>
+            className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id
+                ? 'bg-red-800/50 text-white border-b-2 border-red-500'
+                : 'text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
+              }`}>
             <tab.icon size={16} />
             <span className="text-base font-medium">{tab.label}</span>
             {tab.count !== undefined && tab.count > 0 && (
@@ -708,7 +705,7 @@ const handleSaveContact = async () => {
 
               <div className="p-6">
                 {/* Inline-форма */}
-                                {showContactForm && (
+                {showContactForm && (
                   <div className="mb-6 p-5 space-y-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-base font-semibold text-white flex items-center gap-2">
@@ -875,7 +872,7 @@ const handleSaveContact = async () => {
                               <p className="text-sm text-white/40">Контактное лицо</p>
                             </div>
                           </div>
-                          
+
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-3">
@@ -885,7 +882,7 @@ const handleSaveContact = async () => {
                                 <Phone size={12} /> Телефон
                               </p>
                               <a href={`tel:${person.phone}`}
-                                 className="text-white text-base hover:text-red-400 transition-colors">
+                                className="text-white text-base hover:text-red-400 transition-colors">
                                 {person.phone}
                               </a>
                             </div>
@@ -896,7 +893,7 @@ const handleSaveContact = async () => {
                                 <Mail size={12} /> Email
                               </p>
                               <a href={`mailto:${person.email}`}
-                                 className="text-white text-base hover:text-red-400 transition-colors break-all">
+                                className="text-white text-base hover:text-red-400 transition-colors break-all">
                                 {person.email}
                               </a>
                             </div>
@@ -909,22 +906,22 @@ const handleSaveContact = async () => {
                               <MessageSquare size={12} /> Telegram
                             </p>
                             <a href={`https://t.me/${person.messengers.telegram.replace('@', '')}`}
-                               target="_blank" rel="noopener noreferrer"
-                               className="text-white text-base hover:text-red-400 transition-colors flex items-center gap-2">
+                              target="_blank" rel="noopener noreferrer"
+                              className="text-white text-base hover:text-red-400 transition-colors flex items-center gap-2">
                               @{person.messengers.telegram.replace('@', '')}
                               <ExternalLink size={14} className="text-white/30" />
                             </a>
                           </div>
-                          
+
                         )}
-                                                {person.messengers?.vk && (
+                        {person.messengers?.vk && (
                           <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
                             <p className="text-xs text-white/30 mb-1 flex items-center gap-1.5">
                               <Globe size={12} /> ВКонтакте
                             </p>
                             <a href={`https://vk.com/${person.messengers.vk}`}
-                               target="_blank" rel="noopener noreferrer"
-                               className="text-white text-base hover:text-red-400 transition-colors flex items-center gap-2">
+                              target="_blank" rel="noopener noreferrer"
+                              className="text-white text-base hover:text-red-400 transition-colors flex items-center gap-2">
                               {person.messengers.vk}
                               <ExternalLink size={14} className="text-white/30" />
                             </a>
@@ -984,11 +981,10 @@ const handleSaveContact = async () => {
                           <p className="text-base font-semibold text-white truncate">{c.full_name || c.username || 'Без имени'}</p>
                           <p className="text-sm text-white/40 truncate">{c.email}</p>
                         </div>
-                        <span className={`px-3 py-1.5 rounded-lg text-sm font-medium border flex-shrink-0 ${
-                          c.is_active
+                        <span className={`px-3 py-1.5 rounded-lg text-sm font-medium border flex-shrink-0 ${c.is_active
                             ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
                             : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-                        }`}>{c.is_active ? 'Активен' : 'Неактивен'}</span>
+                          }`}>{c.is_active ? 'Активен' : 'Неактивен'}</span>
                       </div>
                     ))}
                   </div>
@@ -1004,7 +1000,10 @@ const handleSaveContact = async () => {
                 <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
                   <Ticket size={18} className="text-white/40" /> Заявки
                 </h2>
-                <Link to="/tickets/new" className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors shadow-md shadow-red-900/30">
+                <Link
+                  to={`/tickets/new?counterparty_id=${id}`}
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors shadow-md shadow-red-900/30"
+                >
                   <Plus size={16} /> Создать
                 </Link>
               </div>
@@ -1018,7 +1017,7 @@ const handleSaveContact = async () => {
                   <div className="divide-y divide-white/[0.05]">
                     {tickets.map(ticket => (
                       <Link key={ticket.id} to={`/tickets/${ticket.number}`}
-                            className="flex items-start justify-between gap-4 py-4 px-2 hover:bg-white/[0.03] rounded-xl transition-colors group">
+                        className="flex items-start justify-between gap-4 py-4 px-2 hover:bg-white/[0.03] rounded-xl transition-colors group">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
                             <span className="text-red-400 font-mono text-sm bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-lg">#{ticket.number}</span>
@@ -1079,12 +1078,12 @@ const handleSaveContact = async () => {
             </p>
             <div className="divide-y divide-white/[0.06]">
               {[
-                { label: 'Тип',         value: <span className="text-white/80 text-sm">{counterparty.counterparty_type}</span> },
-                { label: 'ИНН',         value: <span className="font-mono text-white/80">{counterparty.inn}</span> },
+                { label: 'Тип', value: <span className="text-white/80 text-sm">{counterparty.counterparty_type}</span> },
+                { label: 'ИНН', value: <span className="font-mono text-white/80">{counterparty.inn}</span> },
                 { label: 'Сотрудников', value: <span className="text-white font-bold">{customers.length}</span> },
-                { label: 'Заявок',      value: <span className="text-white font-bold">{tickets.length}</span> },
-                { label: 'Активных',    value: <span className="text-white font-bold">{tickets.filter(t => t.status !== 'Закрыт' && t.status !== 'Решён').length}</span> },
-                { label: 'Создан',      value: <span className="text-white/70 text-sm">{fmtDateShort(counterparty.created_at)}</span> },
+                { label: 'Заявок', value: <span className="text-white font-bold">{tickets.length}</span> },
+                { label: 'Активных', value: <span className="text-white font-bold">{tickets.filter(t => t.status !== 'Закрыт' && t.status !== 'Решён').length}</span> },
+                { label: 'Создан', value: <span className="text-white/70 text-sm">{fmtDateShort(counterparty.created_at)}</span> },
               ].map(row => (
                 <div key={row.label} className="flex items-center justify-between py-3">
                   <span className="text-white/40 text-base">{row.label}</span>

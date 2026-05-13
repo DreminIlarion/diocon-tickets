@@ -12,8 +12,8 @@ import type { Project } from '../types';
 // ─── Role Dropdown ────────────────────────────────────────────────────────────
 
 const ROLE_OPTIONS = [
-  { value: 'all',    label: 'Все мои проекты' },
-  { value: 'owner',  label: 'Где я владелец' },
+  { value: 'all', label: 'Все мои проекты' },
+  { value: 'owner', label: 'Где я владелец' },
   { value: 'member', label: 'Где я участник' },
 ] as const;
 
@@ -27,8 +27,8 @@ function RoleDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const btnRef       = useRef<HTMLButtonElement>(null);
-  const [openUp, setOpenUp]       = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUp, setOpenUp] = useState(false);
   const [alignRight, setAlignRight] = useState(false);
 
   useEffect(() => {
@@ -98,9 +98,8 @@ function RoleDropdown({
                   type="button"
                   key={opt.value}
                   onClick={() => { onChange(opt.value); setOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${
-                    active ? 'bg-red-500/10 text-white' : 'text-white/65 hover:bg-white/[0.04]'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${active ? 'bg-red-500/10 text-white' : 'text-white/65 hover:bg-white/[0.04]'
+                    }`}
                 >
                   {active
                     ? <Check size={15} className="text-red-400 flex-shrink-0" />
@@ -122,18 +121,18 @@ function RoleDropdown({
 export default function ProjectsPage() {
   const { user } = useAuthStore();
 
-  const [projects, setProjects]     = useState<Project[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [search, setSearch]         = useState('');
-  const [page, setPage]             = useState(1);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [projectRole, setProjectRole] = useState<ProjectRole>('all');
 
-  const isCustomer      = user?.role === 'customer';
+  const isCustomer = user?.role === 'customer';
   const isCustomerAdmin = user?.role === 'customer_admin';
-  const isSupport       = user?.role === 'support_agent' || user?.role === 'support_manager';
-  const isAdmin         = user?.role === 'admin';
+  const isSupport = user?.role === 'support_agent' || user?.role === 'support_manager';
+  const isAdmin = user?.role === 'admin';
   const canCreateProject = isSupport || isAdmin;
 
   useEffect(() => {
@@ -289,9 +288,9 @@ export default function ProjectsPage() {
       {/* ── Статистика ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { icon: FolderOpen, value: totalItems,              label: 'Всего проектов',   color: 'text-white/60' },
-          { icon: Building2,  value: getActiveCount(),         label: 'Активных',         color: 'text-emerald-400' },
-          { icon: Users,      value: getTotalParticipants(),   label: 'Участников',       color: 'text-blue-400' },
+          { icon: FolderOpen, value: totalItems, label: 'Всего проектов', color: 'text-white/60' },
+          { icon: Building2, value: getActiveCount(), label: 'Активных', color: 'text-emerald-400' },
+          { icon: Users, value: getTotalParticipants(), label: 'Участников', color: 'text-blue-400' },
         ].map(stat => (
           <div key={stat.label} className="glass-card rounded-2xl border border-white/[0.08] p-5 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
@@ -355,11 +354,10 @@ export default function ProjectsPage() {
                         <p className="text-sm text-white/40 font-mono">{project.key || '—'}</p>
                       </div>
                     </div>
-                    <span className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-sm font-medium border ${
-                      project.status === 'active'
+                    <span className={`flex-shrink-0 px-2.5 py-1 rounded-lg text-sm font-medium border ${project.status === 'active'
                         ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
-                    }`}>
+                      }`}>
                       {project.status === 'active' ? 'Активен' : 'Архивирован'}
                     </span>
                   </div>
@@ -372,11 +370,10 @@ export default function ProjectsPage() {
 
                   {userRole && (
                     <div className="mb-3">
-                      <span className={`text-sm px-2.5 py-1 rounded-lg border font-medium ${
-                        userRole === 'owner'
+                      <span className={`text-sm px-2.5 py-1 rounded-lg border font-medium ${userRole === 'owner'
                           ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                           : 'bg-blue-500/15 text-blue-400 border-blue-500/30'
-                      }`}>
+                        }`}>
                         {userRole === 'owner' ? 'Владелец' : 'Участник'}
                       </span>
                     </div>
@@ -415,11 +412,10 @@ export default function ProjectsPage() {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${
-                        pageNum === page
+                      className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
                           ? 'bg-red-700 text-white'
                           : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
-                      }`}
+                        }`}
                     >
                       {pageNum}
                     </button>

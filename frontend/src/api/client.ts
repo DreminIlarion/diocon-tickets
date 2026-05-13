@@ -309,19 +309,19 @@ export const counterpartiesApi = {
   },
   // Получить привязанные продукты контрагента
   getProducts: async (counterpartyId: string, page = 1, size = 10) => {
-  const res = await api.get(`/api/v1/counterparties/${counterpartyId}/products`, {
-    params: { page, size },
-  });
-  return res.data;
-},
+    const res = await api.get(`/api/v1/counterparties/${counterpartyId}/products`, {
+      params: { page, size },
+    });
+    return res.data;
+  },
 
-linkProduct: async (
-  counterpartyId: string,
-  data: { product_id: string; environment: string; is_primary: boolean }
-) => {
-  const res = await api.post(`/api/v1/counterparties/${counterpartyId}/products`, data);
-  return res.data;
-},
+  linkProduct: async (
+    counterpartyId: string,
+    data: { product_id: string; environment: string; is_primary: boolean }
+  ) => {
+    const res = await api.post(`/api/v1/counterparties/${counterpartyId}/products`, data);
+    return res.data;
+  },
 };
 
 // ==== Invitations API ====
@@ -451,7 +451,7 @@ export const projectsApi = {
     return response.data;
   },
 
-    // Выдаёт ключ по названию
+  // Выдаёт ключ по названию
   getKeySuggestion: async (
     name: string
   ): Promise<KeySuggestionResponse> => {
@@ -736,8 +736,8 @@ export const ticketsApi = {
     });
   },
 
-archiveTicket: (ticketId: string) =>
-  api.delete(`/api/v1/tickets/${ticketId}`).then(r => r.data),
+  archiveTicket: (ticketId: string) =>
+    api.delete(`/api/v1/tickets/${ticketId}`).then(r => r.data),
 
 };
 

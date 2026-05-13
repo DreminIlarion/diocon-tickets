@@ -13,12 +13,12 @@ import { SpellCheckDiff } from './SpellCheckDiff';
 export type DescriptionBlock =
   | { id: string; type: 'text'; value: string }
   | {
-      id: string;
-      type: 'image';
-      localFile?: File;
-      localPreview?: string;
-      attachmentId?: string;
-    };
+    id: string;
+    type: 'image';
+    localFile?: File;
+    localPreview?: string;
+    attachmentId?: string;
+  };
 
 // ─── Кастомный Image extension ────────────────────────────────────────────────
 // Стандартный @tiptap/extension-image НЕ хранит data-attachment-id.
@@ -135,10 +135,9 @@ function EditorToolbar({
   if (!editor) return null;
 
   const btnCls = (active: boolean) =>
-    `px-2.5 py-1.5 rounded-lg border text-sm transition-all ${
-      active
-        ? 'bg-red-500/20 border-red-500/40 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.15)]'
-        : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-white/60 hover:text-white'
+    `px-2.5 py-1.5 rounded-lg border text-sm transition-all ${active
+      ? 'bg-red-500/20 border-red-500/40 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.15)]'
+      : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-white/60 hover:text-white'
     }`;
 
   return (
@@ -213,7 +212,7 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
   // ────────────────────────────────────────────────────────────────────────────
   const imageFilesRef = useRef<Map<string, File>>(new Map());
 
-  const insertImageRef = useRef<(file: File) => void>(() => {});
+  const insertImageRef = useRef<(file: File) => void>(() => { });
 
   // ── Загрузка blob URL для картинок с attachmentId ──────────────────────────
   const [resolvedUrls, setResolvedUrls] = useState<Map<string, string>>(

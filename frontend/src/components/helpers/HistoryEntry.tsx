@@ -1,5 +1,5 @@
-import { 
-  Clock, Image as ImageIcon, FileText, Plus, Minus, RefreshCw, 
+import {
+  Clock, Image as ImageIcon, FileText, Plus, Minus, RefreshCw,
   UserPlus, UserMinus, Tag, Archive, MessageSquare, Edit, Trash2,
   UserCheck, Building2, FolderOpen, CheckCircle
 } from 'lucide-react';
@@ -242,11 +242,10 @@ export const HistoryEntry = ({
     <div className="flex gap-4">
       {/* Иконка */}
       <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-          isDescEdit && hasMediaChanges
+        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isDescEdit && hasMediaChanges
             ? 'bg-violet-500/15 text-violet-400'
             : config.color
-        }`}
+          }`}
       >
         {isDescEdit && hasMediaChanges ? (
           <ImageIcon className="w-4.5 h-4.5" />

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { 
-  User, 
+import {
+  User,
   Shield,
   Bell,
   Camera,
@@ -17,7 +17,7 @@ import { useEffect } from 'react';
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore();
   const { toast } = useToast();
-  
+
   const [activeTab, setActiveTab] = useState<'profile' | 'company' | 'security' | 'notifications'>('profile');
   const [uploading, setUploading] = useState(false);
   const [myCompany, setMyCompany] = useState<Counterparty | null>(null);
@@ -150,11 +150,10 @@ export default function ProfilePage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                    activeTab === tab.id
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === tab.id
                       ? 'bg-red-800/20 text-red-400'
                       : 'text-white/60 hover:text-white hover:bg-white/5'
-                  }`}
+                    }`}
                 >
                   <tab.icon className="w-5 h-5" />
                   {tab.label}
@@ -170,7 +169,7 @@ export default function ProfilePage() {
           {activeTab === 'profile' && (
             <div className="glass-card-static p-6">
               <h3 className="text-lg font-semibold text-white mb-6">Личная информация</h3>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="label">Имя пользователя</label>
@@ -220,7 +219,7 @@ export default function ProfilePage() {
           {activeTab === 'company' && myCompany && (
             <div className="glass-card-static p-6">
               <h3 className="text-lg font-semibold text-white mb-6">Информация о компании</h3>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="label">Название</label>
@@ -277,7 +276,7 @@ export default function ProfilePage() {
           {activeTab === 'security' && (
             <div className="glass-card-static p-6">
               <h3 className="text-lg font-semibold text-white mb-6">Безопасность</h3>
-              
+
               <div className="space-y-6">
                 <div className="p-4 rounded-xl bg-white/5 border border-white/5">
                   <div className="flex items-center justify-between">
@@ -316,7 +315,7 @@ export default function ProfilePage() {
           {activeTab === 'notifications' && (
             <div className="glass-card-static p-6">
               <h3 className="text-lg font-semibold text-white mb-6">Настройки уведомлений</h3>
-              
+
               <div className="space-y-4">
                 {[
                   { label: 'Новая заявка', desc: 'Уведомления о новых заявках' },

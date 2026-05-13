@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { 
-  ArrowLeft, ArrowRight, Sparkles, Loader2, FileText, 
-  Tag, Upload, X, CheckCircle2, File, Building2, Zap, Plus, Search, Users, FolderOpen, User 
+import {
+  ArrowLeft, ArrowRight, Sparkles, Loader2, FileText,
+  Tag, Upload, X, CheckCircle2, File, Building2, Zap, Plus, Search, Users, FolderOpen, User
 } from 'lucide-react';
-import { 
-  SignalLow, SignalMedium, SignalHigh, Flame 
+import {
+  SignalLow, SignalMedium, SignalHigh, Flame
 } from 'lucide-react';
 
 import { useAuthStore } from '../stores/authStore';
@@ -14,44 +14,44 @@ import { attachmentsApi, type Attachment } from '../api/attachments';
 import type { Counterparty, TicketTag, TicketPriority, Project, User as UserType } from '../types';
 
 const PRIORITIES = [
-  { 
-    value: 'Низкий', 
-    label: 'Низкий', 
-    color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', 
-    icon: <SignalLow className="w-10 h-10" />, 
-    desc: 'Можно выполнить в плановом порядке' 
+  {
+    value: 'Низкий',
+    label: 'Низкий',
+    color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+    icon: <SignalLow className="w-10 h-10" />,
+    desc: 'Можно выполнить в плановом порядке'
   },
-  { 
-    value: 'Средний', 
-    label: 'Средний', 
-    color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', 
-    icon: <SignalMedium className="w-10 h-10" />, 
-    desc: 'Стандартный приоритет' 
+  {
+    value: 'Средний',
+    label: 'Средний',
+    color: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
+    icon: <SignalMedium className="w-10 h-10" />,
+    desc: 'Стандартный приоритет'
   },
-  { 
-    value: 'Высокий', 
-    label: 'Высокий', 
-    color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', 
-    icon: <SignalHigh className="w-10 h-10" />, 
-    desc: 'Требует внимания в ближайшее время' 
+  {
+    value: 'Высокий',
+    label: 'Высокий',
+    color: 'bg-orange-500/20 text-orange-400 border-orange-500/40',
+    icon: <SignalHigh className="w-10 h-10" />,
+    desc: 'Требует внимания в ближайшее время'
   },
-  { 
-    value: 'Критический', 
-    label: 'Критический', 
-    color: 'bg-red-500/20 text-red-400 border-red-500/40', 
-    icon: <Flame className="w-10 h-10" />, 
-    desc: 'Нужно решать немедленно!' 
+  {
+    value: 'Критический',
+    label: 'Критический',
+    color: 'bg-red-500/20 text-red-400 border-red-500/40',
+    icon: <Flame className="w-10 h-10" />,
+    desc: 'Нужно решать немедленно!'
   },
 ];
 
 const PRESET_TAGS = [
-  { name: 'Инцидент',     color: '#ef4444' },
+  { name: 'Инцидент', color: '#ef4444' },
   { name: 'Консультация', color: '#3b82f6' },
-  { name: 'Доработка',    color: '#8b5cf6' },
-  { name: 'Ошибка',       color: '#f97316' },
-  { name: 'Интеграция',   color: '#06b6d4' },
-  { name: 'Обучение',     color: '#10b981' },
-  { name: 'Срочное',      color: '#dc2626' },
+  { name: 'Доработка', color: '#8b5cf6' },
+  { name: 'Ошибка', color: '#f97316' },
+  { name: 'Интеграция', color: '#06b6d4' },
+  { name: 'Обучение', color: '#10b981' },
+  { name: 'Срочное', color: '#dc2626' },
 ];
 
 interface LocalFile {
@@ -91,27 +91,27 @@ export default function NewTicketPage() {
   const [aiSuggestedTags, setAiSuggestedTags] = useState<TicketTag[]>([]);
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
-  
+
   // Для customer - автоматический контрагент
   const [customerCounterparty, setCustomerCounterparty] = useState<Counterparty | null>(null);
-  
+
   // Для admin/support - выбор типа (проект или контрагент)
   const [selectionType, setSelectionType] = useState<SelectionType>(null);
-  
+
   // Для выбора контрагента
   const [selectedCounterparty, setSelectedCounterparty] = useState<Counterparty | null>(null);
   const [counterparties, setCounterparties] = useState<Counterparty[]>([]);
   const [counterpartySearch, setCounterpartySearch] = useState('');
   const [showCounterpartyDropdown, setShowCounterpartyDropdown] = useState(false);
   const [loadingCounterparties, setLoadingCounterparties] = useState(false);
-  
+
   // Для выбора проекта
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [showProjectDropdown, setShowProjectDropdown] = useState(false);
   const [projectSearch, setProjectSearch] = useState('');
-  
+
   // Для выбора инициатора (reporter)
   const [users, setUsers] = useState<SimpleUser[]>([]);
   const [selectedReporter, setSelectedReporter] = useState<SimpleUser | null>(null);
@@ -222,16 +222,16 @@ export default function NewTicketPage() {
     try {
       const response = await counterpartiesApi.getAll(1, 50);
       let items = response.items;
-      
+
       if (search) {
         const lowerSearch = search.toLowerCase();
-        items = items.filter(cp => 
+        items = items.filter(cp =>
           cp.name?.toLowerCase().includes(lowerSearch) ||
           cp.legal_name?.toLowerCase().includes(lowerSearch) ||
           cp.inn?.includes(search)
         );
       }
-      
+
       setCounterparties(items);
     } catch (error) {
       console.error('Failed to load counterparts:', error);
@@ -263,10 +263,10 @@ export default function NewTicketPage() {
         email: customer.email,
         role: customer.role,
       }));
-      
+
       let allUsers = [...formattedUsers];
       const currentUserInList = formattedUsers.find(u => u.id === user?.user_id);
-      
+
       if (!currentUserInList && user?.user_id) {
         const currentUserObj: SimpleUser = {
           id: user.user_id,
@@ -277,7 +277,7 @@ export default function NewTicketPage() {
         };
         allUsers = [currentUserObj, ...formattedUsers];
       }
-      
+
       setUsers(allUsers);
       setSelectedReporter(null);
       setReporterSearch('');
@@ -290,11 +290,11 @@ export default function NewTicketPage() {
 
   const runAI = useCallback(async () => {
     if (!title || !description) return;
-    
+
     setAiLoading(true);
     try {
       const result = await ticketsApi.predict(title, description);
-      
+
       setAiSuggestion(result);
       setAiSuggestedTags(result.suggested_tags || []);
 
@@ -375,17 +375,17 @@ export default function NewTicketPage() {
 
   const uploadFiles = async (ticketId: string): Promise<boolean> => {
     const filesToUpload = localFiles.filter(f => f.status === 'pending');
-    
+
     if (filesToUpload.length === 0) return true;
-    
-    setLocalFiles(prev => prev.map(f => 
-      filesToUpload.some(uf => uf.id === f.id) 
+
+    setLocalFiles(prev => prev.map(f =>
+      filesToUpload.some(uf => uf.id === f.id)
         ? { ...f, status: 'uploading' }
         : f
     ));
-    
+
     let allSuccess = true;
-    
+
     for (const fileItem of filesToUpload) {
       try {
         const attachment = await attachmentsApi.uploadAttachment(
@@ -393,7 +393,7 @@ export default function NewTicketPage() {
           'ticket',
           ticketId
         );
-        
+
         setLocalFiles(prev => prev.map(f =>
           f.id === fileItem.id
             ? { ...f, status: 'success', attachmentId: attachment.id }
@@ -409,33 +409,33 @@ export default function NewTicketPage() {
         allSuccess = false;
       }
     }
-    
+
     return allSuccess;
   };
 
-  
+
   // Внутри компонента NewTicketPage, рядом с loadCounterparties и loadProjects
-const loadProjectsForAll = async () => {
-  setLoadingProjects(true);
-  try {
-    const response = await projectsApi.getAll(1, 100);
-    setProjects(response.items);
-  } catch (error) {
-    console.error('Failed to load projects:', error);
-  } finally {
-    setLoadingProjects(false);
-  }
-};
-// Загрузка проектов для выбора (когда выбран тип "проект")
-useEffect(() => {
-  if (selectionType === 'project') {
-    loadProjectsForAll();
-  } else if (selectionType === 'counterparty' && selectedCounterparty) {
-    loadProjects(selectedCounterparty.id);
-  } else {
-    setProjects([]);
-  }
-}, [selectionType, selectedCounterparty]);
+  const loadProjectsForAll = async () => {
+    setLoadingProjects(true);
+    try {
+      const response = await projectsApi.getAll(1, 100);
+      setProjects(response.items);
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
+  // Загрузка проектов для выбора (когда выбран тип "проект")
+  useEffect(() => {
+    if (selectionType === 'project') {
+      loadProjectsForAll();
+    } else if (selectionType === 'counterparty' && selectedCounterparty) {
+      loadProjects(selectedCounterparty.id);
+    } else {
+      setProjects([]);
+    }
+  }, [selectionType, selectedCounterparty]);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -446,14 +446,14 @@ useEffect(() => {
         priority,
         tags: tags.length > 0 ? tags : undefined,
       };
-      
+
       // Логика выбора: приоритет у проекта
       if (selectedProject) {
         ticketData.project_id = selectedProject.id;
       } else if (selectedCounterparty) {
         ticketData.counterparty_id = selectedCounterparty.id;
       }
-      
+
       // Инициатор
       if (isCustomer && user?.user_id) {
         ticketData.reporter_id = user.user_id;
@@ -464,13 +464,13 @@ useEffect(() => {
           ticketData.reporter_id = user.user_id;
         }
       }
-      
+
       const ticket = await ticketsApi.create(ticketData);
-      
+
       if (localFiles.length > 0) {
         await uploadFiles(ticket.id);
       }
-      
+
       navigate('/tickets');
     } catch (error: any) {
       console.error('Failed to create ticket:', error);
@@ -540,7 +540,7 @@ useEffect(() => {
             <div key={s.num} className="flex items-center">
               <div className={`flex items-center gap-4 ${step >= s.num ? 'text-white' : 'text-white/40'}`}>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all
-                  ${step === s.num ? 'bg-red-600 border-red-500 scale-110' : 
+                  ${step === s.num ? 'bg-red-600 border-red-500 scale-110' :
                     step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-white/10 border-white/20'}`}>
                   {step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}
                 </div>
@@ -571,11 +571,10 @@ useEffect(() => {
                   <button
                     type="button"
                     onClick={() => handleSelectionTypeChange('project')}
-                    className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${
-                      selectionType === 'project'
+                    className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project'
                         ? 'border-purple-500 bg-purple-500/20 text-purple-400'
                         : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <FolderOpen className="w-6 h-6" />
                     <span className="text-lg font-medium">Проекту</span>
@@ -583,11 +582,10 @@ useEffect(() => {
                   <button
                     type="button"
                     onClick={() => handleSelectionTypeChange('counterparty')}
-                    className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${
-                      selectionType === 'counterparty'
+                    className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty'
                         ? 'border-blue-500 bg-blue-500/20 text-blue-400'
                         : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <Building2 className="w-6 h-6" />
                     <span className="text-lg font-medium">Контрагенту</span>
@@ -625,7 +623,7 @@ useEffect(() => {
                       className="input-field pl-12 py-5 text-lg w-full"
                     />
                   </div>
-                  
+
                   {showCounterpartyDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingCounterparties ? (
@@ -664,7 +662,7 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                
+
                 {selectedCounterparty && (
                   <div className="mt-4 p-5 rounded-xl bg-green-500/10 border border-green-500/30">
                     <div className="flex items-center gap-3">
@@ -706,7 +704,7 @@ useEffect(() => {
                       className="input-field pl-12 py-5 text-lg w-full"
                     />
                   </div>
-                  
+
                   {showProjectDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingProjects ? (
@@ -717,7 +715,7 @@ useEffect(() => {
                       ) : (
                         <>
                           {projects
-                            .filter(p => !projectSearch || 
+                            .filter(p => !projectSearch ||
                               p.name.toLowerCase().includes(projectSearch.toLowerCase()) ||
                               p.key.toLowerCase().includes(projectSearch.toLowerCase()))
                             .map((project) => (
@@ -752,7 +750,7 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                
+
                 {selectedProject && (
                   <div className="mt-4 p-5 rounded-xl bg-purple-500/10 border border-purple-500/30">
                     <div className="flex items-center gap-3">
@@ -815,7 +813,7 @@ useEffect(() => {
                       className="input-field pl-12 py-5 text-lg w-full"
                     />
                   </div>
-                  
+
                   {showReporterDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingUsers ? (
@@ -852,10 +850,10 @@ useEffect(() => {
                             </div>
                           </button>
                           {users
-                            .filter(u => !reporterSearch || 
+                            .filter(u => !reporterSearch ||
                               (u.full_name?.toLowerCase().includes(reporterSearch.toLowerCase()) ||
-                               u.username.toLowerCase().includes(reporterSearch.toLowerCase()) ||
-                               u.email.toLowerCase().includes(reporterSearch.toLowerCase())))
+                                u.username.toLowerCase().includes(reporterSearch.toLowerCase()) ||
+                                u.email.toLowerCase().includes(reporterSearch.toLowerCase())))
                             .map((u) => (
                               <button
                                 key={u.id}
@@ -889,7 +887,7 @@ useEffect(() => {
                     </div>
                   )}
                 </div>
-                
+
                 {selectedReporter && (
                   <div className="mt-4 p-5 rounded-xl bg-green-500/10 border border-green-500/30">
                     <div className="flex items-center gap-3">
@@ -901,7 +899,7 @@ useEffect(() => {
                     </div>
                   </div>
                 )}
-                
+
                 {!selectedReporter && (
                   <div className="mt-4 p-5 rounded-xl bg-gray-500/10 border border-gray-500/30">
                     <div className="flex items-center gap-3">
@@ -977,8 +975,8 @@ useEffect(() => {
                     key={p.value}
                     onClick={() => setPriority(p.value as TicketPriority)}
                     className={`px-8 py-5 rounded-2xl text-lg font-medium transition-all border flex-1 min-w-[200px] text-left
-                      ${priority === p.value 
-                        ? 'bg-white/20 text-white border-white/70' 
+                      ${priority === p.value
+                        ? 'bg-white/20 text-white border-white/70'
                         : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
                       }`}
                   >
@@ -1075,8 +1073,8 @@ useEffect(() => {
                         className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 rounded-2xl text-base"
                       >
                         <span>{tag.name}</span>
-                        <X 
-                          className="w-4 h-4 cursor-pointer text-white/60 hover:text-red-400 transition-colors" 
+                        <X
+                          className="w-4 h-4 cursor-pointer text-white/60 hover:text-red-400 transition-colors"
                           onClick={() => removeTag(tag.name)}
                         />
                       </div>
@@ -1245,13 +1243,13 @@ useEffect(() => {
                   </div>
                   <div>
                     <p className="text-[16px] font-semibold text-white">
-                      {selectedReporter 
+                      {selectedReporter
                         ? getUserDisplayName(selectedReporter)
                         : (user?.full_name || user?.username || 'Вы')}
                     </p>
                     <p className="text-white/60">
-                      {selectedReporter 
-                        ? selectedReporter.email 
+                      {selectedReporter
+                        ? selectedReporter.email
                         : user?.email}
                     </p>
                     {!selectedReporter && (
@@ -1289,9 +1287,9 @@ useEffect(() => {
                         <span
                           key={tag.name}
                           className="px-6 py-3 rounded-2xl text-lg font-medium"
-                          style={{ 
-                            backgroundColor: (tag.color || '#71717a') + '30', 
-                            color: tag.color || '#d1d5db' 
+                          style={{
+                            backgroundColor: (tag.color || '#71717a') + '30',
+                            color: tag.color || '#d1d5db'
                           }}
                         >
                           {tag.name}

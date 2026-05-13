@@ -11,25 +11,25 @@ import { useNavigate } from 'react-router-dom';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { value: 'ERP',      label: 'ERP',      icon: Server,     color: 'text-orange-400',  bg: 'bg-orange-500/10' },
-  { value: 'WEB',      label: 'Web',      icon: Globe,      color: 'text-blue-400',    bg: 'bg-blue-500/10' },
-  { value: 'MOBILE',   label: 'Mobile',   icon: Smartphone, color: 'text-green-400',   bg: 'bg-green-500/10' },
-  { value: 'API',      label: 'API',      icon: Code,       color: 'text-violet-400',  bg: 'bg-violet-500/10' },
-  { value: 'DESKTOP',  label: 'Desktop',  icon: Monitor,    color: 'text-cyan-400',    bg: 'bg-cyan-500/10' },
-  { value: 'HARDWARE', label: 'Hardware', icon: Cpu,        color: 'text-amber-400',   bg: 'bg-amber-500/10' },
-  { value: 'OTHER',    label: 'Прочее',   icon: HelpCircle, color: 'text-white/50',    bg: 'bg-white/[0.06]' },
+  { value: 'ERP', label: 'ERP', icon: Server, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+  { value: 'WEB', label: 'Web', icon: Globe, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+  { value: 'MOBILE', label: 'Mobile', icon: Smartphone, color: 'text-green-400', bg: 'bg-green-500/10' },
+  { value: 'API', label: 'API', icon: Code, color: 'text-violet-400', bg: 'bg-violet-500/10' },
+  { value: 'DESKTOP', label: 'Desktop', icon: Monitor, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+  { value: 'HARDWARE', label: 'Hardware', icon: Cpu, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+  { value: 'OTHER', label: 'Прочее', icon: HelpCircle, color: 'text-white/50', bg: 'bg-white/[0.06]' },
 ] as const;
 
 const STATUSES = [
-  { value: 'active',     label: 'Активный',   dot: 'bg-emerald-400', color: 'text-emerald-400' },
-  { value: 'beta',       label: 'Бета',       dot: 'bg-blue-400',    color: 'text-blue-400' },
-  { value: 'deprecated', label: 'Устаревший', dot: 'bg-white/30',    color: 'text-white/40' },
+  { value: 'active', label: 'Активный', dot: 'bg-emerald-400', color: 'text-emerald-400' },
+  { value: 'beta', label: 'Бета', dot: 'bg-blue-400', color: 'text-blue-400' },
+  { value: 'deprecated', label: 'Устаревший', dot: 'bg-white/30', color: 'text-white/40' },
 ] as const;
 
-const catMeta    = (v: string) => CATEGORIES.find(c => c.value === v);
+const catMeta = (v: string) => CATEGORIES.find(c => c.value === v);
 const statusMeta = (v: string) => STATUSES.find(s => s.value === v);
 const statusLabel = (v: string) => statusMeta(v)?.label ?? v;
-const statusDot   = (s: string) => statusMeta(s)?.dot ?? 'bg-white/20';
+const statusDot = (s: string) => statusMeta(s)?.dot ?? 'bg-white/20';
 
 const ATTRIBUTE_LABELS: Record<string, string> = {
   license_type: 'Лицензия', environment: 'Среда', db_connection_ref: 'Подключение к БД',
@@ -50,7 +50,7 @@ const ATTRIBUTE_LABELS: Record<string, string> = {
   serial_prefix_pattern: 'Серийный №', notes: 'Заметки', support_group: 'Поддержка',
 };
 
-const getAttrLabel    = (k: string) => ATTRIBUTE_LABELS[k] || k.replace(/_/g, ' ');
+const getAttrLabel = (k: string) => ATTRIBUTE_LABELS[k] || k.replace(/_/g, ' ');
 const formatAttrValue = (v: any): string => {
   if (v === true) return 'Да';
   if (v === false) return 'Нет';
@@ -73,8 +73,8 @@ function FilterDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const btnRef       = useRef<HTMLButtonElement>(null);
-  const [openUp, setOpenUp]       = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUp, setOpenUp] = useState(false);
   const [alignRight, setAlignRight] = useState(false);
 
   useEffect(() => {
@@ -139,9 +139,8 @@ function FilterDropdown({
             <button
               type="button"
               onClick={() => { onChange(''); setOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${
-                !value ? 'bg-red-500/10 text-white' : 'text-white/60 hover:bg-white/[0.04]'
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${!value ? 'bg-red-500/10 text-white' : 'text-white/60 hover:bg-white/[0.04]'
+                }`}
             >
               {!value ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
               <span>{placeholder}</span>
@@ -154,9 +153,8 @@ function FilterDropdown({
                   type="button"
                   key={opt.value}
                   onClick={() => { onChange(opt.value); setOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${
-                    active ? 'bg-red-500/10 text-white' : 'text-white/70 hover:bg-white/[0.04]'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${active ? 'bg-red-500/10 text-white' : 'text-white/70 hover:bg-white/[0.04]'
+                    }`}
                 >
                   {active ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
                   <span className="flex items-center gap-2.5">
@@ -184,7 +182,7 @@ function ActiveFilters({
 }) {
   if (!category && !status) return null;
   const catInfo = catMeta(category);
-  const sInfo   = statusMeta(status);
+  const sInfo = statusMeta(status);
 
   return (
     <div className="flex items-center gap-2.5 flex-wrap">
@@ -219,7 +217,7 @@ function ActiveFilters({
 // ─── Product Row ──────────────────────────────────────────────────────────────
 
 const ProductRow = ({ product, onClick }: { product: any; onClick: () => void }) => {
-  const cat  = catMeta(product.category);
+  const cat = catMeta(product.category);
   const Icon = cat?.icon || Package;
   const sInfo = statusMeta(product.status);
 
@@ -267,7 +265,7 @@ const ProductRow = ({ product, onClick }: { product: any; onClick: () => void })
 // ─── Product Modal ────────────────────────────────────────────────────────────
 
 const ProductModal = ({ product, onClose }: { product: any; onClose: () => void }) => {
-  const cat  = catMeta(product.category);
+  const cat = catMeta(product.category);
   const Icon = cat?.icon || Package;
   const sInfo = statusMeta(product.status);
   const attrEntries = Object.entries(product.attributes || {}).filter(
@@ -358,14 +356,14 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
 export default function ProductsPage() {
   const navigate = useNavigate();
 
-  const [products, setProducts]         = useState<any[]>([]);
-  const [loading, setLoading]           = useState(false);
-  const [error, setError]               = useState<string | null>(null);
-  const [page, setPage]                 = useState(1);
-  const [totalPages, setTotalPages]     = useState(1);
-  const [searchQuery, setSearchQuery]   = useState('');
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
-  const [filterStatus, setFilterStatus]     = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
   const loadProducts = useCallback(async () => {
@@ -375,7 +373,7 @@ export default function ProductsPage() {
       const res = await productsApi.getProducts({
         page, size: 30,
         category: filterCategory || undefined,
-        status:   filterStatus   || undefined,
+        status: filterStatus || undefined,
       });
       setProducts(res.items);
       setTotalPages(res.total_pages);
@@ -537,11 +535,10 @@ export default function ProductsPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${
-                    pageNum === page
+                  className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
                       ? 'bg-red-700 text-white'
                       : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
-                  }`}
+                    }`}
                 >
                   {pageNum}
                 </button>

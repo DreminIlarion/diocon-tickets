@@ -12,15 +12,15 @@ interface ConfirmModalProps {
   type?: 'danger' | 'warning' | 'info';
 }
 
-export const ConfirmModal = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title, 
-  message, 
-  confirmText = 'Удалить', 
+export const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Удалить',
   cancelText = 'Отмена',
-  type = 'danger' 
+  type = 'danger'
 }: ConfirmModalProps) => {
   if (!isOpen) return null;
 
@@ -62,12 +62,12 @@ export const ConfirmModal = ({
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         {/* Содержание */}
         <div className="p-6">
           <p className="text-white/70 text-base">{message}</p>
         </div>
-        
+
         {/* Кнопки */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-white/10">
           <button

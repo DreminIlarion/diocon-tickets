@@ -27,10 +27,10 @@ interface CommentFormProps {
   onSuccess?: () => void;
 }
 
-export const CommentForm = React.memo(({ 
-  message, 
-  setMessage, 
-  onSend, 
+export const CommentForm = React.memo(({
+  message,
+  setMessage,
+  onSend,
   sending,
   messageType,
   setMessageType,
@@ -94,18 +94,18 @@ export const CommentForm = React.memo(({
 
   const uploadFiles = async (commentId: string): Promise<boolean> => {
     const filesToUpload = localFiles.filter(f => f.status === 'pending');
-    
+
     if (filesToUpload.length === 0) return true;
-    
+
     setUploadingFiles(true);
-    setLocalFiles(prev => prev.map(f => 
-      filesToUpload.some(uf => uf.id === f.id) 
+    setLocalFiles(prev => prev.map(f =>
+      filesToUpload.some(uf => uf.id === f.id)
         ? { ...f, status: 'uploading' }
         : f
     ));
-    
+
     let allSuccess = true;
-    
+
     for (const fileItem of filesToUpload) {
       try {
         const attachment = await attachmentsApi.uploadAttachment(
@@ -113,7 +113,7 @@ export const CommentForm = React.memo(({
           'comment',
           commentId
         );
-        
+
         setLocalFiles(prev => prev.map(f =>
           f.id === fileItem.id
             ? { ...f, status: 'success', attachmentId: attachment.id }
@@ -129,7 +129,7 @@ export const CommentForm = React.memo(({
         allSuccess = false;
       }
     }
-    
+
     setUploadingFiles(false);
     return allSuccess;
   };
@@ -159,30 +159,30 @@ export const CommentForm = React.memo(({
   const handleSend = async () => {
     const trimmedMessage = message.trim();
     const hasFiles = localFiles.filter(f => f.status === 'pending').length > 0;
-    
+
     if ((!trimmedMessage && !hasFiles) || sending || uploadingFiles) {
       return;
     }
-    
+
     try {
       const commentId = await onSend(localFiles);
-      
+
       if (!commentId) {
         throw new Error('Не удалось создать комментарий - ID не получен');
       }
-      
+
       if (hasFiles) {
         await uploadFiles(commentId);
       }
-      
+
       setMessage('');
       setLocalFiles([]);
       setSpellCheckResult(null);
-      
+
       if (onSuccess) {
         await onSuccess();
       }
-      
+
     } catch (error) {
       console.error('Failed to send comment:', error);
     }
@@ -226,7 +226,7 @@ export const CommentForm = React.memo(({
           <User className="w-5 h-5 text-white" />
         </div>
       </div>
-      
+
       <div className="flex-1">
         {/* ─── Textarea с кнопкой spell check ─── */}
         <div className="relative">
@@ -284,7 +284,7 @@ export const CommentForm = React.memo(({
             />
           </div>
         )}
-        
+
         {/* ─── Список файлов ─── */}
         {localFiles.length > 0 && (
           <div className="mt-3 space-y-2">
@@ -316,7 +316,7 @@ export const CommentForm = React.memo(({
             ))}
           </div>
         )}
-        
+
         {/* ─── Нижняя панель ─── */}
         <div className="flex justify-between items-center mt-2">
           <div className="flex gap-2">
@@ -324,16 +324,15 @@ export const CommentForm = React.memo(({
               <button
                 type="button"
                 onClick={() => setMessageType(messageType === 'public' ? 'internal' : 'public')}
-                className={`px-3 py-1.5 rounded-lg text-l font-medium transition-colors ${
-                  messageType === 'internal'
+                className={`px-3 py-1.5 rounded-lg text-l font-medium transition-colors ${messageType === 'internal'
                     ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                     : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10'
-                }`}
+                  }`}
               >
                 {messageType === 'internal' ? 'Внутренний' : 'Публичный'}
               </button>
             )}
-            
+
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -351,12 +350,12 @@ export const CommentForm = React.memo(({
               className="hidden"
               accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
             />
-            
+
             <span className="text-l text-white/30 self-center">
               Ctrl+Enter для отправки
             </span>
           </div>
-          
+
           <button
             onClick={handleSend}
             disabled={isSendDisabled}

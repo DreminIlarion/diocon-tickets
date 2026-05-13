@@ -9,7 +9,7 @@ export default function RegisterPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const { toast } = useToast();
-  
+
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +20,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!token) {
       toast({ title: 'Ошибка', description: 'Недействительная ссылка приглашения', variant: 'destructive' });
       return;
@@ -102,7 +102,7 @@ export default function RegisterPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="glass-card-static p-8">
           <h2 className="text-[16px] font-semibold text-white mb-6 text-center">Регистрация</h2>
-          
+
           <div className="space-y-5">
             <div>
               <label className="label">Имя пользователя</label>

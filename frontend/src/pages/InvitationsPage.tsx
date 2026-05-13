@@ -97,14 +97,14 @@ function CounterpartyDropdown({
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
       const dropdownHeight = 320; // примерная высота дропдауна
-      
+
       // Если снизу меньше места, чем нужно, и сверху больше — показываем вверх
       if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
         setDropDirection('up');
       } else {
         setDropDirection('down');
       }
-      
+
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [open]);
@@ -113,10 +113,10 @@ function CounterpartyDropdown({
 
   const filtered = query
     ? counterparties.filter(c =>
-        c.name.toLowerCase().includes(query.toLowerCase()) ||
-        (c.inn && c.inn.includes(query)) ||
-        (c.legal_name && c.legal_name.toLowerCase().includes(query.toLowerCase()))
-      )
+      c.name.toLowerCase().includes(query.toLowerCase()) ||
+      (c.inn && c.inn.includes(query)) ||
+      (c.legal_name && c.legal_name.toLowerCase().includes(query.toLowerCase()))
+    )
     : counterparties;
 
   return (
@@ -158,7 +158,7 @@ function CounterpartyDropdown({
       </button>
 
       {open && (
-        <div 
+        <div
           className={`
             absolute z-50 bg-[#1a1a1a] border border-white/[0.1] rounded-xl 
             shadow-[0_16px_48px_rgba(0,0,0,.5)] overflow-hidden
@@ -237,20 +237,20 @@ export default function InvitationsPage() {
   const [activeTab, setActiveTab] = useState<'send' | 'history'>('send');
 
   // Форма
-  const [email, setEmail]               = useState('');
-  const [role, setRole]                 = useState<UserRole | ''>('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState<UserRole | ''>('');
   const [counterpartyId, setCounterpartyId] = useState('');
   const [counterparties, setCounterparties] = useState<Counterparty[]>([]);
-  const [sending, setSending]           = useState(false);
-  const [success, setSuccess]           = useState(false);
-  const [error, setError]               = useState('');
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   // История
-  const [invitations, setInvitations]   = useState<Invitation[]>([]);
-  const [loading, setLoading]           = useState(false);
-  const [page, setPage]                 = useState(1);
-  const [totalPages, setTotalPages]     = useState(1);
-  const [totalItems, setTotalItems]     = useState(0);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'used' | 'expired'>('all');
 
   const [revokeTarget, setRevokeTarget] = useState<Invitation | null>(null);
@@ -259,7 +259,7 @@ export default function InvitationsPage() {
   const selectedRole = ROLES.find(r => r.value === role);
   const needsCounterparty = selectedRole?.group === 'client';
   const clientRoles = ROLES.filter(r => r.group === 'client');
-  const staffRoles  = ROLES.filter(r => r.group === 'staff');
+  const staffRoles = ROLES.filter(r => r.group === 'staff');
 
   useEffect(() => { loadCounterparties(); }, []);
 
@@ -311,19 +311,19 @@ export default function InvitationsPage() {
     }
   };
 
-const handleRevoke = async () => {
-  if (!revokeTarget) return;
-  setRevoking(true);
-  try {
-    await invitationsApi.delete(revokeTarget.id);
-    setRevokeTarget(null);
-    loadInvitations();
-  } catch (e) {
-    console.error(e);
-  } finally {
-    setRevoking(false);
-  }
-};
+  const handleRevoke = async () => {
+    if (!revokeTarget) return;
+    setRevoking(true);
+    try {
+      await invitationsApi.delete(revokeTarget.id);
+      setRevokeTarget(null);
+      loadInvitations();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRevoking(false);
+    }
+  };
 
   // Фильтрация истории на клиенте
   const filteredInvitations = invitations.filter(inv => {
@@ -375,17 +375,16 @@ const handleRevoke = async () => {
       {/* ── Tabs ──────────────────────────────────────────────────────────── */}
       <div className="flex gap-2 border-b border-white/10">
         {[
-          { id: 'send' as const,    label: 'Отправить',  icon: Send },
-          { id: 'history' as const, label: 'История',    icon: History, count: totalItems },
+          { id: 'send' as const, label: 'Отправить', icon: Send },
+          { id: 'history' as const, label: 'История', icon: History, count: totalItems },
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-6 py-3.5 rounded-t-xl text-base font-medium transition-all ${
-              activeTab === tab.id
+            className={`flex items-center gap-2 px-6 py-3.5 rounded-t-xl text-base font-medium transition-all ${activeTab === tab.id
                 ? 'bg-red-800/50 text-white border-b-2 border-red-500'
                 : 'text-white/50 hover:text-white/70 hover:bg-white/5'
-            }`}
+              }`}
           >
             <tab.icon className="w-5 h-5" />
             {tab.label}
@@ -597,19 +596,18 @@ const handleRevoke = async () => {
                   <h2 className="text-xl font-bold text-white">История приглашений</h2>
                   <div className="flex gap-1.5 bg-white/5 rounded-lg p-0.5">
                     {[
-                      { id: 'all' as const,     label: 'Все' },
-                      { id: 'pending' as const,  label: 'Ожидает' },
-                      { id: 'used' as const,     label: 'Принято' },
-                      { id: 'expired' as const,  label: 'Истекло' },
+                      { id: 'all' as const, label: 'Все' },
+                      { id: 'pending' as const, label: 'Ожидает' },
+                      { id: 'used' as const, label: 'Принято' },
+                      { id: 'expired' as const, label: 'Истекло' },
                     ].map(f => (
                       <button
                         key={f.id}
                         onClick={() => setStatusFilter(f.id)}
-                        className={`px-3 py-1.5 rounded-md text-l font-medium transition-colors ${
-                          statusFilter === f.id
+                        className={`px-3 py-1.5 rounded-md text-l font-medium transition-colors ${statusFilter === f.id
                             ? 'bg-red-800/60 text-white'
                             : 'text-white/40 hover:text-white/60'
-                        }`}
+                          }`}
                       >
                         {f.label}
                       </button>
@@ -678,14 +676,14 @@ const handleRevoke = async () => {
                               </p>
                             </div>
                             {canRevoke && (
-                                <button
-                                  onClick={() => setRevokeTarget(inv)}
-                                  className="p-2.5 rounded-xl bg-red-900/30 hover:bg-red-900/50 text-white/40 hover:text-red-400 transition-colors"
-                                  title="Отозвать"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              )}
+                              <button
+                                onClick={() => setRevokeTarget(inv)}
+                                className="p-2.5 rounded-xl bg-red-900/30 hover:bg-red-900/50 text-white/40 hover:text-red-400 transition-colors"
+                                title="Отозвать"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -734,10 +732,10 @@ const handleRevoke = async () => {
               </h3>
               <div className="space-y-3">
                 {[
-                  { label: 'Всего', value: stats.total,   color: 'text-white',       dot: 'bg-white/30' },
+                  { label: 'Всего', value: stats.total, color: 'text-white', dot: 'bg-white/30' },
                   { label: 'Ожидает', value: stats.pending, color: 'text-yellow-400', dot: 'bg-yellow-400' },
-                  { label: 'Принято', value: stats.used,    color: 'text-green-400',  dot: 'bg-green-400' },
-                  { label: 'Истекло', value: stats.expired, color: 'text-red-400',    dot: 'bg-red-400' },
+                  { label: 'Принято', value: stats.used, color: 'text-green-400', dot: 'bg-green-400' },
+                  { label: 'Истекло', value: stats.expired, color: 'text-red-400', dot: 'bg-red-400' },
                 ].map(s => (
                   <div key={s.label} className="flex items-center justify-between py-1.5">
                     <span className="flex items-center gap-2 text-l text-white/50">
@@ -759,9 +757,9 @@ const handleRevoke = async () => {
             </div>
             <div className="space-y-5">
               {[
-                { n: '1', title: 'Отправьте приглашение',   desc: 'Укажите email, роль и контрагента' },
+                { n: '1', title: 'Отправьте приглашение', desc: 'Укажите email, роль и контрагента' },
                 { n: '2', title: 'Пользователь получит письмо', desc: 'Со ссылкой для регистрации' },
-                { n: '3', title: 'Регистрация',             desc: 'Создаёт аккаунт и получает доступ' },
+                { n: '3', title: 'Регистрация', desc: 'Создаёт аккаунт и получает доступ' },
               ].map(step => (
                 <div key={step.n} className="flex gap-3.5">
                   <div className="w-8 h-8 rounded-full bg-red-800/25 flex items-center justify-center text-l font-bold text-red-400 flex-shrink-0">
@@ -808,7 +806,7 @@ const handleRevoke = async () => {
           </div>
         </div>
       </div>
-            {/* ── Модалка подтверждения отзыва ──────────────────────────────── */}
+      {/* ── Модалка подтверждения отзыва ──────────────────────────────── */}
       {revokeTarget && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div

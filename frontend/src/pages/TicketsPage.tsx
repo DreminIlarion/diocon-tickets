@@ -16,21 +16,21 @@ import type {
 // ─── Константы ────────────────────────────────────────────────────────────────
 
 const STATUSES: { value: TicketStatus; label: string; color: string }[] = [
-  { value: 'Новый',           label: 'Новый',           color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  { value: 'Новый', label: 'Новый', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
   { value: 'На согласовании', label: 'На согласовании', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  { value: 'Открыт',         label: 'Открыт',          color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  { value: 'В работе',       label: 'В работе',        color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  { value: 'Ожидает ответа', label: 'Ожидает ответа',  color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
-  { value: 'Решён',          label: 'Решён',           color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  { value: 'Закрыт',         label: 'Закрыт',          color: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30' },
-  { value: 'Переоткрыт',     label: 'Переоткрыт',      color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  { value: 'Открыт', label: 'Открыт', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+  { value: 'В работе', label: 'В работе', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
+  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
+  { value: 'Решён', label: 'Решён', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
+  { value: 'Закрыт', label: 'Закрыт', color: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30' },
+  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
 ];
 
 const PRIORITIES: { value: TicketPriority; label: string; color: string }[] = [
-  { value: 'Низкий',       label: 'Низкий',       color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  { value: 'Средний',      label: 'Средний',      color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  { value: 'Высокий',      label: 'Высокий',      color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
-  { value: 'Критический',  label: 'Критический',  color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  { value: 'Низкий', label: 'Низкий', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
+  { value: 'Средний', label: 'Средний', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
+  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
+  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
 ];
 
 // ─── Кастомный Dropdown ──────────────────────────────────────────────────────
@@ -87,9 +87,9 @@ function FilterDropdown({
 
   const filtered = query
     ? options.filter(o =>
-        o.label.toLowerCase().includes(query.toLowerCase()) ||
-        (o.sublabel && o.sublabel.toLowerCase().includes(query.toLowerCase()))
-      )
+      o.label.toLowerCase().includes(query.toLowerCase()) ||
+      (o.sublabel && o.sublabel.toLowerCase().includes(query.toLowerCase()))
+    )
     : options;
 
   return (
@@ -225,32 +225,32 @@ export default function TicketsPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
-  const [tickets, setTickets]       = useState<TicketListItem[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [page, setPage]             = useState(1);
+  const [tickets, setTickets] = useState<TicketListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
   // Фильтры
-  const [search, setSearch]                         = useState('');
-  const [statusFilter, setStatusFilter]             = useState<TicketStatus | ''>('');
-  const [priorityFilter, setPriorityFilter]         = useState<TicketPriority | ''>('');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<TicketStatus | ''>('');
+  const [priorityFilter, setPriorityFilter] = useState<TicketPriority | ''>('');
   const [counterpartyFilter, setCounterpartyFilter] = useState('');
-  const [projectFilter, setProjectFilter]           = useState('');
-  const [reporterFilter, setReporterFilter]         = useState('');
-  const [showFilters, setShowFilters]               = useState(false);
+  const [projectFilter, setProjectFilter] = useState('');
+  const [reporterFilter, setReporterFilter] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   // Данные для дропдаунов
   const [counterparties, setCounterparties] = useState<Counterparty[]>([]);
-  const [projects, setProjects]             = useState<Project[]>([]);
-  const [allUsers, setAllUsers]             = useState<SimpleUser[]>([]);
-  const [companyUsers, setCompanyUsers]     = useState<CounterpartyCustomer[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [allUsers, setAllUsers] = useState<SimpleUser[]>([]);
+  const [companyUsers, setCompanyUsers] = useState<CounterpartyCustomer[]>([]);
 
   // Роли
-  const isCustomer      = user?.role === 'customer';
+  const isCustomer = user?.role === 'customer';
   const isCustomerAdmin = user?.role === 'customer_admin';
-  const isSupport       = user?.role === 'support_agent' || user?.role === 'support_manager';
-  const isAdmin         = user?.role === 'admin';
+  const isSupport = user?.role === 'support_agent' || user?.role === 'support_manager';
+  const isAdmin = user?.role === 'admin';
 
   // ── Загрузка фильтров ────────────────────────────────────────────────────
 
@@ -303,10 +303,10 @@ export default function TicketsPage() {
     setLoading(true);
     try {
       const filters = {
-        status:       statusFilter || undefined,
-        priority:     priorityFilter || undefined,
-        project_id:   projectFilter || undefined,
-        reporter_id:  reporterFilter || undefined,
+        status: statusFilter || undefined,
+        priority: priorityFilter || undefined,
+        project_id: projectFilter || undefined,
+        reporter_id: reporterFilter || undefined,
       };
 
       let response;
@@ -360,17 +360,17 @@ export default function TicketsPage() {
   const hasActiveFilters = !!(statusFilter || priorityFilter || counterpartyFilter || projectFilter || reporterFilter || search);
   const activeFiltersCount = [statusFilter, priorityFilter, counterpartyFilter, projectFilter, reporterFilter].filter(Boolean).length;
 
-  const getStatusColor  = (s: string) => STATUSES.find(x => x.value === s)?.color  || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30';
+  const getStatusColor = (s: string) => STATUSES.find(x => x.value === s)?.color || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30';
   const getPriorityColor = (p: string) => PRIORITIES.find(x => x.value === p)?.color || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30';
 
   const formatDate = (d: string) => {
     if (!d) return '—';
     const date = new Date(d);
-    const now  = new Date();
+    const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 86400000);
     if (diff === 0) return `Сегодня, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
     if (diff === 1) return `Вчера, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
-    if (diff < 7)  return `${diff} дн. назад`;
+    if (diff < 7) return `${diff} дн. назад`;
     return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
@@ -378,17 +378,17 @@ export default function TicketsPage() {
 
   const getUserDisplayName = (uid: string) => {
     if (isAdmin || isSupport) { const u = allUsers.find(x => x.id === uid); return u?.full_name || u?.username || u?.email || uid; }
-    if (isCustomerAdmin)      { const u = companyUsers.find(x => x.id === uid); return u?.full_name || u?.username || u?.email || uid; }
+    if (isCustomerAdmin) { const u = companyUsers.find(x => x.id === uid); return u?.full_name || u?.username || u?.email || uid; }
     return uid;
   };
 
   // ── Опции для дропдаунов ──────────────────────────────────────────────────
 
-  const statusOptions: DropdownOption[]       = STATUSES.map(s => ({ value: s.value, label: s.label, color: s.color }));
-  const priorityOptions: DropdownOption[]     = PRIORITIES.map(p => ({ value: p.value, label: p.label, color: p.color }));
+  const statusOptions: DropdownOption[] = STATUSES.map(s => ({ value: s.value, label: s.label, color: s.color }));
+  const priorityOptions: DropdownOption[] = PRIORITIES.map(p => ({ value: p.value, label: p.label, color: p.color }));
   const counterpartyOptions: DropdownOption[] = counterparties.map(c => ({ value: c.id, label: c.name || c.legal_name, sublabel: c.inn ? `ИНН: ${c.inn}` : undefined }));
-  const projectOptions: DropdownOption[]      = projects.map(p => ({ value: p.id, label: p.name }));
-  const userOptions: DropdownOption[]         = (isAdmin || isSupport)
+  const projectOptions: DropdownOption[] = projects.map(p => ({ value: p.id, label: p.name }));
+  const userOptions: DropdownOption[] = (isAdmin || isSupport)
     ? allUsers.map(u => ({ value: u.id, label: u.full_name || u.username || u.email, sublabel: u.email && u.full_name ? u.email : undefined }))
     : companyUsers.map(u => ({ value: u.id, label: u.full_name || u.username || u.email, sublabel: u.email && (u.full_name || u.username) ? u.email : undefined }));
 
@@ -656,10 +656,10 @@ export default function TicketsPage() {
       {/* ── Статистика ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Всего',       value: totalItems,                                                                            icon: FileText,    color: 'text-white/60' },
-          { label: 'Новых',       value: tickets.filter(t => t.status === 'Новый').length,                                      icon: Clock,       color: 'text-blue-400' },
-          { label: 'В работе',    value: tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length,          icon: CheckCircle2, color: 'text-purple-400' },
-          { label: 'Критических', value: tickets.filter(t => t.priority === 'Критический').length,                              icon: AlertTriangle, color: 'text-red-400' },
+          { label: 'Всего', value: totalItems, icon: FileText, color: 'text-white/60' },
+          { label: 'Новых', value: tickets.filter(t => t.status === 'Новый').length, icon: Clock, color: 'text-blue-400' },
+          { label: 'В работе', value: tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length, icon: CheckCircle2, color: 'text-purple-400' },
+          { label: 'Критических', value: tickets.filter(t => t.priority === 'Критический').length, icon: AlertTriangle, color: 'text-red-400' },
         ].map(stat => (
           <div key={stat.label} className="glass-card rounded-2xl border border-white/[0.08] p-5 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
@@ -774,11 +774,10 @@ export default function TicketsPage() {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${
-                        pageNum === page
+                      className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
                           ? 'bg-red-700 text-white'
                           : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
-                      }`}
+                        }`}
                     >
                       {pageNum}
                     </button>

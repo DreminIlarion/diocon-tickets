@@ -20,10 +20,10 @@ import {
 // ─── Константы ────────────────────────────────────────────────────────────────
 
 const PRIORITIES = [
-  { value: 'Низкий',      label: 'Низкий',      color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', icon: <SignalLow className="w-10 h-10" />,    desc: 'Плановый порядок' },
-  { value: 'Средний',     label: 'Средний',     color: 'bg-amber-500/20 text-amber-400 border-amber-500/40',       icon: <SignalMedium className="w-10 h-10" />,  desc: 'Стандартный' },
-  { value: 'Высокий',     label: 'Высокий',     color: 'bg-orange-500/20 text-orange-400 border-orange-500/40',     icon: <SignalHigh className="w-10 h-10" />,    desc: 'Требует внимания' },
-  { value: 'Критический',label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40',              icon: <Flame className="w-10 h-10" />,         desc: 'Немедленно!' },
+  { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
+  { value: 'Средний', label: 'Средний', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
+  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
+  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
 ];
 
 const PRESET_TAGS = [
@@ -50,6 +50,9 @@ type SelectionType = 'project' | 'counterparty' | null;
 
 export default function NewTicketPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const preselectedCounterpartyId = searchParams.get('counterparty_id');
+  const preselectedProjectId = searchParams.get('project_id');
   const { user } = useAuthStore();
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -117,7 +120,11 @@ export default function NewTicketPage() {
 
   useEffect(() => { pageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [step]);
   useEffect(() => { if (isCustomer && user?.counterparty_id) loadCustomerCounterparty(); }, [user]);
-  useEffect(() => { if (canSelectCounterparty) loadCounterparties(); }, [canSelectCounterparty]);
+  useEffect(() => {
+  if (canSelectCounterparty) {
+    loadCounterparties();
+  }
+}, [canSelectCounterparty]);
 
   useEffect(() => {
     if (selectionType === 'counterparty' && selectedCounterparty) loadProjects(selectedCounterparty.id);
@@ -131,6 +138,41 @@ export default function NewTicketPage() {
     else { setUsers([]); setSelectedReporter(null); setReporterSearch(''); }
   }, [selectedCounterparty, selectedProject]);
 
+useEffect(() => {
+  if (!preselectedProjectId || !canSelectCounterparty) return;
+
+  const autoSelectProject = async () => {
+    setSelectionType('project');
+    
+    try {
+      // Загружаем все проекты
+      const items = (await projectsApi.getAll(1, 100)).items;
+      setProjects(items);
+      
+      // Ищем нужный проект
+      const found = items.find(p => p.id === preselectedProjectId);
+      if (found) {
+        setSelectedProject(found);
+        setProjectSearch(`${found.key} - ${found.name}`);
+        
+        // Если у проекта есть контрагент — тоже выбираем его
+        if (found.counterparty_id) {
+          try {
+            const cp = await counterpartiesApi.getById(found.counterparty_id);
+            setSelectedCounterparty(cp);
+            setCounterpartySearch(cp.name || cp.legal_name || '');
+          } catch { }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to auto-select project:', err);
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
+
+  autoSelectProject();
+}, [preselectedProjectId, canSelectCounterparty]);
   // AI
   const runAI = useCallback(async () => {
     if (!title || !description) return;
@@ -139,7 +181,7 @@ export default function NewTicketPage() {
       const r = await ticketsApi.predict(title, description);
       setAiSuggestion(r); setAiSuggestedTags(r.suggested_tags || []);
       setPriority(r.suggested_priority); setTags(r.suggested_tags || []);
-    } catch {} finally { setAiLoading(false); }
+    } catch { } finally { setAiLoading(false); }
   }, [title, description]);
 
   useEffect(() => {
@@ -152,27 +194,53 @@ export default function NewTicketPage() {
 
   const loadCustomerCounterparty = async () => {
     if (!user?.counterparty_id) return;
-    try { setCustomerCounterparty(await counterpartiesApi.getById(user.counterparty_id)); } catch {}
+    try { setCustomerCounterparty(await counterpartiesApi.getById(user.counterparty_id)); } catch { }
   };
 
-  const loadCounterparties = async (search?: string) => {
-    setLoadingCounterparties(true);
-    try {
-      let items = (await counterpartiesApi.getAll(1, 50)).items;
-      if (search) { const q = search.toLowerCase(); items = items.filter(c => c.name?.toLowerCase().includes(q) || c.legal_name?.toLowerCase().includes(q) || c.inn?.includes(search)); }
-      setCounterparties(items);
-    } catch {} finally { setLoadingCounterparties(false); }
-  };
+const loadCounterparties = async (search?: string) => {
+  setLoadingCounterparties(true);
+  try {
+    let items = (await counterpartiesApi.getAll(1, 50)).items;
+    if (search) {
+      const q = search.toLowerCase();
+      items = items.filter(c =>
+        c.name?.toLowerCase().includes(q) ||
+        c.legal_name?.toLowerCase().includes(q) ||
+        c.inn?.includes(search)
+      );
+    }
+    setCounterparties(items);
+
+    // Автовыбор из URL — только при первой загрузке (без поиска)
+    if (!search && preselectedCounterpartyId && !selectedCounterparty) {
+      const found = items.find(c => c.id === preselectedCounterpartyId);
+      if (found) {
+        setSelectionType('counterparty');
+        setSelectedCounterparty(found);
+        setCounterpartySearch(found.name || found.legal_name || '');
+      }
+    }
+  } catch { }
+  finally { setLoadingCounterparties(false); }
+};
 
   const loadProjects = async (cpId: string) => {
     setLoadingProjects(true);
-    try { setProjects((await projectsApi.getByCounterparty(cpId, 1, 50)).items); } catch {} finally { setLoadingProjects(false); }
+    try { setProjects((await projectsApi.getByCounterparty(cpId, 1, 50)).items); } catch { } finally { setLoadingProjects(false); }
   };
 
-  const loadProjectsForAll = async () => {
-    setLoadingProjects(true);
-    try { setProjects((await projectsApi.getAll(1, 100)).items); } catch {} finally { setLoadingProjects(false); }
-  };
+const loadProjectsForAll = async (): Promise<Project[]> => {
+  setLoadingProjects(true);
+  try {
+    const items = (await projectsApi.getAll(1, 100)).items;
+    setProjects(items);
+    return items;
+  } catch {
+    return [];
+  } finally {
+    setLoadingProjects(false);
+  }
+};
 
   const loadUsers = async (cpId: string) => {
     setLoadingUsers(true);
@@ -185,7 +253,7 @@ export default function NewTicketPage() {
         all = [{ id: user.user_id, username: user.username || '', full_name: user.full_name || null, email: user.email || '', role: user.role }, ...items];
       }
       setUsers(all); setSelectedReporter(null); setReporterSearch('');
-    } catch {} finally { setLoadingUsers(false); }
+    } catch { } finally { setLoadingUsers(false); }
   };
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
@@ -234,96 +302,96 @@ export default function NewTicketPage() {
 
   // ─── Submit ────────────────────────────────────────────────────────────────
 
-const handleSubmit = async () => {
-  setSubmitting(true);
-  try {
-    // Собираем только текстовую часть для первичного создания
-    // (чтобы в БД не попал [[local-image:...]])
-    const textOnlyDesc = descriptionBlocks
-      .filter(
-        (b): b is Extract<DescriptionBlock, { type: 'text' }> =>
-          b.type === 'text'
-      )
-      .map((b) => b.value.trim())
-      .filter(Boolean)
-      .join('\n\n');
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      // Собираем только текстовую часть для первичного создания
+      // (чтобы в БД не попал [[local-image:...]])
+      const textOnlyDesc = descriptionBlocks
+        .filter(
+          (b): b is Extract<DescriptionBlock, { type: 'text' }> =>
+            b.type === 'text'
+        )
+        .map((b) => b.value.trim())
+        .filter(Boolean)
+        .join('\n\n');
 
-    const data: any = {
-      title,
-      description: textOnlyDesc || '(описание с изображениями)',
-      priority,
-      tags: tags.map((t) => ({ name: t.name, color: t.color || '#64748b' })),
-    };
+      const data: any = {
+        title,
+        description: textOnlyDesc || '(описание с изображениями)',
+        priority,
+        tags: tags.map((t) => ({ name: t.name, color: t.color || '#64748b' })),
+      };
 
-    if (isCustomer && customerCounterparty)
-      data.counterparty_id = customerCounterparty.id;
-    else if (selectedProject) data.project_id = selectedProject.id;
-    else if (selectedCounterparty)
-      data.counterparty_id = selectedCounterparty.id;
+      if (isCustomer && customerCounterparty)
+        data.counterparty_id = customerCounterparty.id;
+      else if (selectedProject) data.project_id = selectedProject.id;
+      else if (selectedCounterparty)
+        data.counterparty_id = selectedCounterparty.id;
 
-    if (isCustomer && user?.user_id) data.reporter_id = user.user_id;
-    else if (canSelectReporter)
-      data.reporter_id = selectedReporter?.id || user?.user_id;
+      if (isCustomer && user?.user_id) data.reporter_id = user.user_id;
+      else if (canSelectReporter)
+        data.reporter_id = selectedReporter?.id || user?.user_id;
 
-    const ticket = await ticketsApi.create(data);
+      const ticket = await ticketsApi.create(data);
 
-    // 1. Загружаем картинки из блоков описания
-    const imageBlocks = descriptionBlocks.filter(
-      (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
-        b.type === 'image' && !!b.localFile
-    );
-
-    const uploadMap: Record<string, string> = {};
-
-    for (const block of imageBlocks) {
-      try {
-        const att = await attachmentsApi.uploadAttachment(
-          block.localFile!,
-          'ticket',
-          ticket.id
-        );
-        uploadMap[block.id] = att.id;
-      } catch (err) {
-        console.error('Image upload failed:', block.id, err);
-      }
-    }
-
-    // 2. Собираем финальное описание с реальными ID вложений
-    if (imageBlocks.length > 0) {
-      let finalDesc = serializeBlocks(descriptionBlocks);
-
-      for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
-        finalDesc = finalDesc.replaceAll(
-          `[[local-image:${blockId}]]`,
-          `[[image:${attachmentId}]]`
-        );
-      }
-
-      // Убираем оставшиеся local-image (если upload упал)
-      finalDesc = finalDesc.replace(
-        /\[\[local-image:[^\]]+\]\]\n*/g,
-        ''
+      // 1. Загружаем картинки из блоков описания
+      const imageBlocks = descriptionBlocks.filter(
+        (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
+          b.type === 'image' && !!b.localFile
       );
 
-      await ticketsApi.update(ticket.id, { description: finalDesc });
-    }
+      const uploadMap: Record<string, string> = {};
 
-    // 3. Загружаем обычные файлы
-    for (const f of generalFiles.filter((x) => x.status === 'pending')) {
-      try {
-        await attachmentsApi.uploadAttachment(f.file, 'ticket', ticket.id);
-      } catch (err) {
-        console.error('File upload failed:', f.file.name, err);
+      for (const block of imageBlocks) {
+        try {
+          const att = await attachmentsApi.uploadAttachment(
+            block.localFile!,
+            'ticket',
+            ticket.id
+          );
+          uploadMap[block.id] = att.id;
+        } catch (err) {
+          console.error('Image upload failed:', block.id, err);
+        }
       }
-    }
 
-    navigate('/tickets');
-  } catch (err: any) {
-    console.error('Submit failed:', err?.response?.data || err);
-  } finally {
-    setSubmitting(false);
-  }
-};
+      // 2. Собираем финальное описание с реальными ID вложений
+      if (imageBlocks.length > 0) {
+        let finalDesc = serializeBlocks(descriptionBlocks);
+
+        for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
+          finalDesc = finalDesc.replaceAll(
+            `[[local-image:${blockId}]]`,
+            `[[image:${attachmentId}]]`
+          );
+        }
+
+        // Убираем оставшиеся local-image (если upload упал)
+        finalDesc = finalDesc.replace(
+          /\[\[local-image:[^\]]+\]\]\n*/g,
+          ''
+        );
+
+        await ticketsApi.update(ticket.id, { description: finalDesc });
+      }
+
+      // 3. Загружаем обычные файлы
+      for (const f of generalFiles.filter((x) => x.status === 'pending')) {
+        try {
+          await attachmentsApi.uploadAttachment(f.file, 'ticket', ticket.id);
+        } catch (err) {
+          console.error('File upload failed:', f.file.name, err);
+        }
+      }
+
+      navigate('/tickets');
+    } catch (err: any) {
+      console.error('Submit failed:', err?.response?.data || err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const cpName = (c: Counterparty) => c.name || c.legal_name || c.inn || '—';
   const prjName = (p: Project) => `${p.key} - ${p.name}`;
@@ -354,9 +422,8 @@ const handleSubmit = async () => {
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
               <div className={`flex items-center gap-4 ${step >= s.num ? 'text-white' : 'text-white/40'}`}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${
-                  step === s.num ? 'bg-red-600 border-red-500 scale-110' : step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-white/10 border-white/20'
-                }`}>{step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}</div>
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${step === s.num ? 'bg-red-600 border-red-500 scale-110' : step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-white/10 border-white/20'
+                  }`}>{step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}</div>
                 <div><div className="font-semibold text-lg">Шаг {s.num}</div><div className="text-sm">{s.label}</div></div>
               </div>
               {i < 2 && <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-white/10'}`} />}
@@ -377,17 +444,17 @@ const handleSubmit = async () => {
                   <label className="block text-2xl font-semibold text-white mb-4">Привязать заявку к</label>
                   <div className="flex gap-4">
                     <button type="button" onClick={() => handleSelectionTypeChange('project')}
-                            className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
                       <FolderOpen className="w-6 h-6" /><span className="text-lg font-medium">Проекту</span>
                     </button>
                     <button type="button" onClick={() => handleSelectionTypeChange('counterparty')}
-                            className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty' ? 'border-blue-500 bg-blue-500/20 text-blue-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty' ? 'border-blue-500 bg-blue-500/20 text-blue-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
                       <Building2 className="w-6 h-6" /><span className="text-lg font-medium">Контрагенту</span>
                     </button>
                   </div>
                 </div>
                 <button type="button" onClick={() => handleSelectionTypeChange(null)}
-                        className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === null ? 'border-white bg-white/10 text-white' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === null ? 'border-white bg-white/10 text-white' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
                   <X className="w-5 h-5" /><span className="text-lg font-medium">Без привязки</span>
                 </button>
               </>
@@ -401,16 +468,16 @@ const handleSubmit = async () => {
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                     <input value={counterpartySearch}
-                           onChange={e => { setCounterpartySearch(e.target.value); setShowCounterpartyDropdown(true); loadCounterparties(e.target.value); }}
-                           onFocus={() => { setShowCounterpartyDropdown(true); if (!counterparties.length) loadCounterparties(); }}
-                           placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
+                      onChange={e => { setCounterpartySearch(e.target.value); setShowCounterpartyDropdown(true); loadCounterparties(e.target.value); }}
+                      onFocus={() => { setShowCounterpartyDropdown(true); if (!counterparties.length) loadCounterparties(); }}
+                      placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
                   </div>
                   {showCounterpartyDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
                       {loadingCounterparties ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> :
                         counterparties.map(cp => (
                           <button key={cp.id} onClick={() => { setSelectedCounterparty(cp); setCounterpartySearch(cpName(cp)); setShowCounterpartyDropdown(false); }}
-                                  className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
+                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
                             <div className="font-semibold text-white">{cpName(cp)}</div>
                             {cp.inn && <div className="text-xs text-white/40 mt-1">ИНН: {cp.inn}</div>}
                           </button>
@@ -431,16 +498,16 @@ const handleSubmit = async () => {
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                     <input value={projectSearch}
-                           onChange={e => { setProjectSearch(e.target.value); setShowProjectDropdown(true); }}
-                           onFocus={() => { setShowProjectDropdown(true); if (!projects.length) loadProjectsForAll(); }}
-                           placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
+                      onChange={e => { setProjectSearch(e.target.value); setShowProjectDropdown(true); }}
+                      onFocus={() => { setShowProjectDropdown(true); if (!projects.length) loadProjectsForAll(); }}
+                      placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
                   </div>
                   {showProjectDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
                       {loadingProjects ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> :
                         projects.filter(p => !projectSearch || p.name.toLowerCase().includes(projectSearch.toLowerCase()) || p.key.toLowerCase().includes(projectSearch.toLowerCase())).map(p => (
                           <button key={p.id} onClick={() => { setSelectedProject(p); setProjectSearch(prjName(p)); setShowProjectDropdown(false); }}
-                                  className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
+                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
                             <span className="text-purple-400">{p.key}</span> — {p.name}
                           </button>
                         ))
@@ -470,20 +537,20 @@ const handleSubmit = async () => {
                 <div className="relative" ref={reporterDropdownRef}>
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                   <input value={reporterSearch}
-                         onChange={e => { setReporterSearch(e.target.value); setShowReporterDropdown(true); }}
-                         onFocus={() => setShowReporterDropdown(true)}
-                         placeholder="Выберите..." className="input-field pl-12 py-5 text-lg w-full" />
+                    onChange={e => { setReporterSearch(e.target.value); setShowReporterDropdown(true); }}
+                    onFocus={() => setShowReporterDropdown(true)}
+                    placeholder="Выберите..." className="input-field pl-12 py-5 text-lg w-full" />
                   {showReporterDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
                       {loadingUsers ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> : (
                         <>
                           <button onClick={() => { setSelectedReporter(null); setReporterSearch(''); setShowReporterDropdown(false); }}
-                                  className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10">
+                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10">
                             <span className="text-white">{user?.full_name || 'Вы'}</span> <span className="text-white/40">(текущий)</span>
                           </button>
                           {users.filter(u => !reporterSearch || (u.full_name?.toLowerCase().includes(reporterSearch.toLowerCase()) || u.email.toLowerCase().includes(reporterSearch.toLowerCase()))).map(u => (
                             <button key={u.id} onClick={() => { setSelectedReporter(u); setReporterSearch(uName(u)); setShowReporterDropdown(false); }}
-                                    className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
+                              className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
                               <div className="text-white">{uName(u)}</div>
                               <div className="text-white/40 text-sm">{u.email}</div>
                             </button>
@@ -502,7 +569,7 @@ const handleSubmit = async () => {
             {/* Тема */}
             <SpellCheckField value={title} onChange={setTitle} label="Тема заявки *">
               <input type="text" value={title} onChange={e => setTitle(e.target.value)}
-                     placeholder="Кратко опишите проблему..." className="input-field py-5 text-2xl w-full" />
+                placeholder="Кратко опишите проблему..." className="input-field py-5 text-2xl w-full" />
             </SpellCheckField>
 
             {/* Описание */}
@@ -520,7 +587,7 @@ const handleSubmit = async () => {
                 Прикрепить файлы
               </label>
               <div onDrop={handleGeneralDrop} onDragOver={e => e.preventDefault()}
-                   className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-white/40 transition-colors">
+                className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-white/40 transition-colors">
                 <Upload className="w-10 h-10 text-white/20 mx-auto mb-3" />
                 <p className="text-lg text-white/50 mb-2">Перетащите файлы сюда</p>
                 <label className="inline-block">
@@ -545,7 +612,7 @@ const handleSubmit = async () => {
                         <p className="text-sm text-white/40">{formatFileSize(f.file.size)}</p>
                       </div>
                       <button onClick={() => removeGeneralFile(f.id)}
-                              className="p-1.5 rounded-lg hover:bg-white/[0.08] text-white/30 hover:text-red-400 transition-colors">
+                        className="p-1.5 rounded-lg hover:bg-white/[0.08] text-white/30 hover:text-red-400 transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -574,9 +641,8 @@ const handleSubmit = async () => {
               <div className="flex flex-wrap gap-3">
                 {PRIORITIES.map(p => (
                   <button key={p.value} onClick={() => setPriority(p.value as TicketPriority)}
-                          className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${
-                            priority === p.value ? 'bg-white/20 text-white border-white/70' : 'bg-white/5 border-white/20 hover:bg-white/10'
-                          }`}>
+                    className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${priority === p.value ? 'bg-white/20 text-white border-white/70' : 'bg-white/5 border-white/20 hover:bg-white/10'
+                      }`}>
                     <div className="flex items-center gap-4">{p.icon}<div><div className="font-semibold">{p.label}</div><div className="text-sm opacity-70">{p.desc}</div></div></div>
                   </button>
                 ))}
@@ -591,7 +657,7 @@ const handleSubmit = async () => {
                   <div className="flex flex-wrap gap-3">
                     {aiSuggestedTags.map(t => (
                       <button key={t.name} onClick={() => togglePresetTag(t)}
-                              className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
+                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
                         {t.name}
                       </button>
                     ))}
@@ -601,7 +667,7 @@ const handleSubmit = async () => {
               <div className="flex flex-wrap gap-3 mb-6">
                 {PRESET_TAGS.map(t => (
                   <button key={t.name} onClick={() => togglePresetTag(t)}
-                          className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
+                    className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
                     {t.name}
                   </button>
                 ))}
@@ -612,9 +678,9 @@ const handleSubmit = async () => {
               {showCustomTagInput && (
                 <div className="flex gap-3 mb-6">
                   <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addCustomTag()}
-                         placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
+                    placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
                   <button onClick={addCustomTag} disabled={!newTagInput.trim()}
-                          className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">Добавить</button>
+                    className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">Добавить</button>
                 </div>
               )}
               {tags.length > 0 && (
@@ -702,7 +768,7 @@ const handleSubmit = async () => {
                     }
                     if (block.type === 'image' && block.localPreview) {
                       return <img key={block.id} src={block.localPreview} alt="вложение"
-                                  className="max-w-full max-h-[400px] rounded-2xl border border-white/[0.08] object-contain" />;
+                        className="max-w-full max-h-[400px] rounded-2xl border border-white/[0.08] object-contain" />;
                     }
                     return null;
                   })}
@@ -726,7 +792,7 @@ const handleSubmit = async () => {
                     <div className="flex flex-wrap gap-2">
                       {tags.map(t => (
                         <span key={t.name} className="px-4 py-2 rounded-xl text-base font-medium"
-                              style={{ backgroundColor: (t.color || '#71717a') + '30', color: t.color || '#d1d5db' }}>
+                          style={{ backgroundColor: (t.color || '#71717a') + '30', color: t.color || '#d1d5db' }}>
                           {t.name}
                         </span>
                       ))}
@@ -758,19 +824,19 @@ const handleSubmit = async () => {
         <div className="flex justify-between mt-12 pt-8 border-t border-white/10">
           {step > 1 ? (
             <button onClick={() => setStep(step - 1)}
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-lg font-medium">
+              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-lg font-medium">
               <ArrowLeft className="w-5 h-5" /> Назад
             </button>
           ) : <div />}
 
           {step < 3 ? (
             <button onClick={() => setStep(step + 1)}
-                    className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors">
+              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors">
               Далее <ArrowRight className="w-5 h-5 inline ml-2" />
             </button>
           ) : (
             <button onClick={handleSubmit} disabled={submitting}
-                    className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
+              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
               {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <><FileText className="w-5 h-5" /> Создать заявку</>}
             </button>
           )}

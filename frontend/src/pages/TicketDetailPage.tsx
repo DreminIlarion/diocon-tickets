@@ -138,7 +138,7 @@ export default function TicketDetailPage() {
   const [counterparty, setCounterparty] = useState<any | null>(null);
 
   // ── Имена акторов для истории и автора ──
-const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
+  const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
 
   // ── Редактирование ──
   const [showEditModal, setShowEditModal] = useState(false);
@@ -258,46 +258,46 @@ const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
     return cacheLoadingPromise;
   }, []);
   const loadActorNames = useCallback(async (history: any[], counterpartyId?: string) => {
-  const actorIds = [...new Set(history.map(e => e.actor_id).filter(Boolean))];
-  
-  // Добавляем reporter_id и created_by тикета тоже
-  if (ticket?.reporter_id) actorIds.push(ticket.reporter_id);
-  if (ticket?.created_by) actorIds.push(ticket.created_by);
-  
-  if (!actorIds.length) return;
+    const actorIds = [...new Set(history.map(e => e.actor_id).filter(Boolean))];
 
-  const names = new Map<string, string>();
+    // Добавляем reporter_id и created_by тикета тоже
+    if (ticket?.reporter_id) actorIds.push(ticket.reporter_id);
+    if (ticket?.created_by) actorIds.push(ticket.created_by);
 
-  // Текущий пользователь
-  if (user?.user_id) {
-    names.set(user.user_id, user.full_name || user.username || 'Вы');
-  }
+    if (!actorIds.length) return;
 
-  // Клиенты контрагента
-  if (counterpartyId) {
-    try {
-      const r = await usersApi.getCustomers(counterpartyId, 1, 100);
-      r.items.forEach((u: any) => {
-        names.set(u.id, u.full_name || u.username || u.email);
-      });
-    } catch {}
-  }
+    const names = new Map<string, string>();
 
-  // Сотрудники поддержки (для тех кого не нашли)
-  const missing = actorIds.filter(id => !names.has(id));
-  if (missing.length) {
-    try {
-      const r = await usersApi.getSupports(1, 100);
-      r.items.forEach((u: any) => {
-        if (missing.includes(u.id)) {
+    // Текущий пользователь
+    if (user?.user_id) {
+      names.set(user.user_id, user.full_name || user.username || 'Вы');
+    }
+
+    // Клиенты контрагента
+    if (counterpartyId) {
+      try {
+        const r = await usersApi.getCustomers(counterpartyId, 1, 100);
+        r.items.forEach((u: any) => {
           names.set(u.id, u.full_name || u.username || u.email);
-        }
-      });
-    } catch {}
-  }
+        });
+      } catch { }
+    }
 
-  setActorNames(names);
-}, [user, ticket?.reporter_id, ticket?.created_by]);
+    // Сотрудники поддержки (для тех кого не нашли)
+    const missing = actorIds.filter(id => !names.has(id));
+    if (missing.length) {
+      try {
+        const r = await usersApi.getSupports(1, 100);
+        r.items.forEach((u: any) => {
+          if (missing.includes(u.id)) {
+            names.set(u.id, u.full_name || u.username || u.email);
+          }
+        });
+      } catch { }
+    }
+
+    setActorNames(names);
+  }, [user, ticket?.reporter_id, ticket?.created_by]);
 
   const loadComments = useCallback(async (tid: string, page = 1, append = false) => {
     append ? setLoadingMoreComments(true) : setLoadingComments(true);
@@ -344,9 +344,9 @@ const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
         const data = await ticketsApi.getById(tid);
         setTicket(data);
         if (data.history?.length || data.reporter_id || data.created_by) {
-  loadActorNames(data.history || [], data.counterparty_id);
-}
-        
+          loadActorNames(data.history || [], data.counterparty_id);
+        }
+
         if (data.counterparty_id) { try { setCounterparty(await counterpartiesApi.getById(data.counterparty_id)); } catch { setCounterparty(null); } }
         else setCounterparty(null);
         await loadComments(tid, 1, false);
@@ -356,7 +356,7 @@ const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
         if (found) {
           const data = await ticketsApi.getById(found.id);
           setTicket(data); ticketNumberToIdCache?.set(number, found.id);
-          
+
           await loadComments(found.id, 1, false);
         } else { toast({ title: 'Ошибка', description: 'Заявка не найдена', variant: 'destructive' }); navigate('/tickets'); }
       }
@@ -475,106 +475,106 @@ const [actorNames, setActorNames] = useState<Map<string, string>>(new Map());
     setShowEditModal(true);
   }, [ticket]);
 
-const handleSaveEdit = useCallback(async () => {
-  if (!ticket) return;
-  setSavingEdit(true);
-  try {
-    // 1. Проверяем что у всех новых картинок есть File
-    const imageBlocks = editDescBlocks.filter(
-      (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
-        b.type === 'image'
-    );
-
-    const newImageBlocks = imageBlocks.filter(
-      (b) => !b.attachmentId && b.localFile
-    );
-
-    const brokenBlocks = imageBlocks.filter(
-      (b) => !b.attachmentId && !b.localFile
-    );
-
-    if (brokenBlocks.length > 0) {
-      toast({
-        title: 'Ошибка',
-        description: `${brokenBlocks.length} изображение(й) потеряло связь с файлом. Удалите их и добавьте заново.`,
-        variant: 'destructive',
-      });
-      setSavingEdit(false);
-      return;
-    }
-
-    // 2. Загружаем новые картинки
-    const uploadMap: Record<string, string> = {};
-    const failedUploads: string[] = [];
-
-    for (const block of newImageBlocks) {
-      try {
-        const att = await attachmentsApi.uploadAttachment(
-          block.localFile!,
-          'ticket',
-          ticket.id
-        );
-        uploadMap[block.id] = att.id;
-      } catch (e) {
-        console.error('Upload failed for block:', block.id, e);
-        failedUploads.push(block.id);
-      }
-    }
-    // Если хоть один upload упал — не сохраняем
-    if (failedUploads.length > 0) {
-      toast({
-        title: 'Ошибка загрузки',
-        description: `Не удалось загрузить ${failedUploads.length} изображение(й). Попробуйте ещё раз.`,
-        variant: 'destructive',
-      });
-      setSavingEdit(false);
-      return;
-    }
-
-    // 3. Собираем финальное описание
-    let finalDesc = serializeBlocks(editDescBlocks);
-
-    // Заменяем local-image → image для успешно загруженных
-    for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
-      finalDesc = finalDesc.replaceAll(
-        `[[local-image:${blockId}]]`,
-        `[[image:${attachmentId}]]`
+  const handleSaveEdit = useCallback(async () => {
+    if (!ticket) return;
+    setSavingEdit(true);
+    try {
+      // 1. Проверяем что у всех новых картинок есть File
+      const imageBlocks = editDescBlocks.filter(
+        (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
+          b.type === 'image'
       );
-    }
 
-    // 4. Финальная проверка — не должно остаться local-image
-    if (/\[\[local-image:[^\]]+\]\]/.test(finalDesc)) {
+      const newImageBlocks = imageBlocks.filter(
+        (b) => !b.attachmentId && b.localFile
+      );
+
+      const brokenBlocks = imageBlocks.filter(
+        (b) => !b.attachmentId && !b.localFile
+      );
+
+      if (brokenBlocks.length > 0) {
+        toast({
+          title: 'Ошибка',
+          description: `${brokenBlocks.length} изображение(й) потеряло связь с файлом. Удалите их и добавьте заново.`,
+          variant: 'destructive',
+        });
+        setSavingEdit(false);
+        return;
+      }
+
+      // 2. Загружаем новые картинки
+      const uploadMap: Record<string, string> = {};
+      const failedUploads: string[] = [];
+
+      for (const block of newImageBlocks) {
+        try {
+          const att = await attachmentsApi.uploadAttachment(
+            block.localFile!,
+            'ticket',
+            ticket.id
+          );
+          uploadMap[block.id] = att.id;
+        } catch (e) {
+          console.error('Upload failed for block:', block.id, e);
+          failedUploads.push(block.id);
+        }
+      }
+      // Если хоть один upload упал — не сохраняем
+      if (failedUploads.length > 0) {
+        toast({
+          title: 'Ошибка загрузки',
+          description: `Не удалось загрузить ${failedUploads.length} изображение(й). Попробуйте ещё раз.`,
+          variant: 'destructive',
+        });
+        setSavingEdit(false);
+        return;
+      }
+
+      // 3. Собираем финальное описание
+      let finalDesc = serializeBlocks(editDescBlocks);
+
+      // Заменяем local-image → image для успешно загруженных
+      for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
+        finalDesc = finalDesc.replaceAll(
+          `[[local-image:${blockId}]]`,
+          `[[image:${attachmentId}]]`
+        );
+      }
+
+      // 4. Финальная проверка — не должно остаться local-image
+      if (/\[\[local-image:[^\]]+\]\]/.test(finalDesc)) {
+        toast({
+          title: 'Ошибка',
+          description:
+            'В описании остались незагруженные изображения. Сохранение отменено.',
+          variant: 'destructive',
+        });
+        setSavingEdit(false);
+        return;
+      }
+
+      // 5. Сохраняем
+      const updated = await ticketsApi.update(ticket.id, {
+        title: editTitle.trim(),
+        description: finalDesc,
+        priority: editPriority as any,
+        tags: editTags,
+      });
+
+      setTicket(updated);
+      setShowEditModal(false);
+      toast({ title: 'Сохранено' });
+    } catch (e: any) {
       toast({
         title: 'Ошибка',
-        description:
-          'В описании остались незагруженные изображения. Сохранение отменено.',
+        description: e?.message || 'Не удалось сохранить',
         variant: 'destructive',
       });
+    } finally {
       setSavingEdit(false);
-      return;
     }
-
-    // 5. Сохраняем
-    const updated = await ticketsApi.update(ticket.id, {
-      title: editTitle.trim(),
-      description: finalDesc,
-      priority: editPriority as any,
-      tags: editTags,
-    });
-
-    setTicket(updated);
-    setShowEditModal(false);
-    toast({ title: 'Сохранено' });
-  } catch (e: any) {
-    toast({
-      title: 'Ошибка',
-      description: e?.message || 'Не удалось сохранить',
-      variant: 'destructive',
-    });
-  } finally {
-    setSavingEdit(false);
-  }
-}, [ticket, editTitle, editDescBlocks, editPriority, editTags, toast]);
+  }, [ticket, editTitle, editDescBlocks, editPriority, editTags, toast]);
 
   // ── Effects ──
 
@@ -667,13 +667,13 @@ const handleSaveEdit = useCallback(async () => {
               </span>
             )}
             {!ticket.is_archived && (user?.user_id === ticket.created_by || user?.user_id === ticket.reporter_id) && (
-            <button onClick={openEditModal}
-                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-base
+              <button onClick={openEditModal}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-base
                               bg-white/[0.05] hover:bg-white/[0.10] border border-white/[0.08]
                               text-white/70 hover:text-white transition-colors">
-              <Edit className="w-4 h-4" /> Редактировать
-            </button>
-          )}
+                <Edit className="w-4 h-4" /> Редактировать
+              </button>
+            )}
           </div>
           <h1 className="text-3xl font-bold text-white mb-4">{ticket.title}</h1>
           <div className="flex flex-wrap items-center gap-6 text-base text-white/40">
@@ -691,9 +691,8 @@ const handleSaveEdit = useCallback(async () => {
           <div className="flex gap-2 border-b border-white/10 overflow-x-auto">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${
-                        activeTab === tab.id ? 'bg-red-800/50 text-white border-b-2 border-red-500' : 'text-white/50 hover:text-white/70 hover:bg-white/5'
-                      }`}>
+                className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-red-800/50 text-white border-b-2 border-red-500' : 'text-white/50 hover:text-white/70 hover:bg-white/5'
+                  }`}>
                 <tab.icon className="w-5 h-5" />
                 <span className="text-base font-medium">{tab.label}</span>
                 {tab.count !== undefined && tab.count > 0 && <span className="ml-1 px-2 py-0.5 rounded-full bg-white/20 text-base">{tab.count}</span>}
@@ -702,7 +701,7 @@ const handleSaveEdit = useCallback(async () => {
           </div>
 
           <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                      {/* ── Чат ── */}
+            {/* ── Чат ── */}
             {activeTab === 'chat' && (
               <div className="flex flex-col">
                 <div className="px-6 py-4 border-b border-white/10 bg-white/5">
@@ -717,9 +716,8 @@ const handleSaveEdit = useCallback(async () => {
                       <div className="flex gap-1 bg-white/5 rounded-lg p-0.5">
                         {(['newest', 'oldest'] as const).map(order => (
                           <button key={order} onClick={() => setCommentSortOrder(order)}
-                                  className={`px-3 py-1.5 text-base rounded-md transition-colors ${
-                                    commentSortOrder === order ? 'bg-red-800/50 text-white' : 'text-white/40 hover:text-white/60'
-                                  }`}>
+                            className={`px-3 py-1.5 text-base rounded-md transition-colors ${commentSortOrder === order ? 'bg-red-800/50 text-white' : 'text-white/40 hover:text-white/60'
+                              }`}>
                             {order === 'newest' ? 'Сначала новые' : 'Сначала старые'}
                           </button>
                         ))}
@@ -731,8 +729,8 @@ const handleSaveEdit = useCallback(async () => {
 
                 <div className="p-5 border-b border-white/10">
                   <CommentForm message={message} setMessage={setMessage} onSend={handleSendMessage} sending={sending}
-                               messageType={messageType} setMessageType={setMessageType} canWriteInternal={canWriteInternal}
-                               onSuccess={() => { if (ticket?.id) loadComments(ticket.id, 1, false); }} />
+                    messageType={messageType} setMessageType={setMessageType} canWriteInternal={canWriteInternal}
+                    onSuccess={() => { if (ticket?.id) loadComments(ticket.id, 1, false); }} />
                 </div>
 
                 <div ref={chatContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-6 space-y-5 max-h-[500px]">
@@ -743,11 +741,11 @@ const handleSaveEdit = useCallback(async () => {
                       {loadingMoreComments && <div className="flex justify-center py-2"><Loader2 className="w-6 h-6 text-white/30 animate-spin" /></div>}
                       {sortedRootComments.map(comment => (
                         <CommentItem key={comment.id} comment={comment} isReplying={replyingTo === comment.id}
-                                     onReply={handleReply} onSendReply={handleSendReply} onEditComment={handleEditComment}
-                                     onDeleteComment={() => { setCommentToDelete(comment.id); setShowDeleteConfirm(true); }}
-                                     replyText={replyText} setReplyText={setReplyText} replyingTo={replyingTo} setReplyingTo={setReplyingTo}
-                                     getAuthorName={getAuthorName} formatRelativeTime={formatRelativeTime} getAvatarColor={getAvatarColor}
-                                     handleDownload={handleDownload} ticketId={ticket.id} currentUser={user} onReactionUpdated={handleReactionUpdated} />
+                          onReply={handleReply} onSendReply={handleSendReply} onEditComment={handleEditComment}
+                          onDeleteComment={() => { setCommentToDelete(comment.id); setShowDeleteConfirm(true); }}
+                          replyText={replyText} setReplyText={setReplyText} replyingTo={replyingTo} setReplyingTo={setReplyingTo}
+                          getAuthorName={getAuthorName} formatRelativeTime={formatRelativeTime} getAvatarColor={getAvatarColor}
+                          handleDownload={handleDownload} ticketId={ticket.id} currentUser={user} onReactionUpdated={handleReactionUpdated} />
                       ))}
                       {!hasMoreComments && <div className="text-center py-4 text-base text-white/30">Все комментарии загружены</div>}
                     </>
@@ -782,7 +780,7 @@ const handleSaveEdit = useCallback(async () => {
                     <div className="flex flex-wrap gap-3">
                       {ticket.tags.map(tag => (
                         <span key={tag.name} className="px-4 py-2 rounded-xl text-base font-medium"
-                              style={{ backgroundColor: tag.color ? `${tag.color}20` : 'rgba(255,255,255,0.1)', color: tag.color || '#d1d5db' }}>
+                          style={{ backgroundColor: tag.color ? `${tag.color}20` : 'rgba(255,255,255,0.1)', color: tag.color || '#d1d5db' }}>
                           {tag.name}
                         </span>
                       ))}
@@ -805,12 +803,12 @@ const handleSaveEdit = useCallback(async () => {
                         const isImage = file.mime_type.startsWith('image/');
                         return (
                           <div key={file.id} onClick={() => openPreview(file)}
-                               className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden group hover:border-white/30 transition-all cursor-pointer">
+                            className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden group hover:border-white/30 transition-all cursor-pointer">
                             <div className="h-52 bg-zinc-950 flex items-center justify-center relative overflow-hidden">
                               {isImage && imagePreviews[file.id]
                                 ? <img src={imagePreviews[file.id]} alt={file.original_filename} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                                 : isImage ? <Loader2 className="w-8 h-8 text-white/30 animate-spin" />
-                                : <div className="text-6xl text-white/30">{getFileIcon(file.mime_type)}</div>
+                                  : <div className="text-6xl text-white/30">{getFileIcon(file.mime_type)}</div>
                               }
                               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                                 <p className="text-white text-base line-clamp-2 font-medium">{file.original_filename}</p>
@@ -819,7 +817,7 @@ const handleSaveEdit = useCallback(async () => {
                             <div className="p-3 flex justify-between items-center">
                               <span className="text-base text-white/40">{formatFileSize(file.size_bytes)}</span>
                               <button onClick={e => { e.stopPropagation(); handleDownload(file.id); }}
-                                      className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl">
+                                className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl">
                                 <Download className="w-4 h-4" />
                               </button>
                             </div>
@@ -841,7 +839,7 @@ const handleSaveEdit = useCallback(async () => {
                   ))}
                   {sortedHistory.length > 5 && (
                     <button onClick={() => setExpandedHistory(!expandedHistory)}
-                            className="flex items-center gap-2 text-white/50 hover:text-white/80 text-base mt-4">
+                      className="flex items-center gap-2 text-white/50 hover:text-white/80 text-base mt-4">
                       {expandedHistory ? <>Скрыть <ChevronUp className="w-4 h-4" /></> : <>Показать все ({sortedHistory.length}) <ChevronDown className="w-4 h-4" /></>}
                     </button>
                   )}
@@ -891,7 +889,7 @@ const handleSaveEdit = useCallback(async () => {
                         else if (status === 'Переоткрыт') cls = 'bg-orange-500/20 hover:bg-orange-500/30 text-orange-400';
                         return (
                           <button key={status} onClick={() => handleStatusChange(status)} disabled={updatingStatus}
-                                  className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all ${cls} disabled:opacity-50 text-base`}>
+                            className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all ${cls} disabled:opacity-50 text-base`}>
                             {updatingStatus ? <Loader2 className="w-5 h-5 animate-spin" /> : status}
                           </button>
                         );
@@ -919,13 +917,13 @@ const handleSaveEdit = useCallback(async () => {
                             </div>
                           </div>
                           <button onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
-                                  className="text-base text-red-400 hover:text-red-300">{showAssigneeDropdown ? 'Скрыть' : 'Изменить'}</button>
+                            className="text-base text-red-400 hover:text-red-300">{showAssigneeDropdown ? 'Скрыть' : 'Изменить'}</button>
                         </div>
                       ) : (
                         <div className="text-center py-5">
                           <p className="text-white/50 text-lg mb-4">Не назначен</p>
                           <button onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
-                                  className="px-5 py-2.5 rounded-xl bg-red-800/50 hover:bg-red-700 text-white text-base">
+                            className="px-5 py-2.5 rounded-xl bg-red-800/50 hover:bg-red-700 text-white text-base">
                             <UserPlus className="w-5 h-5 inline mr-2" />Назначить
                           </button>
                         </div>
@@ -936,27 +934,27 @@ const handleSaveEdit = useCallback(async () => {
                           <div className="relative mb-4">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                             <input value={searchUser} onChange={e => setSearchUser(e.target.value)} placeholder="Поиск..."
-                                   className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none text-base" />
+                              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none text-base" />
                           </div>
                           {loadingSupports ? <div className="flex justify-center py-6"><Loader2 className="w-6 h-6 animate-spin text-white/30" /></div>
-                           : filteredUsers.length === 0 ? <div className="text-center py-6 text-white/40">Нет сотрудников</div>
-                           : (
-                            <div className="space-y-2 max-h-64 overflow-y-auto">
-                              <button onClick={() => handleAssign(null)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-red-400">
-                                <div className="w-9 h-9 rounded-full bg-red-500/20 flex items-center justify-center"><X className="w-5 h-5" /></div>
-                                <span className="text-base">Снять</span>
-                              </button>
-                              {filteredUsers.map(emp => (
-                                <button key={emp.id} onClick={() => handleAssign(emp.id)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-left">
-                                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-700 to-red-800 flex items-center justify-center"><User className="w-5 h-5 text-white" /></div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-white font-medium text-base truncate">{emp.full_name || emp.username}</p>
-                                    <p className="text-white/40 text-base truncate">{emp.email}</p>
-                                  </div>
-                                </button>
-                              ))}
-                            </div>
-                          )}
+                            : filteredUsers.length === 0 ? <div className="text-center py-6 text-white/40">Нет сотрудников</div>
+                              : (
+                                <div className="space-y-2 max-h-64 overflow-y-auto">
+                                  <button onClick={() => handleAssign(null)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-red-400">
+                                    <div className="w-9 h-9 rounded-full bg-red-500/20 flex items-center justify-center"><X className="w-5 h-5" /></div>
+                                    <span className="text-base">Снять</span>
+                                  </button>
+                                  {filteredUsers.map(emp => (
+                                    <button key={emp.id} onClick={() => handleAssign(emp.id)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 text-left">
+                                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-700 to-red-800 flex items-center justify-center"><User className="w-5 h-5 text-white" /></div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-white font-medium text-base truncate">{emp.full_name || emp.username}</p>
+                                        <p className="text-white/40 text-base truncate">{emp.email}</p>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
                         </div>
                       )}
                     </div>
@@ -986,7 +984,7 @@ const handleSaveEdit = useCallback(async () => {
                           <p className="text-base text-white/40">Скроется из основного списка</p>
                         </div>
                         <button onClick={() => setShowArchiveConfirm(true)} disabled={archiving}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/30 text-amber-400 text-base font-medium disabled:opacity-50 flex-shrink-0">
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/30 text-amber-400 text-base font-medium disabled:opacity-50 flex-shrink-0">
                           {archiving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Archive className="w-5 h-5" />}
                           Архивировать
                         </button>
@@ -1045,8 +1043,8 @@ const handleSaveEdit = useCallback(async () => {
               )}
               <div className="pt-3 space-y-3">
                 {[{ label: 'Создана', value: formatDate(ticket.created_at) },
-                  ...(ticket.closed_at ? [{ label: 'Закрыта', value: formatDate(ticket.closed_at) }] : []),
-                  { label: 'Обновлена', value: formatDate(ticket.updated_at) },
+                ...(ticket.closed_at ? [{ label: 'Закрыта', value: formatDate(ticket.closed_at) }] : []),
+                { label: 'Обновлена', value: formatDate(ticket.updated_at) },
                 ].map(r => (
                   <div key={r.label}><span className="text-white/50 text-base block mb-1">{r.label}</span><span className="text-white text-base">{r.value}</span></div>
                 ))}
@@ -1055,75 +1053,75 @@ const handleSaveEdit = useCallback(async () => {
           </div>
 
           {/* Автор */}
-<div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-  <h3 className="text-xl font-semibold text-white mb-5 flex items-center gap-3">
-    <User className="w-5 h-5 text-white/60" /> Автор
-  </h3>
-  {(() => {
-    // Приоритет: reporter → actorNames → текущий пользователь
-    const reporter = ticket.reporter;
-    const createdById = ticket.created_by;
-    const reporterId = ticket.reporter_id;
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
+            <h3 className="text-xl font-semibold text-white mb-5 flex items-center gap-3">
+              <User className="w-5 h-5 text-white/60" /> Автор
+            </h3>
+            {(() => {
+              // Приоритет: reporter → actorNames → текущий пользователь
+              const reporter = ticket.reporter;
+              const createdById = ticket.created_by;
+              const reporterId = ticket.reporter_id;
 
-    // Если есть reporter объект с данными
-    if (reporter?.full_name || reporter?.username || reporter?.email) {
-      const name = reporter.full_name || reporter.username || 'Пользователь';
-      const email = reporter.email;
-      const roleLabel: Record<string, string> = {
-        customer: 'Клиент', customer_admin: 'Администратор клиента',
-        support_agent: 'Агент', support_manager: 'Менеджер', admin: 'Администратор',
-      };
+              // Если есть reporter объект с данными
+              if (reporter?.full_name || reporter?.username || reporter?.email) {
+                const name = reporter.full_name || reporter.username || 'Пользователь';
+                const email = reporter.email;
+                const roleLabel: Record<string, string> = {
+                  customer: 'Клиент', customer_admin: 'Администратор клиента',
+                  support_agent: 'Агент', support_manager: 'Менеджер', admin: 'Администратор',
+                };
 
-      return (
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <p className="font-semibold text-white text-base">{name}</p>
-            {email && <p className="text-sm text-white/40">{email}</p>}
-            {reporter.role && <p className="text-xs text-white/25 mt-0.5">{roleLabel[reporter.role] || reporter.role}</p>}
-          </div>
-        </div>
-      );
-    }
+                return (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white text-base">{name}</p>
+                      {email && <p className="text-sm text-white/40">{email}</p>}
+                      {reporter.role && <p className="text-xs text-white/25 mt-0.5">{roleLabel[reporter.role] || reporter.role}</p>}
+                    </div>
+                  </div>
+                );
+              }
 
-    // Fallback: ищем в actorNames по reporter_id или created_by
-    const fallbackId = reporterId || createdById;
-    const fallbackName = fallbackId ? actorNames.get(fallbackId) : null;
+              // Fallback: ищем в actorNames по reporter_id или created_by
+              const fallbackId = reporterId || createdById;
+              const fallbackName = fallbackId ? actorNames.get(fallbackId) : null;
 
-    if (fallbackName) {
-      return (
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <p className="font-semibold text-white text-base">{fallbackName}</p>
-            <p className="text-xs text-white/25 mt-0.5">Автор заявки</p>
-          </div>
-        </div>
-      );
-    }
+              if (fallbackName) {
+                return (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white text-base">{fallbackName}</p>
+                      <p className="text-xs text-white/25 mt-0.5">Автор заявки</p>
+                    </div>
+                  </div>
+                );
+              }
 
-    // Если текущий пользователь — создатель
-    if (createdById === user?.user_id) {
-      return (
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <p className="font-semibold text-white text-base">{user?.full_name || user?.username || 'Вы'}</p>
-            {user?.email && <p className="text-sm text-white/40">{user.email}</p>}
-          </div>
-        </div>
-      );
-    }
+              // Если текущий пользователь — создатель
+              if (createdById === user?.user_id) {
+                return (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white text-base">{user?.full_name || user?.username || 'Вы'}</p>
+                      {user?.email && <p className="text-sm text-white/40">{user.email}</p>}
+                    </div>
+                  </div>
+                );
+              }
 
-    return <p className="text-white/30 text-base">Автор не указан</p>;
-  })()}
-</div>
+              return <p className="text-white/30 text-base">Автор не указан</p>;
+            })()}
+          </div>
         </div>
       </div>
 
@@ -1139,10 +1137,10 @@ const handleSaveEdit = useCallback(async () => {
               {previewFile.mime_type.startsWith('image/')
                 ? <img src={imagePreviews[previewFile.id] || ''} alt="" className="max-h-[80vh] max-w-full object-contain rounded-2xl" />
                 : <div className="text-center">
-                    <File className="w-24 h-24 mx-auto mb-6 text-white/30" />
-                    <p className="text-2xl text-white mb-3">Предпросмотр недоступен</p>
-                    <button onClick={() => handleDownload(previewFile.id)} className="mt-6 px-10 py-3.5 bg-red-800/50 hover:bg-red-800/80 rounded-2xl text-white font-medium">Скачать</button>
-                  </div>
+                  <File className="w-24 h-24 mx-auto mb-6 text-white/30" />
+                  <p className="text-2xl text-white mb-3">Предпросмотр недоступен</p>
+                  <button onClick={() => handleDownload(previewFile.id)} className="mt-6 px-10 py-3.5 bg-red-800/50 hover:bg-red-800/80 rounded-2xl text-white font-medium">Скачать</button>
+                </div>
               }
             </div>
           </div>
@@ -1154,7 +1152,7 @@ const handleSaveEdit = useCallback(async () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !savingEdit && setShowEditModal(false)} />
           <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-[#1a1a1a] border border-white/[0.1] rounded-2xl overflow-hidden"
-               style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.7)' }}>
+            style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.7)' }}>
 
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.08] bg-white/[0.02] flex-shrink-0">
               <div>
@@ -1162,7 +1160,7 @@ const handleSaveEdit = useCallback(async () => {
                 <p className="text-sm text-white/40 mt-0.5">#{ticket.number}</p>
               </div>
               <button onClick={() => setShowEditModal(false)} disabled={savingEdit}
-                      className="p-2 rounded-xl hover:bg-white/[0.06] text-white/40 hover:text-white"><X size={20} /></button>
+                className="p-2 rounded-xl hover:bg-white/[0.06] text-white/40 hover:text-white"><X size={20} /></button>
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
@@ -1170,7 +1168,7 @@ const handleSaveEdit = useCallback(async () => {
               <div>
                 <label className="block text-base font-medium text-white/70 mb-2">Тема <span className="text-red-400">*</span></label>
                 <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)}
-                       className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-base focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10" />
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-base focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10" />
               </div>
 
               {/* Описание */}
@@ -1190,9 +1188,8 @@ const handleSaveEdit = useCallback(async () => {
                     { value: 'Критический', color: 'bg-red-500/15 text-red-400 border-red-500/30' },
                   ].map(p => (
                     <button key={p.value} type="button" onClick={() => setEditPriority(p.value)}
-                            className={`px-3 py-2.5 rounded-xl text-base font-medium border transition-all ${
-                              editPriority === p.value ? p.color : 'bg-white/[0.03] border-white/[0.08] text-white/50 hover:bg-white/[0.06]'
-                            }`}>{p.value}</button>
+                      className={`px-3 py-2.5 rounded-xl text-base font-medium border transition-all ${editPriority === p.value ? p.color : 'bg-white/[0.03] border-white/[0.08] text-white/50 hover:bg-white/[0.06]'
+                        }`}>{p.value}</button>
                   ))}
                 </div>
               </div>
@@ -1203,7 +1200,7 @@ const handleSaveEdit = useCallback(async () => {
                 <div className="flex flex-wrap gap-2 mb-3">
                   {editTags.map(tag => (
                     <span key={tag.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-base font-medium"
-                          style={{ backgroundColor: (tag.color || '#64748b') + '25', color: tag.color || '#94a3b8' }}>
+                      style={{ backgroundColor: (tag.color || '#64748b') + '25', color: tag.color || '#94a3b8' }}>
                       {tag.name}
                       <button type="button" onClick={() => setEditTags(p => p.filter(t => t.name !== tag.name))} className="text-white/30 hover:text-red-400"><X size={13} /></button>
                     </span>
@@ -1211,24 +1208,25 @@ const handleSaveEdit = useCallback(async () => {
                 </div>
                 <div className="flex gap-2">
                   <input value={editNewTag} onChange={e => setEditNewTag(e.target.value)}
-                         onKeyDown={e => {
-                           if (e.key === 'Enter') { e.preventDefault(); const n = editNewTag.trim();
-                             if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); }
-                           }
-                         }}
-                         placeholder="Новый тег (Enter)" className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-base placeholder-white/25 focus:outline-none" />
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault(); const n = editNewTag.trim();
+                        if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); }
+                      }
+                    }}
+                    placeholder="Новый тег (Enter)" className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-base placeholder-white/25 focus:outline-none" />
                   <button type="button" disabled={!editNewTag.trim()}
-                          onClick={() => { const n = editNewTag.trim(); if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); } }}
-                          className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/60 disabled:opacity-30"><Plus className="w-4 h-4" /></button>
+                    onClick={() => { const n = editNewTag.trim(); if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); } }}
+                    className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/60 disabled:opacity-30"><Plus className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/[0.08] bg-white/[0.01] flex-shrink-0">
               <button onClick={() => setShowEditModal(false)} disabled={savingEdit}
-                      className="px-5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/70 text-base">Отмена</button>
+                className="px-5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/70 text-base">Отмена</button>
               <button onClick={handleSaveEdit} disabled={savingEdit || !editTitle.trim()}
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white text-base font-medium disabled:opacity-40 shadow-lg shadow-red-900/30">
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white text-base font-medium disabled:opacity-40 shadow-lg shadow-red-900/30">
                 {savingEdit && <Loader2 size={16} className="animate-spin" />}
                 {savingEdit ? 'Сохранение...' : 'Сохранить'}
               </button>
@@ -1239,17 +1237,17 @@ const handleSaveEdit = useCallback(async () => {
 
       {/* ── Подтверждение удаления комментария ── */}
       <ConfirmModal isOpen={showDeleteConfirm}
-                    onClose={() => { setShowDeleteConfirm(false); setCommentToDelete(null); }}
-                    onConfirm={() => { if (commentToDelete) handleDeleteComment(commentToDelete); setShowDeleteConfirm(false); setCommentToDelete(null); }}
-                    title="Удалить комментарий" message="Это действие нельзя отменить."
-                    confirmText="Удалить" cancelText="Отмена" type="danger" />
+        onClose={() => { setShowDeleteConfirm(false); setCommentToDelete(null); }}
+        onConfirm={() => { if (commentToDelete) handleDeleteComment(commentToDelete); setShowDeleteConfirm(false); setCommentToDelete(null); }}
+        title="Удалить комментарий" message="Это действие нельзя отменить."
+        confirmText="Удалить" cancelText="Отмена" type="danger" />
 
       {/* ── Подтверждение архивирования ── */}
       <ConfirmModal isOpen={showArchiveConfirm}
-                    onClose={() => setShowArchiveConfirm(false)}
-                    onConfirm={handleArchive}
-                    title="Архивировать заявку" message={`«${ticket.title}» будет перемещена в архив.`}
-                    confirmText={archiving ? 'Архивируем...' : 'Архивировать'} cancelText="Отмена" type="warning" />
+        onClose={() => setShowArchiveConfirm(false)}
+        onConfirm={handleArchive}
+        title="Архивировать заявку" message={`«${ticket.title}» будет перемещена в архив.`}
+        confirmText={archiving ? 'Архивируем...' : 'Архивировать'} cancelText="Отмена" type="warning" />
     </div>
   );
 }

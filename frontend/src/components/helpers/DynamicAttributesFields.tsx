@@ -85,14 +85,12 @@ export const DynamicAttributesFields: React.FC<DynamicAttributesFieldsProps> = (
                   role="switch"
                   aria-checked={!!values[key]}
                   onClick={() => onChange(key, !values[key])}
-                  className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${
-                    values[key] ? 'bg-green-600' : 'bg-white/10'
-                  }`}
+                  className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${values[key] ? 'bg-green-600' : 'bg-white/10'
+                    }`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${
-                      values[key] ? 'translate-x-4' : 'translate-x-0'
-                    }`}
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${values[key] ? 'translate-x-4' : 'translate-x-0'
+                      }`}
                   />
                 </button>
                 <span className="text-sm text-white/70">

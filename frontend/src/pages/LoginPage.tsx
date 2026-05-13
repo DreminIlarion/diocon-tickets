@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/authStore';
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login, isLoading } = useAuthStore();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email || !password) {
       setError('Заполните все поля');
       return;
@@ -44,13 +44,13 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#1c1c1c]">
-        </div>
+      </div>
 
       <div className="w-full max-w-3xl relative z-10">
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center mb-6">
-            <img 
+            <img
               src="http://80.93.62.177:8000/media/images/Logo_bez_fona_bez_teksta.width-80.height-80.png"
               alt="ДИО-Консалт"
               className="w-20 h-20 object-contain"
