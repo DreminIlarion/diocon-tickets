@@ -16,21 +16,21 @@ import type {
 // ─── Константы ────────────────────────────────────────────────────────────────
 
 const STATUSES: { value: TicketStatus; label: string; color: string }[] = [
-  { value: 'Новый', label: 'Новый', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-  { value: 'На согласовании', label: 'На согласовании', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  { value: 'Открыт', label: 'Открыт', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  { value: 'В работе', label: 'В работе', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
-  { value: 'Решён', label: 'Решён', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  { value: 'Закрыт', label: 'Закрыт', color: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30' },
-  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  { value: 'Новый', label: 'Новый', color: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30' },
+  { value: 'На согласовании', label: 'На согласовании', color: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/30' },
+  { value: 'Открыт', label: 'Открыт', color: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-500/30' },
+  { value: 'В работе', label: 'В работе', color: 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/30' },
+  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30' },
+  { value: 'Решён', label: 'Решён', color: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30' },
+  { value: 'Закрыт', label: 'Закрыт', color: 'bg-gray-100 dark:bg-gray-500/20 text-gray-700 dark:text-gray-400 border-gray-300 dark:border-gray-500/30' },
+  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30' },
 ];
 
 const PRIORITIES: { value: TicketPriority; label: string; color: string }[] = [
-  { value: 'Низкий', label: 'Низкий', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  { value: 'Средний', label: 'Средний', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
-  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  { value: 'Низкий', label: 'Низкий', color: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30' },
+  { value: 'Средний', label: 'Средний', color: 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/30' },
+  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30' },
+  { value: 'Критический', label: 'Критический', color: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30' },
 ];
 
 // ─── Кастомный Dropdown ──────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ function FilterDropdown({
 
   return (
     <div ref={ref} className="relative">
-      <p className="text-xs uppercase tracking-wider text-white/30 mb-1.5 flex items-center gap-2">
+      <p className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-1.5 flex items-center gap-2">
         {icon}
         {label}
       </p>
@@ -105,10 +105,10 @@ function FilterDropdown({
         className={`
           w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border text-base transition-all
           ${open
-            ? 'bg-white/[0.08] border-red-500/40 text-white'
+            ? 'bg-[var(--hover-2)] border-red-500/40 text-[var(--text-primary)]'
             : value
-              ? 'bg-white/[0.06] border-white/[0.12] text-white/90'
-              : 'bg-white/[0.03] border-white/[0.08] text-white/50 hover:border-white/[0.15] hover:text-white/70'
+              ? 'bg-[var(--hover-1)] border-[var(--border-color)] text-white/90'
+              : 'bg-[var(--bg-tertiary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]'
           }
         `}
       >
@@ -130,32 +130,32 @@ function FilterDropdown({
               tabIndex={0}
               onClick={e => { e.stopPropagation(); onChange(''); setOpen(false); }}
               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onChange(''); setOpen(false); } }}
-              className="p-0.5 rounded hover:bg-white/10 text-white/30 hover:text-white/60 transition-colors cursor-pointer"
+              className="p-0.5 rounded hover:bg-[var(--hover-2)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
             >
               <X size={13} />
             </span>
           ) : (
-            <ChevronDown size={15} className={`text-white/25 transition-transform ${open ? 'rotate-180' : ''}`} />
+            <ChevronDown size={15} className={`text-[var(--text-muted)] transition-transform ${open ? 'rotate-180' : ''}`} />
           )}
         </div>
       </button>
 
       {open && (
         <div
-          className="absolute top-full left-0 right-0 mt-1.5 z-[100] bg-[#1d1d1d] border border-white/[0.1] rounded-xl overflow-hidden"
+          className="absolute top-full left-0 right-0 mt-1.5 z-[100] bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden"
           style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}
         >
           {searchable && (
-            <div className="p-2 border-b border-white/[0.06]">
+            <div className="p-2 border-b border-[var(--border-color)]">
               <div className="relative">
-                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/25" />
+                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   ref={inputRef}
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Поиск..."
-                  className="w-full pl-8 pr-3 py-2 rounded-lg glass-card border border-white/[0.06]
-                             text-sm text-white placeholder-white/25 focus:outline-none focus:border-white/[0.15]"
+                  className="w-full pl-8 pr-3 py-2 rounded-lg glass-card border border-[var(--border-color)]
+                             text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-hover)]"
                 />
               </div>
             </div>
@@ -167,17 +167,17 @@ function FilterDropdown({
               onClick={() => { onChange(''); setOpen(false); setQuery(''); }}
               className={`
                 w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                ${!value ? 'bg-red-500/10 text-white' : 'text-white/55 hover:bg-white/[0.04]'}
+                ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'}
               `}
             >
               {!value ? <Check size={14} className="text-red-400 flex-shrink-0" /> : <span className="w-[14px]" />}
               <span>{placeholder}</span>
             </button>
 
-            <div className="h-px bg-white/[0.06] mx-3 my-1" />
+            <div className="h-px bg-[var(--hover-1)] mx-3 my-1" />
 
             {filtered.length === 0 ? (
-              <div className="px-4 py-6 text-center text-sm text-white/30">Ничего не найдено</div>
+              <div className="px-4 py-6 text-center text-sm text-[var(--text-muted)]">Ничего не найдено</div>
             ) : (
               filtered.map(option => {
                 const isSelected = option.value === value;
@@ -188,7 +188,7 @@ function FilterDropdown({
                     onClick={() => { onChange(option.value); setOpen(false); setQuery(''); }}
                     className={`
                       w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                      ${isSelected ? 'bg-red-500/10 text-white' : 'text-white/65 hover:bg-white/[0.04]'}
+                      ${isSelected ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'}
                     `}
                   >
                     {isSelected
@@ -204,7 +204,7 @@ function FilterDropdown({
                       <div className="min-w-0">
                         <span className="block truncate">{option.label}</span>
                         {option.sublabel && (
-                          <span className="block text-xs text-white/30 truncate">{option.sublabel}</span>
+                          <span className="block text-xs text-[var(--text-muted)] truncate">{option.sublabel}</span>
                         )}
                       </div>
                     )}
@@ -408,13 +408,13 @@ export default function TicketsPage() {
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2">
             {isCustomer ? 'Мои заявки' : 'Заявки'}
           </h1>
-          <p className="text-base text-white/60">
+          <p className="text-base text-[var(--text-secondary)]">
             Управление обращениями
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-white/[0.08] text-white/50 text-sm">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-2)] text-[var(--text-secondary)] text-sm">
                 {totalItems}
               </span>
             )}
@@ -432,14 +432,14 @@ export default function TicketsPage() {
       {/* ── Поиск + кнопка фильтров ──────────────────────────────────────── */}
       <div className="flex gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)] pointer-events-none" />
           <input
             type="text"
             placeholder="Поиск по теме, номеру, статусу..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-10 py-3 glass-card border border-white/[0.08]
-                       rounded-xl text-white text-base placeholder-white/30
+            className="w-full pl-12 pr-10 py-3 glass-card border border-[var(--border-color)]
+                       rounded-xl text-[var(--text-primary)] text-base placeholder-[var(--text-muted)]
                        focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10
                        transition-all"
           />
@@ -448,7 +448,7 @@ export default function TicketsPage() {
               type="button"
               onClick={() => setSearch('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                         text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors"
+                         text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--hover-1)] transition-colors"
             >
               <X size={14} />
             </button>
@@ -463,14 +463,14 @@ export default function TicketsPage() {
             transition-all duration-150
             ${showFilters || activeFiltersCount > 0
               ? 'bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/20'
-              : 'bg-white/[0.04] text-white/60 border border-white/[0.08] hover:bg-white/[0.06] hover:text-white/80'
+              : 'bg-[var(--hover-1)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--hover-1)] hover:text-white/80'
             }
           `}
         >
           <SlidersHorizontal size={16} />
           <span className="hidden sm:inline">Фильтры</span>
           {activeFiltersCount > 0 && (
-            <span className="ml-0.5 w-5 h-5 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">
+            <span className="ml-0.5 w-5 h-5 rounded-full bg-red-600 text-[var(--text-primary)] text-[11px] font-bold flex items-center justify-center">
               {activeFiltersCount}
             </span>
           )}
@@ -480,14 +480,14 @@ export default function TicketsPage() {
       {/* ── Активные теги поиска/фильтров ────────────────────────────────── */}
       {hasActiveFilters && !showFilters && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-white/30">Активно:</span>
+          <span className="text-sm text-[var(--text-muted)]">Активно:</span>
 
           {search && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                             bg-white/[0.06] text-white/70 border border-white/[0.08]">
+                             bg-[var(--hover-1)] text-[var(--text-primary)] border border-[var(--border-color)]">
               <Search size={12} />
               «{search}»
-              <X size={12} className="cursor-pointer text-white/30 hover:text-white/60" onClick={() => setSearch('')} />
+              <X size={12} className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-secondary)]" onClick={() => setSearch('')} />
             </span>
           )}
 
@@ -531,7 +531,7 @@ export default function TicketsPage() {
 
           <button
             onClick={resetFilters}
-            className="text-sm text-white/35 hover:text-white/60 transition-colors ml-1"
+            className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors ml-1"
           >
             Сбросить всё
           </button>
@@ -540,11 +540,11 @@ export default function TicketsPage() {
 
       {/* ── Панель фильтров ──────────────────────────────────────────────── */}
       {showFilters && (
-        <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 space-y-4
+        <div className="bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-2xl p-5 space-y-4
                         animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-white flex items-center gap-2">
-              <SlidersHorizontal size={14} className="text-white/40" />
+            <h3 className="text-base font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              <SlidersHorizontal size={14} className="text-[var(--text-muted)]" />
               Фильтры
             </h3>
             {hasActiveFilters && (
@@ -607,10 +607,10 @@ export default function TicketsPage() {
 
           {/* Активные фильтры-теги внутри панели */}
           {hasActiveFilters && (
-            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/[0.06]">
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[var(--border-color)]">
               {search && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                                 bg-white/[0.06] text-white/70 border border-white/[0.08]">
+                                 bg-[var(--hover-1)] text-[var(--text-primary)] border border-[var(--border-color)]">
                   <Search size={10} /> «{search}»
                   <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => setSearch('')} />
                 </span>
@@ -656,18 +656,18 @@ export default function TicketsPage() {
       {/* ── Статистика ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Всего', value: totalItems, icon: FileText, color: 'text-white/60' },
+          { label: 'Всего', value: totalItems, icon: FileText, color: 'text-[var(--text-secondary)]' },
           { label: 'Новых', value: tickets.filter(t => t.status === 'Новый').length, icon: Clock, color: 'text-blue-400' },
           { label: 'В работе', value: tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length, icon: CheckCircle2, color: 'text-purple-400' },
           { label: 'Критических', value: tickets.filter(t => t.priority === 'Критический').length, icon: AlertTriangle, color: 'text-red-400' },
         ].map(stat => (
-          <div key={stat.label} className="glass-card rounded-2xl border border-white/[0.08] p-5 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+          <div key={stat.label} className="glass-card rounded-2xl border border-[var(--border-color)] p-5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-[var(--hover-1)] flex items-center justify-center flex-shrink-0">
               <stat.icon className={`w-6 h-6 ${stat.color}`} />
             </div>
             <div>
-              <p className="text-3xl font-bold text-white">{stat.value}</p>
-              <p className="text-base text-white/60">{stat.label}</p>
+              <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+              <p className="text-base text-[var(--text-secondary)]">{stat.label}</p>
             </div>
           </div>
         ))}
@@ -675,10 +675,10 @@ export default function TicketsPage() {
 
       {/* ── Список ───────────────────────────────────────────────────────── */}
       {filteredTickets.length === 0 ? (
-        <div className="glass-card rounded-2xl border border-white/[0.08] p-16 text-center">
-          <FileText className="w-20 h-20 text-white/20 mx-auto mb-6" />
-          <h3 className="text-2xl font-bold text-white mb-3">Нет заявок</h3>
-          <p className="text-base text-white/50 mb-8">
+        <div className="glass-card rounded-2xl border border-[var(--border-color)] p-16 text-center">
+          <FileText className="w-20 h-20 text-[var(--text-primary)]/20 mx-auto mb-6" />
+          <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">Нет заявок</h3>
+          <p className="text-base text-[var(--text-secondary)] mb-8">
             {hasActiveFilters
               ? 'Попробуйте изменить параметры фильтрации'
               : search
@@ -696,7 +696,7 @@ export default function TicketsPage() {
           <div className="space-y-4">
             {loading && (
               <div className="flex justify-center py-4">
-                <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+                <Loader2 className="w-6 h-6 text-[var(--text-muted)] animate-spin" />
               </div>
             )}
 
@@ -704,7 +704,7 @@ export default function TicketsPage() {
               <Link
                 key={ticket.id}
                 to={`/tickets/${ticket.number}`}
-                className="glass-card p-6 block hover:bg-white/[0.08] hover:border-red-500/30 transition-all group"
+                className="glass-card p-6 block hover:bg-[var(--hover-2)] hover:border-red-500/30 transition-all group"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                   <div className="flex-1 min-w-0">
@@ -714,7 +714,7 @@ export default function TicketsPage() {
                         {ticket.number}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-3 group-hover:text-red-400 transition-colors line-clamp-2">
+                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 group-hover:text-red-400 transition-colors line-clamp-2">
                       {ticket.title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2">
@@ -728,15 +728,15 @@ export default function TicketsPage() {
                   </div>
 
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                    <div className="flex items-center gap-3 text-base text-white/70">
+                    <div className="flex items-center gap-3 text-base text-[var(--text-primary)]">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-white/30" />
+                        <Calendar className="w-4 h-4 text-[var(--text-muted)]" />
                         {formatDate(ticket.created_at)}
                       </div>
-                      <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-red-400 group-hover:translate-x-0.5 transition-all" />
                     </div>
                     {isClosed(ticket.status) && ticket.closed_at ? (
-                      <div className="flex items-center gap-1.5 text-sm text-white/35">
+                      <div className="flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
                         <XCircle className="w-3.5 h-3.5" />
                         Закрыта {formatDate(ticket.closed_at)}
                       </div>
@@ -758,9 +758,9 @@ export default function TicketsPage() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-white/[0.08]
-                           hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                           text-white text-base transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
+                           hover:bg-[var(--hover-1)] disabled:opacity-40 disabled:cursor-not-allowed
+                           text-[var(--text-primary)] text-base transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Назад
@@ -775,8 +775,8 @@ export default function TicketsPage() {
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
                       className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
-                          ? 'bg-red-700 text-white'
-                          : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
+                          ? 'bg-red-700 text-[var(--text-primary)]'
+                          : 'glass-card text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--hover-2)]'
                         }`}
                     >
                       {pageNum}
@@ -788,9 +788,9 @@ export default function TicketsPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-white/[0.08]
-                           hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                           text-white text-base transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
+                           hover:bg-[var(--hover-1)] disabled:opacity-40 disabled:cursor-not-allowed
+                           text-[var(--text-primary)] text-base transition-colors"
               >
                 Вперёд
                 <ChevronRight className="w-4 h-4" />

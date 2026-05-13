@@ -185,13 +185,13 @@ export default function CreateProductPage() {
       <div className="flex items-center gap-3 mb-8">
         <button
           onClick={() => navigate('/products')}
-          className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/50 transition-colors"
+          className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/50 transition-colors"
         >
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-lg font-semibold text-white">Новый продукт</h1>
-          <p className="text-base text-white/40">Заполните информацию о продукте</p>
+          <h1 className="text-lg font-semibold text-[var(--text-primary)]">Новый продукт</h1>
+          <p className="text-base text-[var(--text-primary)]/40">Заполните информацию о продукте</p>
         </div>
       </div>
 
@@ -206,15 +206,15 @@ export default function CreateProductPage() {
             >
               <span
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-base font-bold transition-colors ${i < step
-                    ? 'bg-green-700 text-white'
+                    ? 'bg-green-700 text-[var(--text-primary)]'
                     : i === step
-                      ? 'bg-red-800 text-white'
-                      : 'bg-white/[0.06] text-white/25'
+                      ? 'bg-red-800 text-[var(--text-primary)]'
+                      : 'bg-white/[0.06] text-[var(--text-primary)]/25'
                   }`}
               >
                 {i < step ? <Check size={14} /> : i + 1}
               </span>
-              <span className={`text-base hidden sm:inline ${i === step ? 'text-white font-medium' : i < step ? 'text-white/50' : 'text-white/25'
+              <span className={`text-base hidden sm:inline ${i === step ? 'text-[var(--text-primary)] font-medium' : i < step ? 'text-[var(--text-primary)]/50' : 'text-[var(--text-primary)]/25'
                 }`}>
                 {label}
               </span>
@@ -227,17 +227,17 @@ export default function CreateProductPage() {
       </div>
 
       {/* Content */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#1c1c1c] p-6">
+      <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-6">
         {/* Step 0: Basic info */}
         {step === 0 && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-in fade-in duration-500">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <FormField label="Название" required>
                 <input
                   value={form.name}
                   onChange={(e) => updateForm('name', e.target.value)}
                   placeholder="Например: 1С Бухгалтерия"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
                 />
               </FormField>
 
@@ -246,7 +246,7 @@ export default function CreateProductPage() {
                   value={form.vendor}
                   onChange={(e) => updateForm('vendor', e.target.value)}
                   placeholder="Например: 1С"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
                 />
               </FormField>
             </div>
@@ -261,11 +261,11 @@ export default function CreateProductPage() {
                       key={cat.value}
                       onClick={() => handleCategoryChange(cat.value)}
                       className={`flex items-center gap-2.5 px-3 py-3 rounded-xl border text-left transition-all text-base ${sel
-                          ? 'border-red-800/50 bg-red-800/10 text-white'
-                          : 'border-white/[0.06] bg-white/[0.02] text-white/50 hover:bg-white/[0.04] hover:border-white/[0.1]'
+                          ? 'border-red-800/50 bg-red-800/10 text-[var(--text-primary)]'
+                          : 'border-[var(--border-color)] bg-white/[0.02] text-[var(--text-primary)]/50 hover:bg-white/[0.04] hover:border-[var(--border-color)]'
                         }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center ${sel ? 'text-red-400' : 'text-white/30'}`}>
+                      <div className={`w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center ${sel ? 'text-red-400' : 'text-[var(--text-primary)]/30'}`}>
                         <Icon size={16} />
                       </div>
                       <span>{cat.label}</span>
@@ -281,7 +281,7 @@ export default function CreateProductPage() {
                   value={form.version}
                   onChange={(e) => updateForm('version', e.target.value)}
                   placeholder="3.0.1"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
                 />
               </FormField>
 
@@ -289,10 +289,10 @@ export default function CreateProductPage() {
                 <select
                   value={form.status}
                   onChange={(e) => updateForm('status', e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white text-base focus:outline-none focus:border-red-800/60 transition-colors"
+                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base focus:outline-none focus:border-red-800/60 transition-colors"
                 >
                   {PRODUCT_STATUSES.map((s) => (
-                    <option key={s.value} value={s.value} className="bg-[#1c1c1c]">{s.label}</option>
+                    <option key={s.value} value={s.value} className="bg-[var(--bg-primary)]">{s.label}</option>
                   ))}
                 </select>
               </FormField>
@@ -304,7 +304,7 @@ export default function CreateProductPage() {
                 onChange={(e) => updateForm('description', e.target.value)}
                 rows={3}
                 placeholder="Краткое описание..."
-                className="w-full px-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors resize-none"
+                className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors resize-none"
               />
             </FormField>
           </div>
@@ -314,16 +314,16 @@ export default function CreateProductPage() {
         {step === 1 && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-white font-medium">
+              <h3 className="text-[var(--text-primary)] font-medium">
                 Атрибуты — {getCategoryLabel(form.category)}
               </h3>
-              <p className="text-base text-white/40 mt-0.5">
+              <p className="text-base text-[var(--text-primary)]/40 mt-0.5">
                 Поля со звёздочкой обязательны
               </p>
             </div>
 
             {schemaLoading ? (
-              <div className="flex items-center justify-center gap-2 py-16 text-white/40 text-base">
+              <div className="flex items-center justify-center gap-2 py-16 text-[var(--text-primary)]/40 text-base">
                 <Loader2 size={18} className="animate-spin" />
                 Загрузка полей...
               </div>
@@ -335,7 +335,7 @@ export default function CreateProductPage() {
                 labels={ATTRIBUTE_LABELS}
               />
             ) : (
-              <div className="py-16 text-base text-white/30 text-center">
+              <div className="py-16 text-base text-[var(--text-primary)]/30 text-center">
                 Схема не загружена
               </div>
             )}
@@ -345,9 +345,9 @@ export default function CreateProductPage() {
         {/* Step 2: Review */}
         {step === 2 && (
           <div className="space-y-5">
-            <h3 className="text-white font-medium">Проверьте данные</h3>
+            <h3 className="text-[var(--text-primary)] font-medium">Проверьте данные</h3>
 
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] divide-y divide-white/[0.04]">
+            <div className="rounded-xl border border-[var(--border-color)] bg-white/[0.02] divide-y divide-white/[0.04]">
               <SummaryRow label="Название" value={form.name} />
               <SummaryRow label="Вендор" value={form.vendor} />
               <SummaryRow label="Категория" value={getCategoryLabel(form.category)} />
@@ -358,8 +358,8 @@ export default function CreateProductPage() {
 
             {attrEntries.length > 0 && (
               <div>
-                <div className="text-base text-white/35 mb-2">Атрибуты</div>
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] divide-y divide-white/[0.04]">
+                <div className="text-base text-[var(--text-primary)]/35 mb-2">Атрибуты</div>
+                <div className="rounded-xl border border-[var(--border-color)] bg-white/[0.02] divide-y divide-white/[0.04]">
                   {attrEntries.map(([key, value]) => (
                     <SummaryRow key={key} label={getAttrLabel(key)} value={formatAttrValue(value)} />
                   ))}
@@ -376,7 +376,7 @@ export default function CreateProductPage() {
           {step > 0 ? (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/60 text-base transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/60 text-base transition-colors"
             >
               <ArrowLeft size={14} />
               Назад
@@ -384,7 +384,7 @@ export default function CreateProductPage() {
           ) : (
             <button
               onClick={() => navigate('/products')}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-white/60 text-base transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/60 text-base transition-colors"
             >
               Отмена
             </button>
@@ -396,7 +396,7 @@ export default function CreateProductPage() {
             <button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canGoNext()}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-[var(--text-primary)] text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Далее
               <ArrowRight size={14} />
@@ -405,7 +405,7 @@ export default function CreateProductPage() {
             <button
               onClick={handleCreate}
               disabled={creating}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-white text-base font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-[var(--text-primary)] text-base font-medium transition-colors disabled:opacity-50"
             >
               {creating ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
               Создать продукт
@@ -429,7 +429,7 @@ const FormField = ({
   children: React.ReactNode;
 }) => (
   <div className="space-y-2">
-    <label className="block text-base text-white/60">
+    <label className="block text-base text-[var(--text-primary)]/60">
       {label}
       {required && <span className="ml-1 text-red-400">*</span>}
     </label>
@@ -439,7 +439,7 @@ const FormField = ({
 
 const SummaryRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex items-start px-4 py-3">
-    <span className="text-base text-white/35 w-[130px] flex-shrink-0">{label}</span>
-    <span className="text-base text-white/75 break-words">{value}</span>
+    <span className="text-base text-[var(--text-primary)]/35 w-[130px] flex-shrink-0">{label}</span>
+    <span className="text-base text-[var(--text-primary)]/75 break-words">{value}</span>
   </div>
 );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+﻿import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Sparkles, Loader2, FileText,
@@ -403,12 +403,12 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
     <div ref={pageRef} className="max-w-7xl mx-auto pb-12">
       {/* Header */}
       <div className="flex items-center gap-6 mb-8">
-        <button onClick={() => navigate(-1)} className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-          <ArrowLeft className="w-6 h-6 text-white" />
+        <button onClick={() => navigate(-1)} className="p-3 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] transition-colors">
+          <ArrowLeft className="w-6 h-6 text-[var(--text-primary)]" />
         </button>
         <div>
-          <h1 className="text-4xl font-bold text-white">Новая заявка</h1>
-          <p className="text-white/60">Помощник проведёт вас шаг за шагом</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)]">Новая заявка</h1>
+          <p className="text-[var(--text-primary)]/60">Помощник проведёт вас шаг за шагом</p>
         </div>
       </div>
 
@@ -421,12 +421,12 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             { num: 3, label: 'Проверка', icon: <CheckCircle2 className="w-5 h-5" /> },
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
-              <div className={`flex items-center gap-4 ${step >= s.num ? 'text-white' : 'text-white/40'}`}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${step === s.num ? 'bg-red-600 border-red-500 scale-110' : step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-white/10 border-white/20'
+              <div className={`flex items-center gap-4 ${step >= s.num ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40'}`}>
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${step === s.num ? 'bg-red-600 border-red-500 scale-110' : step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-[var(--hover-1)] border-[var(--border-color)]'
                   }`}>{step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}</div>
                 <div><div className="font-semibold text-lg">Шаг {s.num}</div><div className="text-sm">{s.label}</div></div>
               </div>
-              {i < 2 && <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-white/10'}`} />}
+              {i < 2 && <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`} />}
             </div>
           ))}
         </div>
@@ -441,20 +441,20 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             {canSelectCounterparty && (
               <>
                 <div>
-                  <label className="block text-2xl font-semibold text-white mb-4">Привязать заявку к</label>
+                  <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Привязать заявку к</label>
                   <div className="flex gap-4">
                     <button type="button" onClick={() => handleSelectionTypeChange('project')}
-                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
                       <FolderOpen className="w-6 h-6" /><span className="text-lg font-medium">Проекту</span>
                     </button>
                     <button type="button" onClick={() => handleSelectionTypeChange('counterparty')}
-                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty' ? 'border-blue-500 bg-blue-500/20 text-blue-400' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty' ? 'border-blue-500 bg-blue-500/20 text-blue-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
                       <Building2 className="w-6 h-6" /><span className="text-lg font-medium">Контрагенту</span>
                     </button>
                   </div>
                 </div>
                 <button type="button" onClick={() => handleSelectionTypeChange(null)}
-                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === null ? 'border-white bg-white/10 text-white' : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'}`}>
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === null ? 'border-white bg-[var(--hover-1)] text-[var(--text-primary)]' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
                   <X className="w-5 h-5" /><span className="text-lg font-medium">Без привязки</span>
                 </button>
               </>
@@ -463,23 +463,23 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             {/* Контрагент */}
             {canSelectCounterparty && selectionType === 'counterparty' && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">Контрагент <span className="text-red-400">*</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Контрагент <span className="text-red-400">*</span></label>
                 <div className="relative" ref={counterpartyDropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input value={counterpartySearch}
                       onChange={e => { setCounterpartySearch(e.target.value); setShowCounterpartyDropdown(true); loadCounterparties(e.target.value); }}
                       onFocus={() => { setShowCounterpartyDropdown(true); if (!counterparties.length) loadCounterparties(); }}
                       placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
                   </div>
                   {showCounterpartyDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingCounterparties ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> :
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
+                      {loadingCounterparties ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> :
                         counterparties.map(cp => (
                           <button key={cp.id} onClick={() => { setSelectedCounterparty(cp); setCounterpartySearch(cpName(cp)); setShowCounterpartyDropdown(false); }}
-                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
-                            <div className="font-semibold text-white">{cpName(cp)}</div>
-                            {cp.inn && <div className="text-xs text-white/40 mt-1">ИНН: {cp.inn}</div>}
+                            className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
+                            <div className="font-semibold text-[var(--text-primary)]">{cpName(cp)}</div>
+                            {cp.inn && <div className="text-xs text-[var(--text-primary)]/40 mt-1">ИНН: {cp.inn}</div>}
                           </button>
                         ))
                       }
@@ -493,21 +493,21 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             {/* Проект */}
             {canSelectCounterparty && selectionType === 'project' && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">Проект <span className="text-red-400">*</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Проект <span className="text-red-400">*</span></label>
                 <div className="relative" ref={projectDropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input value={projectSearch}
                       onChange={e => { setProjectSearch(e.target.value); setShowProjectDropdown(true); }}
                       onFocus={() => { setShowProjectDropdown(true); if (!projects.length) loadProjectsForAll(); }}
                       placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
                   </div>
                   {showProjectDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingProjects ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> :
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
+                      {loadingProjects ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> :
                         projects.filter(p => !projectSearch || p.name.toLowerCase().includes(projectSearch.toLowerCase()) || p.key.toLowerCase().includes(projectSearch.toLowerCase())).map(p => (
                           <button key={p.id} onClick={() => { setSelectedProject(p); setProjectSearch(prjName(p)); setShowProjectDropdown(false); }}
-                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
+                            className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
                             <span className="text-purple-400">{p.key}</span> — {p.name}
                           </button>
                         ))
@@ -524,8 +524,8 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center gap-4">
                 <Building2 className="w-8 h-8 text-blue-400" />
                 <div>
-                  <p className="text-base font-semibold text-white">{customerCounterparty.name}</p>
-                  {customerCounterparty.inn && <p className="text-white/50 text-sm">ИНН: {customerCounterparty.inn}</p>}
+                  <p className="text-base font-semibold text-[var(--text-primary)]">{customerCounterparty.name}</p>
+                  {customerCounterparty.inn && <p className="text-[var(--text-primary)]/50 text-sm">ИНН: {customerCounterparty.inn}</p>}
                 </div>
               </div>
             )}
@@ -533,26 +533,26 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             {/* Инициатор */}
             {canSelectReporter && (selectedCounterparty || selectedProject) && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">Инициатор <span className="text-white/40 text-sm">(по умолчанию — вы)</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Инициатор <span className="text-[var(--text-primary)]/40 text-sm">(по умолчанию — вы)</span></label>
                 <div className="relative" ref={reporterDropdownRef}>
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                   <input value={reporterSearch}
                     onChange={e => { setReporterSearch(e.target.value); setShowReporterDropdown(true); }}
                     onFocus={() => setShowReporterDropdown(true)}
                     placeholder="Выберите..." className="input-field pl-12 py-5 text-lg w-full" />
                   {showReporterDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingUsers ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-white/40" /></div> : (
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
+                      {loadingUsers ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> : (
                         <>
                           <button onClick={() => { setSelectedReporter(null); setReporterSearch(''); setShowReporterDropdown(false); }}
-                            className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10">
-                            <span className="text-white">{user?.full_name || 'Вы'}</span> <span className="text-white/40">(текущий)</span>
+                            className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)]">
+                            <span className="text-[var(--text-primary)]">{user?.full_name || 'Вы'}</span> <span className="text-[var(--text-primary)]/40">(текущий)</span>
                           </button>
                           {users.filter(u => !reporterSearch || (u.full_name?.toLowerCase().includes(reporterSearch.toLowerCase()) || u.email.toLowerCase().includes(reporterSearch.toLowerCase()))).map(u => (
                             <button key={u.id} onClick={() => { setSelectedReporter(u); setReporterSearch(uName(u)); setShowReporterDropdown(false); }}
-                              className="w-full text-left p-4 hover:bg-white/10 border-b border-white/10 last:border-0">
-                              <div className="text-white">{uName(u)}</div>
-                              <div className="text-white/40 text-sm">{u.email}</div>
+                              className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
+                              <div className="text-[var(--text-primary)]">{uName(u)}</div>
+                              <div className="text-[var(--text-primary)]/40 text-sm">{u.email}</div>
                             </button>
                           ))}
                         </>
@@ -560,21 +560,21 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                     </div>
                   )}
                 </div>
-                <div className="mt-3 p-4 rounded-xl bg-white/5 text-white/60">
-                  Инициатор: <span className="text-white font-medium">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</span>
+                <div className="mt-3 p-4 rounded-xl bg-[var(--hover-1)] text-[var(--text-primary)]/60">
+                  Инициатор: <span className="text-[var(--text-primary)] font-medium">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</span>
                 </div>
               </div>
             )}
 
             {/* Тема */}
-            <SpellCheckField value={title} onChange={setTitle} label="Тема заявки *">
+            <SpellCheckField  value={title} onChange={setTitle} label="Тема заявки *">
               <input type="text" value={title} onChange={e => setTitle(e.target.value)}
                 placeholder="Кратко опишите проблему..." className="input-field py-5 text-2xl w-full" />
             </SpellCheckField>
 
             {/* Описание */}
             <div>
-              <label className="block text-2xl font-semibold text-white mb-4">
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 Подробное описание <span className="text-red-400">*</span>
               </label>
               <TicketEditor blocks={descriptionBlocks} onChange={setDescriptionBlocks} />
@@ -582,37 +582,37 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
 
             {/* Обычные вложения */}
             <div>
-              <label className="block text-2xl font-semibold text-white mb-4">
-                <Upload className="inline w-6 h-6 mr-2 text-white/40" />
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
+                <Upload className="inline w-6 h-6 mr-2 text-[var(--text-primary)]/40" />
                 Прикрепить файлы
               </label>
               <div onDrop={handleGeneralDrop} onDragOver={e => e.preventDefault()}
-                className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-white/40 transition-colors">
-                <Upload className="w-10 h-10 text-white/20 mx-auto mb-3" />
-                <p className="text-lg text-white/50 mb-2">Перетащите файлы сюда</p>
+                className="border-2 border-dashed border-[var(--border-color)] rounded-xl p-8 text-center hover:border-[var(--border-color)] transition-colors">
+                <Upload className="w-10 h-10 text-[var(--text-primary)]/20 mx-auto mb-3" />
+                <p className="text-lg text-[var(--text-primary)]/50 mb-2">Перетащите файлы сюда</p>
                 <label className="inline-block">
                   <input type="file" multiple onChange={handleGeneralFileSelect} className="hidden" />
-                  <span className="px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white text-base font-medium cursor-pointer transition-colors">
+                  <span className="px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-base font-medium cursor-pointer transition-colors">
                     Выбрать файлы
                   </span>
                 </label>
-                <p className="mt-3 text-sm text-white/30">До 10 файлов, максимум 25 МБ</p>
+                <p className="mt-3 text-sm text-[var(--text-primary)]/30">До 10 файлов, максимум 25 МБ</p>
               </div>
 
               {generalFiles.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {generalFiles.map(f => (
-                    <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                    <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-[var(--border-color)]">
                       {f.preview
                         ? <img src={f.preview} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                        : <div className="w-12 h-12 rounded-lg bg-white/[0.06] flex items-center justify-center"><File className="w-5 h-5 text-white/40" /></div>
+                        : <div className="w-12 h-12 rounded-lg bg-white/[0.06] flex items-center justify-center"><File className="w-5 h-5 text-[var(--text-primary)]/40" /></div>
                       }
                       <div className="flex-1 min-w-0">
-                        <p className="text-base text-white truncate">{f.file.name}</p>
-                        <p className="text-sm text-white/40">{formatFileSize(f.file.size)}</p>
+                        <p className="text-base text-[var(--text-primary)] truncate">{f.file.name}</p>
+                        <p className="text-sm text-[var(--text-primary)]/40">{formatFileSize(f.file.size)}</p>
                       </div>
                       <button onClick={() => removeGeneralFile(f.id)}
-                        className="p-1.5 rounded-lg hover:bg-white/[0.08] text-white/30 hover:text-red-400 transition-colors">
+                        className="p-1.5 rounded-lg hover:bg-white/[0.08] text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -630,18 +630,18 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 flex items-center gap-3">
                 <Zap className="w-7 h-7 text-purple-400" />
                 <div>
-                  <h3 className="text-xl font-semibold text-white">ИИ подобрал приоритет и теги</h3>
-                  <p className="text-white/60 mt-1">Проверьте и скорректируйте</p>
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">ИИ подобрал приоритет и теги</h3>
+                  <p className="text-[var(--text-primary)]/60 mt-1">Проверьте и скорректируйте</p>
                 </div>
               </div>
             )}
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-6">Приоритет</label>
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет</label>
               <div className="flex flex-wrap gap-3">
                 {PRIORITIES.map(p => (
                   <button key={p.value} onClick={() => setPriority(p.value as TicketPriority)}
-                    className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${priority === p.value ? 'bg-white/20 text-white border-white/70' : 'bg-white/5 border-white/20 hover:bg-white/10'
+                    className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${priority === p.value ? 'bg-[var(--hover-1)] text-[var(--text-primary)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'
                       }`}>
                     <div className="flex items-center gap-4">{p.icon}<div><div className="font-semibold">{p.label}</div><div className="text-sm opacity-70">{p.desc}</div></div></div>
                   </button>
@@ -650,14 +650,14 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             </div>
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-6">Теги</label>
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Теги</label>
               {aiSuggestedTags.length > 0 && (
                 <div className="mb-6">
-                  <p className="text-white/50 text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4" />Предложено ИИ</p>
+                  <p className="text-[var(--text-primary)]/50 text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4" />Предложено ИИ</p>
                   <div className="flex flex-wrap gap-3">
                     {aiSuggestedTags.map(t => (
                       <button key={t.name} onClick={() => togglePresetTag(t)}
-                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
+                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}>
                         {t.name}
                       </button>
                     ))}
@@ -667,7 +667,7 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <div className="flex flex-wrap gap-3 mb-6">
                 {PRESET_TAGS.map(t => (
                   <button key={t.name} onClick={() => togglePresetTag(t)}
-                    className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}>
+                    className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}>
                     {t.name}
                   </button>
                 ))}
@@ -680,16 +680,16 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                   <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addCustomTag()}
                     placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
                   <button onClick={addCustomTag} disabled={!newTagInput.trim()}
-                    className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">Добавить</button>
+                    className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] font-medium disabled:opacity-40">Добавить</button>
                 </div>
               )}
               {tags.length > 0 && (
-                <div className="p-5 bg-white/5 rounded-2xl">
-                  <p className="text-white/50 mb-3">Выбрано: {tags.length}</p>
+                <div className="p-5 bg-[var(--hover-1)] rounded-2xl">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Выбрано: {tags.length}</p>
                   <div className="flex flex-wrap gap-3">
                     {tags.map(t => (
-                      <div key={t.name} className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 rounded-2xl">
-                        {t.name}<X className="w-4 h-4 cursor-pointer text-white/50 hover:text-red-400" onClick={() => removeTag(t.name)} />
+                      <div key={t.name} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--hover-1)] rounded-2xl">
+                        {t.name}<X className="w-4 h-4 cursor-pointer text-[var(--text-primary)]/50 hover:text-red-400" onClick={() => removeTag(t.name)} />
                       </div>
                     ))}
                   </div>
@@ -706,28 +706,28 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-12 h-12 text-green-400" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-2">Проверьте заявку</h2>
-              <p className="text-lg text-white/60">Убедитесь, что всё правильно</p>
+              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Проверьте заявку</h2>
+              <p className="text-lg text-[var(--text-primary)]/60">Убедитесь, что всё правильно</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in duration-500">
               {/* Привязка */}
               {selectedProject && (
                 <div className="p-6 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center gap-4">
                   <FolderOpen className="w-8 h-8 text-purple-400" />
-                  <div><p className="text-white font-semibold">{prjName(selectedProject)}</p><p className="text-white/40 text-sm">контрагент из проекта</p></div>
+                  <div><p className="text-[var(--text-primary)] font-semibold">{prjName(selectedProject)}</p><p className="text-[var(--text-primary)]/40 text-sm">контрагент из проекта</p></div>
                 </div>
               )}
               {!selectedProject && selectedCounterparty && (
                 <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center gap-4">
                   <Building2 className="w-8 h-8 text-blue-400" />
-                  <p className="text-white font-semibold">{cpName(selectedCounterparty)}</p>
+                  <p className="text-[var(--text-primary)] font-semibold">{cpName(selectedCounterparty)}</p>
                 </div>
               )}
               {isCustomer && customerCounterparty && !selectedProject && !selectedCounterparty && (
                 <div className="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center gap-4">
                   <Building2 className="w-8 h-8 text-blue-400" />
-                  <p className="text-white font-semibold">{customerCounterparty.name}</p>
+                  <p className="text-[var(--text-primary)] font-semibold">{customerCounterparty.name}</p>
                 </div>
               )}
               {canSelectCounterparty && selectionType === null && (
@@ -740,20 +740,20 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <div className="p-6 rounded-2xl bg-green-500/10 border border-green-500/30 flex items-center gap-4">
                 <User className="w-8 h-8 text-green-400" />
                 <div>
-                  <p className="text-white font-semibold">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</p>
-                  <p className="text-white/40 text-sm">{selectedReporter ? selectedReporter.email : user?.email}</p>
+                  <p className="text-[var(--text-primary)] font-semibold">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</p>
+                  <p className="text-[var(--text-primary)]/40 text-sm">{selectedReporter ? selectedReporter.email : user?.email}</p>
                 </div>
               </div>
 
               {/* Тема */}
-              <div className="p-6 rounded-2xl bg-white/5">
-                <p className="text-white/50 mb-2">Тема</p>
-                <p className="text-white font-semibold text-lg break-words">{title || '—'}</p>
+              <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                <p className="text-[var(--text-primary)]/50 mb-2">Тема</p>
+                <p className="text-[var(--text-primary)] font-semibold text-lg break-words">{title || '—'}</p>
               </div>
 
               {/* Описание — с картинками и форматированием */}
-              <div className="p-6 rounded-2xl bg-white/5">
-                <p className="text-white/50 mb-4">Описание</p>
+              <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                <p className="text-[var(--text-primary)]/50 mb-4">Описание</p>
                 <div className="space-y-4">
                   {descriptionBlocks.map(block => {
                     if (block.type === 'text') {
@@ -762,33 +762,33 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                         <TicketDescriptionContent
                           key={block.id}
                           text={block.value}
-                          className="text-white text-base leading-relaxed"
+                          className="text-[var(--text-primary)] text-base leading-relaxed"
                         />
                       );
                     }
                     if (block.type === 'image' && block.localPreview) {
                       return <img key={block.id} src={block.localPreview} alt="вложение"
-                        className="max-w-full max-h-[400px] rounded-2xl border border-white/[0.08] object-contain" />;
+                        className="max-w-full max-h-[400px] rounded-2xl border border-[var(--border-color)] object-contain" />;
                     }
                     return null;
                   })}
                   {descriptionBlocks.every(b => (b.type === 'text' && !b.value.trim()) || (b.type === 'image' && !b.localPreview)) && (
-                    <p className="text-white/30">—</p>
+                    <p className="text-[var(--text-primary)]/30">—</p>
                   )}
                 </div>
               </div>
 
               {/* Приоритет + теги */}
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-white/5">
-                  <p className="text-white/50 mb-3">Приоритет</p>
+                <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Приоритет</p>
                   <div className={`inline-flex items-center gap-3 text-lg px-5 py-2.5 rounded-2xl ${PRIORITIES.find(p => p.value === priority)?.color || ''}`}>
                     {PRIORITIES.find(p => p.value === priority)?.icon} {priority}
                   </div>
                 </div>
                 {tags.length > 0 && (
-                  <div className="p-6 rounded-2xl bg-white/5">
-                    <p className="text-white/50 mb-3">Теги</p>
+                  <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                    <p className="text-[var(--text-primary)]/50 mb-3">Теги</p>
                     <div className="flex flex-wrap gap-2">
                       {tags.map(t => (
                         <span key={t.name} className="px-4 py-2 rounded-xl text-base font-medium"
@@ -803,12 +803,12 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
 
               {/* Обычные вложения */}
               {generalFiles.length > 0 && (
-                <div className="p-6 rounded-2xl bg-white/5">
-                  <p className="text-white/50 mb-3">Вложения ({generalFiles.length})</p>
+                <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Вложения ({generalFiles.length})</p>
                   <div className="space-y-2">
                     {generalFiles.map(f => (
-                      <div key={f.id} className="flex items-center gap-3 text-white">
-                        <File className="w-5 h-5 text-white/40" />
+                      <div key={f.id} className="flex items-center gap-3 text-[var(--text-primary)]">
+                        <File className="w-5 h-5 text-[var(--text-primary)]/40" />
                         <span>{f.file.name}</span>
                         <span className="text-yellow-400 text-sm">(загрузится при создании)</span>
                       </div>
@@ -821,22 +821,22 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between mt-12 pt-8 border-t border-white/10">
+        <div className="flex justify-between mt-12 pt-8 border-t border-[var(--border-color)]">
           {step > 1 ? (
             <button onClick={() => setStep(step - 1)}
-              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-lg font-medium">
+              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] text-lg font-medium">
               <ArrowLeft className="w-5 h-5" /> Назад
             </button>
           ) : <div />}
 
           {step < 3 ? (
             <button onClick={() => setStep(step + 1)}
-              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors">
+              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors">
               Далее <ArrowRight className="w-5 h-5 inline ml-2" />
             </button>
           ) : (
             <button onClick={handleSubmit} disabled={submitting}
-              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
+              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
               {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <><FileText className="w-5 h-5" /> Создать заявку</>}
             </button>
           )}

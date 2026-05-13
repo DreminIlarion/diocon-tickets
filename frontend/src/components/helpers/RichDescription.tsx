@@ -1,4 +1,4 @@
-// components/helpers/RichDescription.tsx
+﻿// components/helpers/RichDescription.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { Loader2, ImageOff } from 'lucide-react';
 import { attachmentsApi } from '../../api/attachments';
@@ -78,8 +78,8 @@ function InlineImage({ attachmentId }: { attachmentId: string }) {
 
   if (loading) return (
     <div className="inline-flex items-center gap-2 my-2 px-3 py-2 bg-white/[0.04] rounded-lg border border-white/[0.08]">
-      <Loader2 size={16} className="animate-spin text-white/30" />
-      <span className="text-sm text-white/40">Загрузка изображения...</span>
+      <Loader2 size={16} className="animate-spin text-[var(--text-primary)]/30" />
+      <span className="text-sm text-[var(--text-primary)]/40">Загрузка изображения...</span>
     </div>
   );
 

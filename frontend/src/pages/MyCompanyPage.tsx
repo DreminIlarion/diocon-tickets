@@ -25,7 +25,7 @@ function Avatar({ name, size = 'md' }: { name?: string | null; size?: 'sm' | 'md
   const cls = { sm: 'w-8 h-8 text-xs', md: 'w-10 h-10 text-sm', lg: 'w-14 h-14 text-base' }[size];
   return (
     <div className={`${cls} rounded-full bg-gradient-to-br from-red-800 to-red-700
-                    flex items-center justify-center font-bold text-white flex-shrink-0 select-none`}>
+                    flex items-center justify-center font-bold text-[var(--text-primary)] flex-shrink-0 select-none`}>
       {getInitials(name)}
     </div>
   );
@@ -40,14 +40,14 @@ const statusClr = (s: string) => ({
   'Решён': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
   'Закрыт': 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30',
   'Переоткрыт': 'bg-red-500/15 text-red-400 border-red-500/30',
-}[s] ?? 'bg-white/5 text-white/50 border-white/10');
+}[s] ?? 'bg-[var(--hover-1)] text-[var(--text-primary)]/50 border-white/10');
 
 const priorityClr = (p: string) => ({
   'Низкий': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
   'Средний': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
   'Высокий': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
   'Критический': 'bg-red-500/15 text-red-400 border-red-500/30',
-}[p] ?? 'bg-white/5 text-white/50 border-white/10');
+}[p] ?? 'bg-[var(--hover-1)] text-[var(--text-primary)]/50 border-white/10');
 
 const fmtDate = (d: string) =>
   new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -65,13 +65,13 @@ const getEmployeeRoleInfo = (role: string) => {
     customer: {
       label: 'Сотрудник',
       icon: <User className="w-3.5 h-3.5" />,
-      color: 'bg-white/[0.06] text-white/60 border-white/[0.1]',
+      color: 'bg-white/[0.06] text-[var(--text-primary)]/60 border-[var(--border-color)]',
     },
   };
   return roles[role] || {
     label: 'Пользователь',
     icon: <User className="w-3.5 h-3.5" />,
-    color: 'bg-white/[0.06] text-white/50 border-white/[0.1]',
+    color: 'bg-white/[0.06] text-[var(--text-primary)]/50 border-[var(--border-color)]',
   };
 };
 
@@ -225,8 +225,8 @@ export default function MyCompanyPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Компания не найдена</h2>
-          <p className="text-base text-white/50">{error || 'Вы не привязаны ни к одной компании'}</p>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Компания не найдена</h2>
+          <p className="text-base text-[var(--text-primary)]/50">{error || 'Вы не привязаны ни к одной компании'}</p>
         </div>
       </div>
     );
@@ -235,7 +235,7 @@ export default function MyCompanyPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
 
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
@@ -246,15 +246,15 @@ export default function MyCompanyPage() {
               <img src={company.avatar_url} alt={company.name}
                 className="w-16 h-16 rounded-2xl object-cover" />
             ) : (
-              <Building2 className="w-8 h-8 text-white" />
+              <Building2 className="w-8 h-8 text-[var(--text-primary)]" />
             )}
           </div>
           <div>
             <div className="flex items-center gap-3 flex-wrap mb-2">
-              <h1 className="text-3xl font-bold text-white">{company.name}</h1>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">{company.name}</h1>
               <span className={`px-3 py-1 rounded-lg text-base font-medium border ${company.is_active
                   ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                  : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
+                  : 'bg-white/[0.06] text-[var(--text-primary)]/40 border-[var(--border-color)]'
                 }`}>
                 {company.is_active ? 'Активен' : 'Неактивен'}
               </span>
@@ -265,13 +265,13 @@ export default function MyCompanyPage() {
                 </span>
               )}
             </div>
-            <p className="text-white/50 text-base">{company.legal_name}</p>
+            <p className="text-[var(--text-primary)]/50 text-base">{company.legal_name}</p>
           </div>
         </div>
 
         <Link to="/tickets/new"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl
-                         bg-red-800 hover:bg-red-700 text-white text-base font-medium
+                         bg-red-800 hover:bg-red-700 text-[var(--text-primary)] text-base font-medium
                          transition-colors shadow-lg shadow-red-900/30 flex-shrink-0">
           <Plus className="w-4 h-4" />
           Создать заявку
@@ -279,13 +279,13 @@ export default function MyCompanyPage() {
       </div>
 
       {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-      <div className="flex gap-1.5 border-b border-white/[0.08] overflow-x-auto">
+      <div className="flex gap-1.5 border-b border-[var(--border-color)] overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-red-800/50 text-white border-b-2 border-red-500'
-                : 'text-white/50 hover:text-white/70 hover:bg-white/[0.04]'
+                ? 'bg-red-800/50 text-[var(--text-primary)] border-b-2 border-red-500'
+                : 'text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.04]'
               }`}>
             <tab.icon className="w-4 h-4" />
             <span className="text-base font-medium">{tab.label}</span>
@@ -304,7 +304,7 @@ export default function MyCompanyPage() {
 
           {/* ═══ Info ═══ */}
           {activeTab === 'info' && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in duration-500">
               <div className="grid md:grid-cols-2 gap-4">
                 {[
                   { label: 'ИНН', value: company.inn },
@@ -313,27 +313,27 @@ export default function MyCompanyPage() {
                   { label: 'Тип', value: company.counterparty_type },
                 ].map(field => (
                   <div key={field.label}
-                    className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-                    <p className="text-xs uppercase tracking-widest text-white/30 mb-2">{field.label}</p>
-                    <p className="text-base font-semibold text-white">{field.value || '—'}</p>
+                    className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2">{field.label}</p>
+                    <p className="text-base font-semibold text-[var(--text-primary)]">{field.value || '—'}</p>
                   </div>
                 ))}
               </div>
 
               {company.address && (
-                <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-                  <p className="text-xs uppercase tracking-widest text-white/30 mb-2 flex items-center gap-2">
+                <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2 flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5" /> Адрес
                   </p>
-                  <p className="text-base text-white">{company.address}</p>
+                  <p className="text-base text-[var(--text-primary)]">{company.address}</p>
                 </div>
               )}
 
-              <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-                <p className="text-xs uppercase tracking-widest text-white/30 mb-2 flex items-center gap-2">
+              <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+                <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2 flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" /> Дата регистрации
                 </p>
-                <p className="text-base text-white font-medium">{fmtDateTime(company.created_at)}</p>
+                <p className="text-base text-[var(--text-primary)] font-medium">{fmtDateTime(company.created_at)}</p>
               </div>
 
               {/* Статистика */}
@@ -344,10 +344,10 @@ export default function MyCompanyPage() {
                   { icon: Clock, value: activeTickets, label: 'Активных' },
                 ].map(s => (
                   <div key={s.label}
-                    className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5 text-center">
-                    <s.icon className="w-5 h-5 text-white/30 mx-auto mb-3" />
-                    <p className="text-3xl font-bold text-white mb-1">{s.value}</p>
-                    <p className="text-sm text-white/40">{s.label}</p>
+                    className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5 text-center">
+                    <s.icon className="w-5 h-5 text-[var(--text-primary)]/30 mx-auto mb-3" />
+                    <p className="text-3xl font-bold text-[var(--text-primary)] mb-1">{s.value}</p>
+                    <p className="text-sm text-[var(--text-primary)]/40">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -356,9 +356,9 @@ export default function MyCompanyPage() {
 
           {/* ═══ Contacts ═══ */}
           {activeTab === 'contacts' && (
-            <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-6">
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2.5">
-                <User className="w-5 h-5 text-white/40" />
+            <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-6">
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2.5">
+                <User className="w-5 h-5 text-[var(--text-primary)]/40" />
                 Контактное лицо
               </h3>
 
@@ -367,8 +367,8 @@ export default function MyCompanyPage() {
                   <div className="flex items-center gap-4 mb-6">
                     <Avatar name={company.contact_person.full_name} size="lg" />
                     <div>
-                      <p className="text-lg font-bold text-white">{company.contact_person.full_name}</p>
-                      <p className="text-base text-white/40">Контактное лицо</p>
+                      <p className="text-lg font-bold text-[var(--text-primary)]">{company.contact_person.full_name}</p>
+                      <p className="text-base text-[var(--text-primary)]/40">Контактное лицо</p>
                     </div>
                   </div>
 
@@ -378,7 +378,7 @@ export default function MyCompanyPage() {
                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <Phone className="w-5 h-5 text-emerald-400" />
-                        <span className="text-base text-white">{company.contact_person.phone}</span>
+                        <span className="text-base text-[var(--text-primary)]">{company.contact_person.phone}</span>
                       </a>
                     )}
                     {company.contact_person.email && (
@@ -386,7 +386,7 @@ export default function MyCompanyPage() {
                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <Mail className="w-5 h-5 text-red-400" />
-                        <span className="text-base text-white">{company.contact_person.email}</span>
+                        <span className="text-base text-[var(--text-primary)]">{company.contact_person.email}</span>
                       </a>
                     )}
                     {company.contact_person.messengers?.telegram && (
@@ -395,19 +395,19 @@ export default function MyCompanyPage() {
                         className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03]
                                     hover:bg-white/[0.06] transition-colors">
                         <MessageSquare className="w-5 h-5 text-sky-400" />
-                        <span className="text-base text-white flex-1">
+                        <span className="text-base text-[var(--text-primary)] flex-1">
                           @{company.contact_person.messengers.telegram}
                         </span>
-                        <ExternalLink className="w-4 h-4 text-white/20" />
+                        <ExternalLink className="w-4 h-4 text-[var(--text-primary)]/20" />
                       </a>
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-16">
-                  <User className="w-16 h-16 text-white/10 mx-auto mb-4" />
-                  <p className="text-white/50 text-base font-semibold mb-1">Не указано</p>
-                  <p className="text-white/30 text-sm">Контактное лицо не задано</p>
+                  <User className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
+                  <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Не указано</p>
+                  <p className="text-[var(--text-primary)]/30 text-sm">Контактное лицо не задано</p>
                 </div>
               )}
             </div>
@@ -415,12 +415,12 @@ export default function MyCompanyPage() {
 
           {/* ═══ Branches ═══ */}
           {activeTab === 'branches' && (
-            <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] overflow-hidden">
-              <div className="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.01]">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
+            <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between bg-white/[0.01]">
+                <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                   <GitBranch className="w-5 h-5 text-amber-400" />
                   Подразделения
-                  <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-white/50">
+                  <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-[var(--text-primary)]/50">
                     {branches.length}
                   </span>
                 </h2>
@@ -429,8 +429,8 @@ export default function MyCompanyPage() {
               <div className="p-6">
                 {branches.length === 0 ? (
                   <div className="text-center py-16">
-                    <GitBranch className="w-16 h-16 text-white/10 mx-auto mb-4" />
-                    <p className="text-white/50 text-base">Нет подразделений</p>
+                    <GitBranch className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
+                    <p className="text-[var(--text-primary)]/50 text-base">Нет подразделений</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-white/[0.05]">
@@ -440,10 +440,10 @@ export default function MyCompanyPage() {
                           <Building2 className="w-5 h-5 text-amber-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-white font-semibold text-base truncate">{branch.name}</p>
-                          <p className="text-white/40 text-sm truncate">{branch.legal_name}</p>
+                          <p className="text-[var(--text-primary)] font-semibold text-base truncate">{branch.name}</p>
+                          <p className="text-[var(--text-primary)]/40 text-sm truncate">{branch.legal_name}</p>
                         </div>
-                        <div className="text-right text-sm text-white/30 flex-shrink-0">
+                        <div className="text-right text-sm text-[var(--text-primary)]/30 flex-shrink-0">
                           {branch.inn && <p>ИНН {branch.inn}</p>}
                           {branch.kpp && <p>КПП {branch.kpp}</p>}
                         </div>
@@ -457,13 +457,13 @@ export default function MyCompanyPage() {
 
           {/* ═══ Employees ═══ */}
           {activeTab === 'employees' && canViewEmployees && (
-            <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] overflow-hidden">
-              <div className="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.01]">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
-                  <Users className="w-5 h-5 text-white/40" />
+            <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between bg-white/[0.01]">
+                <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
+                  <Users className="w-5 h-5 text-[var(--text-primary)]/40" />
                   Сотрудники
                   {employees.length > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-white/50">
+                    <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-[var(--text-primary)]/50">
                       {employees.length}
                     </span>
                   )}
@@ -473,13 +473,13 @@ export default function MyCompanyPage() {
               <div className="p-6">
                 {loadingEmployees ? (
                   <div className="flex justify-center py-16">
-                    <Loader2 className="w-8 h-8 animate-spin text-white/20" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[var(--text-primary)]/20" />
                   </div>
                 ) : employees.length === 0 ? (
                   <div className="text-center py-16">
-                    <Users className="w-16 h-16 text-white/10 mx-auto mb-4" />
-                    <p className="text-white/50 text-base font-semibold mb-1">Пока нет сотрудников</p>
-                    <p className="text-white/30 text-sm">
+                    <Users className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
+                    <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Пока нет сотрудников</p>
+                    <p className="text-[var(--text-primary)]/30 text-sm">
                       Вы можете пригласить коллег через раздел «Приглашения»
                     </p>
                   </div>
@@ -496,16 +496,16 @@ export default function MyCompanyPage() {
                           <Avatar name={emp.full_name || emp.username} />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-white font-semibold text-base truncate">
+                              <span className="text-[var(--text-primary)] font-semibold text-base truncate">
                                 {emp.full_name || emp.username}
                               </span>
                               {isMe && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-white/[0.08] text-white/50">
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-white/[0.08] text-[var(--text-primary)]/50">
                                   Вы
                                 </span>
                               )}
                             </div>
-                            <p className="text-white/40 text-sm truncate">{emp.email}</p>
+                            <p className="text-[var(--text-primary)]/40 text-sm truncate">{emp.email}</p>
                           </div>
                           <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm
                                            font-medium border flex-shrink-0 ${roleInfo.color}`}>
@@ -523,20 +523,20 @@ export default function MyCompanyPage() {
 
           {/* ═══ Tickets ═══ */}
           {activeTab === 'tickets' && canViewTickets && (
-            <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] overflow-hidden">
-              <div className="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.01]">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2.5">
-                  <Ticket className="w-5 h-5 text-white/40" />
+            <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between bg-white/[0.01]">
+                <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
+                  <Ticket className="w-5 h-5 text-[var(--text-primary)]/40" />
                   Заявки
                   {tickets.length > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-white/50">
+                    <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-sm text-[var(--text-primary)]/50">
                       {tickets.length}
                     </span>
                   )}
                 </h2>
                 <Link to="/tickets/new"
                   className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-700
-                                 text-white text-base font-medium transition-colors shadow-md shadow-red-900/30">
+                                 text-[var(--text-primary)] text-base font-medium transition-colors shadow-md shadow-red-900/30">
                   <Plus className="w-4 h-4" />
                   Создать
                 </Link>
@@ -545,13 +545,13 @@ export default function MyCompanyPage() {
               <div className="p-6">
                 {loadingTickets ? (
                   <div className="flex justify-center py-16">
-                    <Loader2 className="w-8 h-8 animate-spin text-white/20" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[var(--text-primary)]/20" />
                   </div>
                 ) : tickets.length === 0 ? (
                   <div className="text-center py-20">
-                    <Ticket className="w-16 h-16 text-white/10 mx-auto mb-4" />
-                    <p className="text-white/50 text-base font-semibold mb-1">Нет заявок</p>
-                    <p className="text-white/30 text-sm mb-5">
+                    <Ticket className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
+                    <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Нет заявок</p>
+                    <p className="text-[var(--text-primary)]/30 text-sm mb-5">
                       У вашей компании пока нет заявок
                     </p>
                     <Link to="/tickets/new"
@@ -580,13 +580,13 @@ export default function MyCompanyPage() {
                               {ticket.priority}
                             </span>
                           </div>
-                          <p className="text-white font-medium text-base group-hover:text-red-400
+                          <p className="text-[var(--text-primary)] font-medium text-base group-hover:text-red-400
                                         transition-colors truncate">
                             {ticket.title}
                           </p>
-                          <p className="text-white/30 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
+                          <p className="text-[var(--text-primary)]/30 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-red-400
+                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-red-400
                                                  group-hover:translate-x-0.5 transition-all
                                                  flex-shrink-0 mt-1" />
                       </Link>
@@ -596,14 +596,14 @@ export default function MyCompanyPage() {
 
                 {/* Пагинация */}
                 {ticketsTotalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 pt-6 border-t border-white/[0.06]">
+                  <div className="flex items-center justify-center gap-2 pt-6 border-t border-[var(--border-color)]">
                     <button
                       onClick={() => setTicketsPage(p => Math.max(1, p - 1))}
                       disabled={ticketsPage === 1}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl
-                                 bg-white/[0.04] border border-white/[0.08]
+                                 bg-white/[0.04] border border-[var(--border-color)]
                                  hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                                 text-white text-base transition-colors"
+                                 text-[var(--text-primary)] text-base transition-colors"
                     >
                       <ChevronRight className="w-4 h-4 rotate-180" />
                       Назад
@@ -618,8 +618,8 @@ export default function MyCompanyPage() {
                             key={pageNum}
                             onClick={() => setTicketsPage(pageNum)}
                             className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === ticketsPage
-                                ? 'bg-red-700 text-white'
-                                : 'bg-white/[0.04] text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
+                                ? 'bg-red-700 text-[var(--text-primary)]'
+                                : 'bg-white/[0.04] text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-white/[0.08]'
                               }`}
                           >
                             {pageNum}
@@ -632,9 +632,9 @@ export default function MyCompanyPage() {
                       onClick={() => setTicketsPage(p => Math.min(ticketsTotalPages, p + 1))}
                       disabled={ticketsPage === ticketsTotalPages}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl
-                                 bg-white/[0.04] border border-white/[0.08]
+                                 bg-white/[0.04] border border-[var(--border-color)]
                                  hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                                 text-white text-base transition-colors"
+                                 text-[var(--text-primary)] text-base transition-colors"
                     >
                       Вперёд
                       <ChevronRight className="w-4 h-4" />
@@ -649,30 +649,30 @@ export default function MyCompanyPage() {
         {/* ── Sidebar ───────────────────────────────────────────────────── */}
         <div className="space-y-5">
           {/* Информация */}
-          <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-            <p className="text-xs uppercase tracking-widest text-white/30 mb-5 flex items-center gap-2">
+          <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-5 flex items-center gap-2">
               <Settings className="w-3.5 h-3.5" /> Информация
             </p>
             <div className="divide-y divide-white/[0.06]">
               {[
-                { label: 'Тип', value: <span className="text-white/80">{company.counterparty_type}</span> },
+                { label: 'Тип', value: <span className="text-[var(--text-primary)]/80">{company.counterparty_type}</span> },
                 {
                   label: 'Статус', value: (
                     <span className={`text-sm px-2.5 py-1 rounded-lg font-medium border ${company.is_active
                         ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                        : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
+                        : 'bg-white/[0.06] text-[var(--text-primary)]/40 border-[var(--border-color)]'
                       }`}>
                       {company.is_active ? 'Активен' : 'Неактивен'}
                     </span>
                   )
                 },
-                { label: 'Подразделений', value: <span className="text-white font-bold">{branches.length}</span> },
-                { label: 'Заявок', value: <span className="text-white font-bold">{ticketsTotalItems}</span> },
-                { label: 'Активных', value: <span className="text-white font-bold">{activeTickets}</span> },
-                { label: 'Зарегистрирован', value: <span className="text-white/70 text-sm">{fmtDate(company.created_at)}</span> },
+                { label: 'Подразделений', value: <span className="text-[var(--text-primary)] font-bold">{branches.length}</span> },
+                { label: 'Заявок', value: <span className="text-[var(--text-primary)] font-bold">{ticketsTotalItems}</span> },
+                { label: 'Активных', value: <span className="text-[var(--text-primary)] font-bold">{activeTickets}</span> },
+                { label: 'Зарегистрирован', value: <span className="text-[var(--text-primary)]/70 text-sm">{fmtDate(company.created_at)}</span> },
               ].map(row => (
                 <div key={row.label} className="flex items-center justify-between py-3">
-                  <span className="text-white/40 text-base">{row.label}</span>
+                  <span className="text-[var(--text-primary)]/40 text-base">{row.label}</span>
                   {row.value}
                 </div>
               ))}
@@ -680,37 +680,37 @@ export default function MyCompanyPage() {
           </div>
 
           {/* Контакты */}
-          <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-            <p className="text-xs uppercase tracking-widest text-white/30 mb-4 flex items-center gap-2">
+          <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2">
               <Phone className="w-3.5 h-3.5" /> Контакты
             </p>
             <div className="space-y-3">
               {company.phone ? (
                 <a href={`tel:${company.phone}`}
-                  className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base">
+                  className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base">
                   <Phone className="w-4 h-4" /> {company.phone}
                 </a>
               ) : (
-                <p className="text-white/20 text-base">Телефон не указан</p>
+                <p className="text-[var(--text-primary)]/20 text-base">Телефон не указан</p>
               )}
               {company.email ? (
                 <a href={`mailto:${company.email}`}
-                  className="flex items-center gap-2 text-white/50 hover:text-white/70 transition-colors text-base break-all">
+                  className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base break-all">
                   <Mail className="w-4 h-4" /> {company.email}
                 </a>
               ) : (
-                <p className="text-white/20 text-base">Email не указан</p>
+                <p className="text-[var(--text-primary)]/20 text-base">Email не указан</p>
               )}
             </div>
           </div>
 
           {company.inn && (
-            <div className="bg-white/[0.04] rounded-2xl border border-white/[0.08] p-5">
-              <p className="text-xs uppercase tracking-widest text-white/30 mb-4">Реквизиты</p>
+            <div className="bg-white/[0.04] rounded-2xl border border-[var(--border-color)] p-5">
+              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Реквизиты</p>
               <div className="space-y-2 text-sm">
-                <p className="text-white/40">ИНН <span className="text-white font-mono">{company.inn}</span></p>
-                {company.kpp && <p className="text-white/40">КПП <span className="text-white font-mono">{company.kpp}</span></p>}
-                {company.okpo && <p className="text-white/40">ОКПО <span className="text-white font-mono">{company.okpo}</span></p>}
+                <p className="text-[var(--text-primary)]/40">ИНН <span className="text-[var(--text-primary)] font-mono">{company.inn}</span></p>
+                {company.kpp && <p className="text-[var(--text-primary)]/40">КПП <span className="text-[var(--text-primary)] font-mono">{company.kpp}</span></p>}
+                {company.okpo && <p className="text-[var(--text-primary)]/40">ОКПО <span className="text-[var(--text-primary)] font-mono">{company.okpo}</span></p>}
               </div>
             </div>
           )}

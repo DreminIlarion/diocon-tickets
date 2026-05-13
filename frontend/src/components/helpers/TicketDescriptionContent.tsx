@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { Loader2, ImageOff } from 'lucide-react';
 import { attachmentsApi } from '../../api/attachments';
 
@@ -22,19 +22,19 @@ function renderInlineFormatting(text: string): React.ReactNode[] {
 
     if (token.startsWith('***') && token.endsWith('***')) {
       result.push(
-        <strong key={key++} className="font-bold italic text-white">
+        <strong key={key++} className="font-bold italic text-[var(--text-primary)]">
           {token.slice(3, -3)}
         </strong>
       );
     } else if (token.startsWith('**') && token.endsWith('**')) {
       result.push(
-        <strong key={key++} className="font-semibold text-white">
+        <strong key={key++} className="font-semibold text-[var(--text-primary)]">
           {token.slice(2, -2)}
         </strong>
       );
     } else if (token.startsWith('*') && token.endsWith('*')) {
       result.push(
-        <em key={key++} className="italic text-white">
+        <em key={key++} className="italic text-[var(--text-primary)]">
           {token.slice(1, -1)}
         </em>
       );
@@ -118,8 +118,8 @@ function RemoteImage({ attachmentId }: { attachmentId: string }) {
 
   if (loading) return (
     <div className="my-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-      <Loader2 className="w-4 h-4 animate-spin text-white/30" />
-      <span className="text-sm text-white/40">Загрузка изображения...</span>
+      <Loader2 className="w-4 h-4 animate-spin text-[var(--text-primary)]/30" />
+      <span className="text-sm text-[var(--text-primary)]/40">Загрузка изображения...</span>
     </div>
   );
 

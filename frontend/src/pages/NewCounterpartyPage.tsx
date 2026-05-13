@@ -188,7 +188,7 @@ const envBadgeClass = (e: string) => {
   if (e === 'staging') return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
   if (e === 'testing') return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
   if (e === 'development') return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-  return 'bg-white/5 text-white/40 border border-white/10';
+  return 'bg-[var(--hover-1)] text-[var(--text-primary)]/40 border border-white/10';
 };
 
 // Валидация
@@ -219,13 +219,13 @@ interface LinkedProduct {
 // ─── Input стили ──────────────────────────────────────────────────────────────
 
 const inputCls = (hasError = false) =>
-  `w-full px-4 py-3.5 text-base bg-white/[0.04] border rounded-xl text-white
+  `w-full px-4 py-3.5 text-base bg-white/[0.04] border rounded-xl text-[var(--text-primary)]
    placeholder-white/30 focus:outline-none focus:ring-2 transition-all ${hasError
     ? 'border-red-500/60 focus:border-red-500 focus:ring-red-500/20'
-    : 'border-white/[0.08] focus:border-red-500/40 focus:ring-red-500/10'
+    : 'border-[var(--border-color)] focus:border-red-500/40 focus:ring-red-500/10'
   }`;
 
-const labelCls = 'block text-base font-medium text-white/80 mb-2';
+const labelCls = 'block text-base font-medium text-[var(--text-primary)]/80 mb-2';
 
 // ─── Компонент ────────────────────────────────────────────────────────────────
 
@@ -436,13 +436,13 @@ export default function NewCounterpartyPage() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <button onClick={() => navigate('/counterparties')}
-          className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06]
-                           text-white/60 hover:text-white transition-all">
+          className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-[var(--border-color)]
+                           text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] transition-all">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white">Новый контрагент</h1>
-          <p className="text-base text-white/50 mt-0.5">Заполните данные контрагента</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Новый контрагент</h1>
+          <p className="text-base text-[var(--text-primary)]/50 mt-0.5">Заполните данные контрагента</p>
         </div>
       </div>
 
@@ -454,15 +454,15 @@ export default function NewCounterpartyPage() {
               onClick={() => { if (s < step) setStep(s); }}
               disabled={s > step}
               className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-semibold transition-all ${step === s
-                  ? 'bg-red-700 text-white shadow-lg shadow-red-900/30'
+                  ? 'bg-red-700 text-[var(--text-primary)] shadow-lg shadow-red-900/30'
                   : step > s
-                    ? 'bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500'
-                    : 'bg-white/[0.06] text-white/30'
+                    ? 'bg-emerald-600 text-[var(--text-primary)] cursor-pointer hover:bg-emerald-500'
+                    : 'bg-white/[0.06] text-[var(--text-primary)]/30'
                 }`}
             >
               {step > s ? <Check className="w-4 h-4" /> : s}
             </button>
-            <span className={`text-sm font-medium hidden sm:block ${step >= s ? 'text-white/70' : 'text-white/30'}`}>
+            <span className={`text-sm font-medium hidden sm:block ${step >= s ? 'text-[var(--text-primary)]/70' : 'text-[var(--text-primary)]/30'}`}>
               {stepLabels[s]}
             </span>
             {s < totalSteps && <div className="w-6 h-0.5 bg-white/[0.08]" />}
@@ -491,7 +491,7 @@ export default function NewCounterpartyPage() {
 
       {/* ═══ Шаг 1: Основное ═══ */}
       {step === 1 && (
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-7">
+        <div className="bg-white/[0.04] border border-[var(--border-color)] rounded-2xl p-6 space-y-7">
 
           {/* Тип */}
           <div>
@@ -504,16 +504,16 @@ export default function NewCounterpartyPage() {
                   onClick={() => handleTypeChange(type.value)}
                   className={`p-5 rounded-xl border-2 text-left transition-all ${formData.counterparty_type === type.value
                       ? 'border-red-500/60 bg-red-500/[0.06]'
-                      : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12]'
+                      : 'border-[var(--border-color)] bg-white/[0.02] hover:border-[var(--border-color)]'
                     }`}
                 >
-                  <div className={`mb-2 ${formData.counterparty_type === type.value ? 'text-red-400' : 'text-white/40'}`}>
+                  <div className={`mb-2 ${formData.counterparty_type === type.value ? 'text-red-400' : 'text-[var(--text-primary)]/40'}`}>
                     {type.icon}
                   </div>
-                  <p className={`text-base font-semibold ${formData.counterparty_type === type.value ? 'text-white' : 'text-white/70'}`}>
+                  <p className={`text-base font-semibold ${formData.counterparty_type === type.value ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70'}`}>
                     {type.label}
                   </p>
-                  <p className="text-sm text-white/30 mt-1">{type.desc}</p>
+                  <p className="text-sm text-[var(--text-primary)]/30 mt-1">{type.desc}</p>
                 </button>
               ))}
             </div>
@@ -592,7 +592,7 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-end pt-2">
             <button onClick={() => setStep(2)} disabled={!isStep1Valid}
-              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-[var(--text-primary)] bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -602,11 +602,11 @@ export default function NewCounterpartyPage() {
 
       {/* ═══ Шаг 2: Контакты ═══ */}
       {step === 2 && (
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-6">
+        <div className="bg-white/[0.04] border border-[var(--border-color)] rounded-2xl p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className={labelCls}>
-                <Phone className="w-4 h-4 inline mr-1.5 text-white/40" />
+                <Phone className="w-4 h-4 inline mr-1.5 text-[var(--text-primary)]/40" />
                 Телефон <span className="text-red-400">*</span>
               </label>
               <input
@@ -627,7 +627,7 @@ export default function NewCounterpartyPage() {
 
             <div>
               <label className={labelCls}>
-                <Mail className="w-4 h-4 inline mr-1.5 text-white/40" />
+                <Mail className="w-4 h-4 inline mr-1.5 text-[var(--text-primary)]/40" />
                 Email <span className="text-red-400">*</span>
               </label>
               <input type="email" value={formData.email}
@@ -640,7 +640,7 @@ export default function NewCounterpartyPage() {
 
           <div>
             <label className={labelCls}>
-              <MapPin className="w-4 h-4 inline mr-1.5 text-white/40" />
+              <MapPin className="w-4 h-4 inline mr-1.5 text-[var(--text-primary)]/40" />
               Адрес
             </label>
             <textarea value={formData.address}
@@ -651,11 +651,11 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(1)}
-              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(3)} disabled={!isStep2Valid}
-              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-[var(--text-primary)] bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -665,13 +665,13 @@ export default function NewCounterpartyPage() {
 
       {/* ═══ Шаг 3: Контактные лица ═══ */}
       {step === 3 && (
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-6">
-          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+        <div className="bg-white/[0.04] border border-[var(--border-color)] rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-[var(--border-color)]">
             <div className="flex items-center gap-3">
-              <UserCircle className="w-6 h-6 text-white/40" />
+              <UserCircle className="w-6 h-6 text-[var(--text-primary)]/40" />
               <div>
-                <p className="text-base font-medium text-white">Контактные лица</p>
-                <p className="text-sm text-white/40">Ответственные сотрудники</p>
+                <p className="text-base font-medium text-[var(--text-primary)]">Контактные лица</p>
+                <p className="text-sm text-[var(--text-primary)]/40">Ответственные сотрудники</p>
               </div>
             </div>
             <button
@@ -680,19 +680,19 @@ export default function NewCounterpartyPage() {
                 if (includeContacts) { setIncludeContacts(false); setContactPersons([]); }
                 else { setIncludeContacts(true); if (!contactPersons.length) setContactPersons([emptyContactPerson()]); }
               }}
-              className={`relative w-12 h-6 rounded-full transition-colors ${includeContacts ? 'bg-red-600' : 'bg-white/10'}`}
+              className={`relative w-12 h-6 rounded-full transition-colors ${includeContacts ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${includeContacts ? 'translate-x-6' : ''}`} />
             </button>
           </div>
 
           {includeContacts && contactPersons.map((cp, i) => (
-            <div key={i} className="p-5 bg-white/[0.02] border border-white/[0.06] rounded-xl space-y-5">
+            <div key={i} className="p-5 bg-white/[0.02] border border-[var(--border-color)] rounded-xl space-y-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-medium text-white">Контакт #{i + 1}</p>
+                <p className="text-base font-medium text-[var(--text-primary)]">Контакт #{i + 1}</p>
                 {contactPersons.length > 1 && (
                   <button onClick={() => removeContactPerson(i)}
-                    className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
+                    className="p-1.5 text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
@@ -731,7 +731,7 @@ export default function NewCounterpartyPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={labelCls}><MessageSquare className="w-3.5 h-3.5 inline mr-1.5 text-white/40" />Telegram</label>
+                  <label className={labelCls}><MessageSquare className="w-3.5 h-3.5 inline mr-1.5 text-[var(--text-primary)]/40" />Telegram</label>
                   <input type="text" value={cp.messengers?.telegram || ''}
                     onChange={e => updateContactPerson(i, { ...cp, messengers: { ...cp.messengers, telegram: e.target.value } })}
                     placeholder="@username" className={inputCls()} />
@@ -748,20 +748,20 @@ export default function NewCounterpartyPage() {
 
           {includeContacts && (
             <button onClick={addContactPerson}
-              className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
-                               bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/[0.1]
-                               hover:border-white/[0.2] rounded-xl transition-all w-full justify-center">
+              className="flex items-center gap-2 px-5 py-3 text-base text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]
+                               bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-[var(--border-color)]
+                               hover:border-[var(--border-color)] rounded-xl transition-all w-full justify-center">
               <Plus className="w-4 h-4" /> Добавить ещё
             </button>
           )}
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(2)}
-              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(4)}
-              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-[var(--text-primary)] bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -771,13 +771,13 @@ export default function NewCounterpartyPage() {
 
       {/* ═══ Шаг 4: Филиалы (юр. лицо) ═══ */}
       {step === 4 && formData.counterparty_type === 'Юридическое лицо' && (
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-6">
-          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+        <div className="bg-white/[0.04] border border-[var(--border-color)] rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-[var(--border-color)]">
             <div className="flex items-center gap-3">
-              <GitBranch className="w-6 h-6 text-white/40" />
+              <GitBranch className="w-6 h-6 text-[var(--text-primary)]/40" />
               <div>
-                <p className="text-base font-medium text-white">Обособленные подразделения</p>
-                <p className="text-sm text-white/40">Филиалы наследуют ИНН</p>
+                <p className="text-base font-medium text-[var(--text-primary)]">Обособленные подразделения</p>
+                <p className="text-sm text-[var(--text-primary)]/40">Филиалы наследуют ИНН</p>
               </div>
             </div>
             <button
@@ -786,29 +786,29 @@ export default function NewCounterpartyPage() {
                 if (includeBranches) { setIncludeBranches(false); setBranches([]); }
                 else { setIncludeBranches(true); if (!branches.length) setBranches([emptyBranch()]); }
               }}
-              className={`relative w-12 h-6 rounded-full transition-colors ${includeBranches ? 'bg-red-600' : 'bg-white/10'}`}
+              className={`relative w-12 h-6 rounded-full transition-colors ${includeBranches ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${includeBranches ? 'translate-x-6' : ''}`} />
             </button>
           </div>
 
           {includeBranches && branches.map((branch, i) => (
-            <div key={i} className="p-5 bg-white/[0.02] border border-white/[0.06] rounded-xl space-y-5">
+            <div key={i} className="p-5 bg-white/[0.02] border border-[var(--border-color)] rounded-xl space-y-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-medium text-white flex items-center gap-2">
-                  <GitBranch className="w-4 h-4 text-white/40" /> Филиал #{i + 1}
+                <p className="text-base font-medium text-[var(--text-primary)] flex items-center gap-2">
+                  <GitBranch className="w-4 h-4 text-[var(--text-primary)]/40" /> Филиал #{i + 1}
                 </p>
                 {branches.length > 1 && (
                   <button onClick={() => removeBranch(i)}
-                    className="p-1.5 text-white/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
+                    className="p-1.5 text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
               </div>
 
-              <div className="px-3 py-2 bg-white/[0.03] rounded-lg border border-white/[0.06]">
-                <p className="text-sm text-white/40">
-                  ИНН наследуется: <span className="text-white font-mono">{formData.inn}</span>
+              <div className="px-3 py-2 bg-white/[0.03] rounded-lg border border-[var(--border-color)]">
+                <p className="text-sm text-[var(--text-primary)]/40">
+                  ИНН наследуется: <span className="text-[var(--text-primary)] font-mono">{formData.inn}</span>
                 </p>
               </div>
 
@@ -867,20 +867,20 @@ export default function NewCounterpartyPage() {
 
           {includeBranches && (
             <button onClick={addBranch}
-              className="flex items-center gap-2 px-5 py-3 text-base text-white/50 hover:text-white
-                               bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-white/[0.1]
-                               hover:border-white/[0.2] rounded-xl transition-all w-full justify-center">
+              className="flex items-center gap-2 px-5 py-3 text-base text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]
+                               bg-white/[0.02] hover:bg-white/[0.05] border border-dashed border-[var(--border-color)]
+                               hover:border-[var(--border-color)] rounded-xl transition-all w-full justify-center">
               <Plus className="w-4 h-4" /> Добавить филиал
             </button>
           )}
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(3)}
-              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={() => setStep(5)}
-              className="px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700 rounded-xl
+              className="px-6 py-3 text-base font-semibold text-[var(--text-primary)] bg-red-800 hover:bg-red-700 rounded-xl
                                transition-all shadow-lg shadow-red-900/30">
               Далее
             </button>
@@ -890,19 +890,19 @@ export default function NewCounterpartyPage() {
 
       {/* ═══ Шаг «Продукты» ═══ */}
       {step === productsStep && (
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 space-y-6">
-          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+        <div className="bg-white/[0.04] border border-[var(--border-color)] rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-[var(--border-color)]">
             <div className="flex items-center gap-3">
-              <Package className="w-6 h-6 text-white/40" />
+              <Package className="w-6 h-6 text-[var(--text-primary)]/40" />
               <div>
-                <p className="text-base font-medium text-white">Привязать продукты</p>
-                <p className="text-sm text-white/40">ПО и оборудование</p>
+                <p className="text-base font-medium text-[var(--text-primary)]">Привязать продукты</p>
+                <p className="text-sm text-[var(--text-primary)]/40">ПО и оборудование</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setShowProductForm(!showProductForm)}
-              className={`relative w-12 h-6 rounded-full transition-colors ${showProductForm ? 'bg-red-600' : 'bg-white/10'}`}
+              className={`relative w-12 h-6 rounded-full transition-colors ${showProductForm ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${showProductForm ? 'translate-x-6' : ''}`} />
             </button>
@@ -911,44 +911,44 @@ export default function NewCounterpartyPage() {
           {showProductForm && (
             <div className="space-y-5">
               {/* Выбор продукта — из полного списка с фильтром */}
-              <div className="p-5 bg-white/[0.02] border border-white/[0.06] rounded-xl space-y-4">
-                <p className="text-base font-medium text-white">Выберите продукт</p>
+              <div className="p-5 bg-white/[0.02] border border-[var(--border-color)] rounded-xl space-y-4">
+                <p className="text-base font-medium text-[var(--text-primary)]">Выберите продукт</p>
 
                 {selectedProductToLink ? (
-                  <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl">
+                  <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-[var(--border-color)] rounded-xl">
                     {(() => {
                       const Icon = catMeta(selectedProductToLink.category)?.icon || Package;
-                      return <Icon className="w-5 h-5 text-white/40 flex-shrink-0" />;
+                      return <Icon className="w-5 h-5 text-[var(--text-primary)]/40 flex-shrink-0" />;
                     })()}
                     <div className="flex-1 min-w-0">
-                      <p className="text-base font-medium text-white truncate">{selectedProductToLink.display_name || selectedProductToLink.name}</p>
-                      <p className="text-sm text-white/40">{selectedProductToLink.vendor}</p>
+                      <p className="text-base font-medium text-[var(--text-primary)] truncate">{selectedProductToLink.display_name || selectedProductToLink.name}</p>
+                      <p className="text-sm text-[var(--text-primary)]/40">{selectedProductToLink.vendor}</p>
                     </div>
                     <button onClick={() => setSelectedProductToLink(null)}
-                      className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
+                      className="p-1.5 text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
                   <>
                     <div className="relative">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30 pointer-events-none" />
                       <input value={productFilter}
                         onChange={e => setProductFilter(e.target.value)}
                         placeholder="Фильтр по названию или вендору..."
-                        className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-base text-white
+                        className="w-full pl-10 pr-4 py-3 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-base text-[var(--text-primary)]
                                         placeholder-white/30 focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10 transition-all" />
                     </div>
 
-                    <div className="max-h-56 overflow-y-auto rounded-xl border border-white/[0.06] bg-[#161616] divide-y divide-white/[0.04]">
+                    <div className="max-h-56 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[#161616] divide-y divide-white/[0.04]">
                       {loadingProducts ? (
                         <div className="flex justify-center py-10">
-                          <Loader2 className="w-5 h-5 animate-spin text-white/20" />
+                          <Loader2 className="w-5 h-5 animate-spin text-[var(--text-primary)]/20" />
                         </div>
                       ) : availableProducts.length === 0 ? (
                         <div className="py-10 text-center">
-                          <Package className="w-8 h-8 mx-auto mb-2 text-white/10" />
-                          <p className="text-base text-white/30">
+                          <Package className="w-8 h-8 mx-auto mb-2 text-[var(--text-primary)]/10" />
+                          <p className="text-base text-[var(--text-primary)]/30">
                             {productFilter ? 'Ничего не найдено' : 'Нет продуктов'}
                           </p>
                         </div>
@@ -970,10 +970,10 @@ export default function NewCounterpartyPage() {
                               }}
                               className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors"
                             >
-                              <PIcon className="w-4 h-4 text-white/30 flex-shrink-0" />
+                              <PIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
-                                <p className="text-base text-white truncate">{p.display_name || p.name}</p>
-                                <p className="text-sm text-white/30">{p.vendor}</p>
+                                <p className="text-base text-[var(--text-primary)] truncate">{p.display_name || p.name}</p>
+                                <p className="text-sm text-[var(--text-primary)]/30">{p.vendor}</p>
                               </div>
                             </button>
                           );
@@ -987,13 +987,13 @@ export default function NewCounterpartyPage() {
                 {selectedProductToLink && (
                   <>
                     <div>
-                      <label className="block text-sm text-white/40 mb-2">Среда</label>
+                      <label className="block text-sm text-[var(--text-primary)]/40 mb-2">Среда</label>
                       <div className="grid grid-cols-2 gap-2">
                         {ENVIRONMENTS.map(env => (
                           <button key={env.value} onClick={() => setProductEnv(env.value)}
                             className={`px-3 py-2.5 rounded-xl text-base font-medium transition-all ${productEnv === env.value
                                 ? envBadgeClass(env.value)
-                                : 'border border-white/[0.06] bg-white/[0.02] text-white/40 hover:bg-white/[0.04]'
+                                : 'border border-[var(--border-color)] bg-white/[0.02] text-[var(--text-primary)]/40 hover:bg-white/[0.04]'
                               }`}>
                             {env.label}
                           </button>
@@ -1001,21 +1001,21 @@ export default function NewCounterpartyPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+                    <div className="flex items-center justify-between p-3 bg-white/[0.03] rounded-xl border border-[var(--border-color)]">
                       <div>
-                        <p className="text-base text-white/70">Основной продукт</p>
-                        <p className="text-sm text-white/30">Отмечает как основной</p>
+                        <p className="text-base text-[var(--text-primary)]/70">Основной продукт</p>
+                        <p className="text-sm text-[var(--text-primary)]/30">Отмечает как основной</p>
                       </div>
                       <button onClick={() => setProductIsPrimary(!productIsPrimary)}
-                        className={`relative w-11 h-6 rounded-full transition-colors ${productIsPrimary ? 'bg-red-600' : 'bg-white/10'}`}>
+                        className={`relative w-11 h-6 rounded-full transition-colors ${productIsPrimary ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`}>
                         <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${productIsPrimary ? 'translate-x-5' : ''}`} />
                       </button>
                     </div>
 
                     <button onClick={addLinkedProduct}
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl
-                                       bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08]
-                                       text-white text-base font-medium transition-colors">
+                                       bg-white/[0.05] hover:bg-white/[0.08] border border-[var(--border-color)]
+                                       text-[var(--text-primary)] text-base font-medium transition-colors">
                       <Plus className="w-4 h-4" /> Добавить в список
                     </button>
                   </>
@@ -1025,14 +1025,14 @@ export default function NewCounterpartyPage() {
               {/* Список добавленных */}
               {linkedProducts.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm text-white/40">Будет привязано: {linkedProducts.length}</p>
+                  <p className="text-sm text-[var(--text-primary)]/40">Будет привязано: {linkedProducts.length}</p>
                   {linkedProducts.map((lp, idx) => {
                     const PIcon = catMeta(lp.product.category)?.icon || Package;
                     return (
-                      <div key={idx} className="flex items-center gap-3 p-3 bg-white/[0.03] border border-white/[0.06] rounded-xl">
-                        <PIcon className="w-4 h-4 text-white/30 flex-shrink-0" />
+                      <div key={idx} className="flex items-center gap-3 p-3 bg-white/[0.03] border border-[var(--border-color)] rounded-xl">
+                        <PIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-base text-white truncate">{lp.product.display_name || lp.product.name}</p>
+                          <p className="text-base text-[var(--text-primary)] truncate">{lp.product.display_name || lp.product.name}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${envBadgeClass(lp.environment)}`}>
                               {envLabel(lp.environment)}
@@ -1045,7 +1045,7 @@ export default function NewCounterpartyPage() {
                           </div>
                         </div>
                         <button onClick={() => removeLinkedProduct(idx)}
-                          className="p-1.5 text-white/30 hover:text-red-400 transition-colors">
+                          className="p-1.5 text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -1058,11 +1058,11 @@ export default function NewCounterpartyPage() {
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(productsPrevStep)}
-              className="px-6 py-3 text-base font-medium text-white/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
+              className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70 bg-white/[0.05] hover:bg-white/[0.08] rounded-xl transition-all">
               Назад
             </button>
             <button onClick={handleSubmit} disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white bg-red-800 hover:bg-red-700
+              className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-[var(--text-primary)] bg-red-800 hover:bg-red-700
                                rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-900/30">
               {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isLoading ? 'Сохранение...' : 'Создать контрагента'}

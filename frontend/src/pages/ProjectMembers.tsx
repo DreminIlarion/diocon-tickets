@@ -1,4 +1,4 @@
-// components/ProjectMembers.tsx
+﻿// components/ProjectMembers.tsx
 import { useState, useEffect } from 'react';
 import { Users, UserPlus, Loader2, X, Crown, Shield, User, Eye, Building2, Search } from 'lucide-react';
 import { projectsApi, counterpartiesApi } from '../api/client';

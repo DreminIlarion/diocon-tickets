@@ -1,4 +1,4 @@
-// components/helpers/CommentItem.tsx
+﻿// components/helpers/CommentItem.tsx
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -47,8 +47,8 @@ const getReactionChipClass = (isActive: boolean) =>
     'backdrop-blur-sm transition-all duration-150 active:scale-[0.98]',
     'shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_1px_2px_rgba(0,0,0,0.18)]',
     isActive
-      ? 'bg-blue-900/40 border-[#5b79ad]/35 text-white hover:bg-[#2b3950]'
-      : 'bg-white/[0.04] border-white/[0.08] text-white/70 hover:bg-white/[0.065] hover:border-white/[0.12] hover:text-white/85 hover:-translate-y-[1px]',
+      ? 'bg-blue-900/40 border-[#5b79ad]/35 text-[var(--text-primary)] hover:bg-[#2b3950]'
+      : 'bg-white/[0.04] border-white/[0.08] text-[var(--text-primary)]/70 hover:bg-white/[0.065] hover:border-white/[0.12] hover:text-[var(--text-primary)]/85 hover:-translate-y-[1px]',
   ].join(' ');
 
 const getReactionPickerItemClass = (isActive: boolean) =>
@@ -90,16 +90,16 @@ function ReplyFilePreview({ file, onRemove }: ReplyFilePreviewProps) {
         <img src={preview} alt={file.name} className="w-8 h-8 rounded object-cover flex-shrink-0" />
       ) : (
         <div className="w-8 h-8 rounded bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-          <File size={14} className="text-white/40" />
+          <File size={14} className="text-[var(--text-primary)]/40" />
         </div>
       )}
       <div className="min-w-0">
-        <p className="text-xs text-white/70 truncate max-w-[100px]">{file.name}</p>
-        <p className="text-[10px] text-white/30">{formatSize(file.size)}</p>
+        <p className="text-xs text-[var(--text-primary)]/70 truncate max-w-[100px]">{file.name}</p>
+        <p className="text-[10px] text-[var(--text-primary)]/30">{formatSize(file.size)}</p>
       </div>
       <button
         onClick={onRemove}
-        className="ml-1 p-0.5 rounded text-white/30 hover:text-red-400 hover:bg-white/[0.05] transition-colors flex-shrink-0"
+        className="ml-1 p-0.5 rounded text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-white/[0.05] transition-colors flex-shrink-0"
       >
         <X size={12} />
       </button>
@@ -441,7 +441,7 @@ export const CommentItem = React.memo(({
     return createPortal(
       <div
         ref={contextMenuRef}
-        className="fixed z-[9999] bg-[#1c1c1c]/95 backdrop-blur-xl rounded-2xl shadow-[0_18px_44px_rgba(0,0,0,.45)] border border-white/[0.08] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+        className="fixed z-[9999] bg-[var(--bg-secondary)]/95 backdrop-blur-xl rounded-2xl shadow-[0_18px_44px_rgba(0,0,0,.45)] border border-white/[0.08] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
         style={{ top: contextMenu.y, left: contextMenu.x, minWidth: 220 }}
       >
         <div className="flex items-center gap-1 p-2.5 border-b border-white/[0.06]">
@@ -452,12 +452,12 @@ export const CommentItem = React.memo(({
           ))}
         </div>
         <div className="py-1.5">
-          <button onClick={() => { onReply(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-white/90 transition-colors">
+          <button onClick={() => { onReply(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
             <Reply size={16} /> Ответить
           </button>
           {canEdit && (
             <>
-              <button onClick={() => { setIsEditing(true); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-white/90 transition-colors">
+              <button onClick={() => { setIsEditing(true); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
                 <Edit2 size={16} /> Редактировать
               </button>
               <button onClick={() => { onDeleteComment(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-red-400 transition-colors">
@@ -476,7 +476,7 @@ export const CommentItem = React.memo(({
     return createPortal(
       <div
         ref={reactionPickerRef}
-        className="fixed z-[9999] rounded-2xl border border-white/[0.08] bg-[#1c1c1c]/95 backdrop-blur-xl p-1.5 flex items-center gap-0.5 shadow-[0_12px_30px_rgba(0,0,0,.35)] animate-in fade-in zoom-in-95 duration-100"
+        className="fixed z-[9999] rounded-2xl border border-white/[0.08] bg-[var(--bg-secondary)]/95 backdrop-blur-xl p-1.5 flex items-center gap-0.5 shadow-[0_12px_30px_rgba(0,0,0,.35)] animate-in fade-in zoom-in-95 duration-100"
         style={{ top: reactionPickerPosition.y, left: reactionPickerPosition.x }}
       >
         {REACTIONS_CONFIG.map(r => (
@@ -500,22 +500,22 @@ export const CommentItem = React.memo(({
         onMouseLeave={() => setIsHovered(false)}
       >
         {level > 0 && (
-          <div className="absolute left-0 top-0 bottom-0 border-l border-white/10" style={{ left: '-12px' }} />
+          <div className="absolute left-0 top-0 bottom-0 border-l border-[var(--border-color)]" style={{ left: '-12px' }} />
         )}
 
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${getAvatarColor(comment.author_role)} flex items-center justify-center shadow-sm`}>
-              <User className="w-4 h-4 text-white" />
+              <User className="w-4 h-4 text-[var(--text-primary)]" />
             </div>
           </div>
 
           <div className="flex-1 min-w-0">
             {/* Шапка комментария */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-l font-medium text-white">{getAuthorName(comment)}</span>
-              <span className="text-l text-white/40">{formatRelativeTime(comment.created_at)}</span>
-              {comment.edited_at && <span className="text-l text-white/30">(изменён)</span>}
+              <span className="text-l font-medium text-[var(--text-primary)]">{getAuthorName(comment)}</span>
+              <span className="text-l text-[var(--text-primary)]/40">{formatRelativeTime(comment.created_at)}</span>
+              {comment.edited_at && <span className="text-l text-[var(--text-primary)]/30">(изменён)</span>}
               {isInternal && (
                 <span className="text-l px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-500/15">
                   Внутренний
@@ -530,21 +530,21 @@ export const CommentItem = React.memo(({
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   onKeyDown={handleEditKeyDown}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/15 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-red-500/40 text-l"
+                  className="w-full px-3 py-2 bg-[var(--hover-1)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/40 focus:outline-none focus:border-red-500/40 text-l"
                   rows={3}
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveEdit} className="px-3 py-1.5 text-l bg-red-800 hover:bg-red-700 rounded-lg text-white transition-colors">
+                  <button onClick={handleSaveEdit} className="px-3 py-1.5 text-l bg-red-800 hover:bg-red-700 rounded-lg text-[var(--text-primary)] transition-colors">
                     Сохранить
                   </button>
-                  <button onClick={() => { setIsEditing(false); setEditText(comment.text); }} className="px-3 py-1.5 text-l bg-white/10 hover:bg-white/15 rounded-lg text-white transition-colors">
+                  <button onClick={() => { setIsEditing(false); setEditText(comment.text); }} className="px-3 py-1.5 text-l bg-[var(--hover-1)] hover:bg-[var(--hover-1)] rounded-lg text-[var(--text-primary)] transition-colors">
                     Отмена
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="text-white/90 text-l mt-1 whitespace-pre-wrap break-words leading-6">
+              <p className="text-[var(--text-primary)]/90 text-l mt-1 whitespace-pre-wrap break-words leading-6">
                 {comment.text}
               </p>
             )}
@@ -561,7 +561,7 @@ export const CommentItem = React.memo(({
                       ? <img src={reaction.emoji} alt={reaction.label} className="w-7 h-7" />
                       : <span className="text-l">{reaction.emoji}</span>}
                     {count > 0 && (
-                      <span className={`text-l font-semibold leading-none tabular-nums ${isActive ? 'text-white/90' : 'text-white/70'}`}>
+                      <span className={`text-l font-semibold leading-none tabular-nums ${isActive ? 'text-[var(--text-primary)]/90' : 'text-[var(--text-primary)]/70'}`}>
                         {count}
                       </span>
                     )}
@@ -569,12 +569,12 @@ export const CommentItem = React.memo(({
                 );
               })}
 
-              <button onClick={() => onReply(comment.id)} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-white/45 hover:text-white/70 hover:bg-white/[0.06] transition-colors">
+              <button onClick={() => onReply(comment.id)} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors">
                 <Reply size={12} /><span>Ответить</span>
               </button>
 
               {localReplyCount > 0 && (
-                <button onClick={() => loadReplies()} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-white/45 hover:text-white/70 hover:bg-white/[0.06] transition-colors">
+                <button onClick={() => loadReplies()} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors">
                   {loadingReplies ? <Loader2 size={12} className="animate-spin" /> : showReplies ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   <span>{localReplyCount}</span>
                 </button>
@@ -591,7 +591,7 @@ export const CommentItem = React.memo(({
                       if (y + 220 > window.innerHeight) y = y - 220;
                       setContextMenu({ x, y });
                     }}
-                    className="p-1 rounded-full text-white/40 hover:text-white/65 hover:bg-white/[0.06] transition-colors"
+                    className="p-1 rounded-full text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/65 hover:bg-white/[0.06] transition-colors"
                   >
                     <MoreVertical size={16} />
                   </button>
@@ -630,7 +630,7 @@ export const CommentItem = React.memo(({
                   <button
                     type="button"
                     onClick={() => replyFileInputRef.current?.click()}
-                    className="p-2 rounded-xl text-white/40 hover:text-white/70 hover:bg-white/[0.06] transition-colors flex-shrink-0 self-end mb-0.5"
+                    className="p-2 rounded-xl text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors flex-shrink-0 self-end mb-0.5"
                     title="Прикрепить файл"
                   >
                     <Paperclip size={16} />
@@ -643,7 +643,7 @@ export const CommentItem = React.memo(({
                     onChange={(e) => setReplyText(e.target.value)}
                     onKeyDown={localHandleKeyDown}
                     placeholder={`Ответить ${getAuthorName(comment)}...`}
-                    className="flex-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-xl text-white placeholder-white/35 focus:outline-none focus:border-red-500/40 text-l resize-none overflow-hidden"
+                    className="flex-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[var(--text-primary)] placeholder-white/35 focus:outline-none focus:border-red-500/40 text-l resize-none overflow-hidden"
                     rows={1}
                     style={{ minHeight: '38px', maxHeight: '150px' }}
                     autoFocus
@@ -654,7 +654,7 @@ export const CommentItem = React.memo(({
                     <button
                       onClick={() => handleLocalSendReply(comment.id, replyText)}
                       disabled={(!replyText.trim() && replyFiles.length === 0) || uploadingReply}
-                      className="px-3 py-2 bg-red-800 hover:bg-red-700 rounded-lg text-white text-l disabled:opacity-50 transition-colors flex items-center gap-1.5"
+                      className="px-3 py-2 bg-red-800 hover:bg-red-700 rounded-lg text-[var(--text-primary)] text-l disabled:opacity-50 transition-colors flex items-center gap-1.5"
                     >
                       {uploadingReply
                         ? <><Loader2 size={12} className="animate-spin" /> Отправка...</>
@@ -663,7 +663,7 @@ export const CommentItem = React.memo(({
                     </button>
                     <button
                       onClick={() => { setReplyingTo(null); setReplyFiles([]); }}
-                      className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] rounded-lg text-white/60 text-l transition-colors"
+                      className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] rounded-lg text-[var(--text-primary)]/60 text-l transition-colors"
                     >
                       Отмена
                     </button>
@@ -671,7 +671,7 @@ export const CommentItem = React.memo(({
                 </div>
 
                 {/* Подсказка */}
-                <p className="text-[14px] text-white/25 pl-10">
+                <p className="text-[14px] text-[var(--text-primary)]/25 pl-10">
                   Ctrl+Enter — отправить {replyFiles.length > 0 && `· ${replyFiles.length} файл(а) прикреплено`}
                 </p>
               </div>
@@ -684,7 +684,7 @@ export const CommentItem = React.memo(({
                   <button
                     key={att.id}
                     onClick={() => handleDownload(att.id)}
-                    className="text-l text-white/45 hover:text-white/70 flex items-center gap-1 transition-colors"
+                    className="text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 flex items-center gap-1 transition-colors"
                   >
                     <span className="text-red-600"><Paperclip size={16} /></span>
                     {att.original_filename}
@@ -698,7 +698,7 @@ export const CommentItem = React.memo(({
               <div className="mt-3 space-y-3">
                 {loadingReplies ? (
                   <div className="flex justify-center py-2">
-                    <Loader2 size={16} className="text-white/30 animate-spin" />
+                    <Loader2 size={16} className="text-[var(--text-primary)]/30 animate-spin" />
                   </div>
                 ) : (
                   replies.map(reply => (

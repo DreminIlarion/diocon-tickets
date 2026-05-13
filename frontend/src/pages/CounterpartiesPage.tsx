@@ -38,17 +38,17 @@ const TYPE_OPTIONS = [
   {
     value: 'Юридическое лицо',
     label: 'Юридическое лицо',
-    icon: <Building2 className="w-4 h-4 text-white/40" />,
+    icon: <Building2 className="w-4 h-4 text-[var(--text-primary)]/40" />,
   },
   {
     value: 'Физическое лицо',
     label: 'Физическое лицо',
-    icon: <User className="w-4 h-4 text-white/40" />,
+    icon: <User className="w-4 h-4 text-[var(--text-primary)]/40" />,
   },
   {
     value: 'ИП',
     label: 'ИП',
-    icon: <Briefcase className="w-4 h-4 text-white/40" />,
+    icon: <Briefcase className="w-4 h-4 text-[var(--text-primary)]/40" />,
   },
 ] as const;
 
@@ -122,7 +122,7 @@ function FilterDropdown({
 
   return (
     <div ref={containerRef} className="relative">
-      <p className="text-xs uppercase tracking-wider text-white/30 mb-1.5 flex items-center gap-2">
+      <p className="text-xs uppercase tracking-wider text-[var(--text-primary)]/30 mb-1.5 flex items-center gap-2">
         {icon}
         {label}
       </p>
@@ -134,10 +134,10 @@ function FilterDropdown({
         className={`
           w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border text-base transition-all
           ${open
-            ? 'bg-white/[0.08] border-red-500/40 text-white'
+            ? 'bg-white/[0.08] border-red-500/40 text-[var(--text-primary)]'
             : value
-              ? 'bg-white/[0.06] border-white/[0.12] text-white/90'
-              : 'bg-white/[0.03] border-white/[0.08] text-white/50 hover:border-white/[0.15] hover:text-white/70'
+              ? 'bg-white/[0.06] border-[var(--border-color)] text-[var(--text-primary)]/90'
+              : 'bg-white/[0.03] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
           }
         `}
       >
@@ -153,14 +153,14 @@ function FilterDropdown({
                 onChange('');
                 setOpen(false);
               }}
-              className="p-0.5 rounded hover:bg-white/10 text-white/30 hover:text-white/60 transition-colors cursor-pointer"
+              className="p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 transition-colors cursor-pointer"
             >
               <X size={13} />
             </span>
           ) : (
             <ChevronDown
               size={15}
-              className={`text-white/25 transition-transform ${open ? 'rotate-180' : ''}`}
+              className={`text-[var(--text-primary)]/25 transition-transform ${open ? 'rotate-180' : ''}`}
             />
           )}
         </div>
@@ -170,23 +170,23 @@ function FilterDropdown({
         <div
           className={`
             absolute z-[100] min-w-[220px] w-full max-w-[320px]
-            bg-[#1d1d1d] border border-white/[0.1] rounded-xl overflow-hidden
+            bg-[#1d1d1d] border border-[var(--border-color)] rounded-xl overflow-hidden
             ${openUp ? 'bottom-full mb-2' : 'top-full mt-2'}
             ${alignRight ? 'right-0' : 'left-0'}
           `}
           style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}
         >
           {searchable && (
-            <div className="p-2 border-b border-white/[0.06]">
+            <div className="p-2 border-b border-[var(--border-color)]">
               <div className="relative">
-                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/25" />
+                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/25" />
                 <input
                   ref={inputRef}
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Поиск..."
-                  className="w-full pl-8 pr-3 py-2 rounded-lg glass-card border border-white/[0.06]
-                             text-sm text-white placeholder-white/25 focus:outline-none focus:border-white/[0.15]"
+                  className="w-full pl-8 pr-3 py-2 rounded-lg glass-card border border-[var(--border-color)]
+                             text-sm text-[var(--text-primary)] placeholder-white/25 focus:outline-none focus:border-[var(--border-color)]"
                 />
               </div>
             </div>
@@ -198,7 +198,7 @@ function FilterDropdown({
               onClick={() => { onChange(''); setOpen(false); }}
               className={`
                 w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                ${!value ? 'bg-red-500/10 text-white' : 'text-white/55 hover:glass-card'}
+                ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/55 hover:glass-card'}
               `}
             >
               {!value ? <Check size={14} className="text-red-400" /> : <span className="w-[14px]" />}
@@ -208,7 +208,7 @@ function FilterDropdown({
             <div className="h-px bg-white/[0.06] mx-3 my-1" />
 
             {filtered.length === 0 ? (
-              <div className="px-4 py-6 text-center text-sm text-white/30">Ничего не найдено</div>
+              <div className="px-4 py-6 text-center text-sm text-[var(--text-primary)]/30">Ничего не найдено</div>
             ) : (
               filtered.map(opt => {
                 const active = opt.value === value;
@@ -219,7 +219,7 @@ function FilterDropdown({
                     onClick={() => { onChange(opt.value); setOpen(false); }}
                     className={`
                       w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                      ${active ? 'bg-red-500/10 text-white' : 'text-white/65 hover:glass-card'}
+                      ${active ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/65 hover:glass-card'}
                     `}
                   >
                     {active ? <Check size={14} className="text-red-400 flex-shrink-0" /> : <span className="w-[14px] flex-shrink-0" />}
@@ -227,7 +227,7 @@ function FilterDropdown({
                     <div className="min-w-0">
                       <span className="block truncate">{opt.label}</span>
                       {opt.sublabel && (
-                        <span className="block text-xs text-white/30 truncate">{opt.sublabel}</span>
+                        <span className="block text-xs text-[var(--text-primary)]/30 truncate">{opt.sublabel}</span>
                       )}
                     </div>
                   </button>
@@ -357,10 +357,10 @@ export default function CounterpartiesPage() {
   const getTypeIcon = (type: string, size: 'sm' | 'md' = 'md') => {
     const cls = size === 'sm' ? 'w-4 h-4' : 'w-6 h-6';
     switch (type) {
-      case 'Юридическое лицо': return <Building2 className={`${cls} text-white/40`} />;
-      case 'Физическое лицо': return <User className={`${cls} text-white/40`} />;
-      case 'ИП': return <Briefcase className={`${cls} text-white/40`} />;
-      default: return <Building2 className={`${cls} text-white/40`} />;
+      case 'Юридическое лицо': return <Building2 className={`${cls} text-[var(--text-primary)]/40`} />;
+      case 'Физическое лицо': return <User className={`${cls} text-[var(--text-primary)]/40`} />;
+      case 'ИП': return <Briefcase className={`${cls} text-[var(--text-primary)]/40`} />;
+      default: return <Building2 className={`${cls} text-[var(--text-primary)]/40`} />;
     }
   };
 
@@ -380,16 +380,16 @@ export default function CounterpartiesPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
 
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-1.5">Контрагенты</h1>
-          <p className="text-base text-white/50">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">Контрагенты</h1>
+          <p className="text-base text-[var(--text-primary)]/50">
             Управление компаниями и подразделениями
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-white/[0.08] text-white/50 text-sm">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-white/[0.08] text-[var(--text-primary)]/50 text-sm">
                 {totalItems}
               </span>
             )}
@@ -409,14 +409,14 @@ export default function CounterpartiesPage() {
       <div className="space-y-4">
         <div className="flex flex-col xl:flex-row gap-3">
           <div className="flex-1 relative mt-5">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 pointer-events-none" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/30 pointer-events-none" />
             <input
               type="text"
               placeholder="Поиск по названию, ИНН, email или подразделению..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-12 pr-10 py-3 glass-card border border-white/[0.08]
-                         rounded-xl text-white text-base placeholder-white/30
+              className="w-full pl-12 pr-10 py-3 glass-card border border-[var(--border-color)]
+                         rounded-xl text-[var(--text-primary)] text-base placeholder-white/30
                          focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10
                          transition-all"
             />
@@ -425,7 +425,7 @@ export default function CounterpartiesPage() {
                 type="button"
                 onClick={() => setSearch('')}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                           text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors"
+                           text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-white/[0.06] transition-colors"
               >
                 <X size={14} />
               </button>
@@ -451,16 +451,16 @@ export default function CounterpartiesPage() {
 
         {hasFilters && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-white/30">Фильтры:</span>
+            <span className="text-sm text-[var(--text-primary)]/30">Фильтры:</span>
 
             {search && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                               bg-white/[0.06] text-white/70 border border-white/[0.08]">
+                               bg-white/[0.06] text-[var(--text-primary)]/70 border border-[var(--border-color)]">
                 <Search size={12} />
                 «{search}»
                 <span
                   onClick={() => setSearch('')}
-                  className="cursor-pointer text-white/30 hover:text-white/60"
+                  className="cursor-pointer text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"
                 >
                   <X size={12} />
                 </span>
@@ -482,7 +482,7 @@ export default function CounterpartiesPage() {
 
             <button
               onClick={resetFilters}
-              className="text-sm text-white/35 hover:text-white/60 transition-colors ml-1"
+              className="text-sm text-[var(--text-primary)]/35 hover:text-[var(--text-primary)]/60 transition-colors ml-1"
             >
               Сбросить всё
             </button>
@@ -500,14 +500,14 @@ export default function CounterpartiesPage() {
         ].map(stat => (
           <div
             key={stat.label}
-            className="glass-card rounded-2xl border border-white/[0.08] p-4 flex items-center gap-3.5"
+            className="glass-card rounded-2xl border border-[var(--border-color)] p-4 flex items-center gap-3.5"
           >
             <div className="w-11 h-11 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-              <stat.icon className="w-5 h-5 text-white/35" />
+              <stat.icon className="w-5 h-5 text-[var(--text-primary)]/35" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{stat.value}</p>
-              <p className="text-sm text-white/40">{stat.label}</p>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+              <p className="text-sm text-[var(--text-primary)]/40">{stat.label}</p>
             </div>
           </div>
         ))}
@@ -515,17 +515,17 @@ export default function CounterpartiesPage() {
 
       {/* ── List ─────────────────────────────────────────────────────────── */}
       {filteredCompanies.length === 0 ? (
-        <div className="glass-card rounded-2xl border border-white/[0.08] p-16 text-center">
-          <Building2 className="w-16 h-16 text-white/10 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-white mb-2">Нет контрагентов</h3>
-          <p className="text-base text-white/50 mb-6">
+        <div className="glass-card rounded-2xl border border-[var(--border-color)] p-16 text-center">
+          <Building2 className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Нет контрагентов</h3>
+          <p className="text-base text-[var(--text-primary)]/50 mb-6">
             {hasFilters ? 'Попробуйте изменить параметры поиска' : 'Добавьте первого контрагента'}
           </p>
           {!hasFilters && (
             <button
               onClick={() => navigate('/counterparties/new')}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700
-                         text-white text-base font-medium transition-colors"
+                         text-[var(--text-primary)] text-base font-medium transition-colors"
             >
               <Plus className="w-4 h-4" />
               Добавить контрагента
@@ -536,7 +536,7 @@ export default function CounterpartiesPage() {
         <div className="space-y-4">
           {loading && (
             <div className="flex justify-center py-2">
-              <Loader2 className="w-5 h-5 animate-spin text-white/20" />
+              <Loader2 className="w-5 h-5 animate-spin text-[var(--text-primary)]/20" />
             </div>
           )}
 
@@ -556,7 +556,7 @@ export default function CounterpartiesPage() {
             return (
               <div
                 key={company.id}
-                className="glass-card rounded-2xl border border-white/[0.08] overflow-hidden"
+                className="glass-card rounded-2xl border border-[var(--border-color)] overflow-hidden"
               >
                 {/* Main company - весь блок кликабельный */}
                 <div
@@ -572,43 +572,43 @@ export default function CounterpartiesPage() {
                       <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                            <h2 className="text-xl font-bold text-white truncate">
+                            <h2 className="text-xl font-bold text-[var(--text-primary)] truncate">
                               {company.name}
                             </h2>
 
                             <span className={`px-2.5 py-1 rounded-lg text-sm font-medium border ${company.is_active
                                 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                                : 'bg-white/[0.06] text-white/40 border-white/[0.1]'
+                                : 'bg-white/[0.06] text-[var(--text-primary)]/40 border-[var(--border-color)]'
                               }`}>
                               {company.is_active ? 'Активен' : 'Неактивен'}
                             </span>
 
                             {hasBranches && (
-                              <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-white/[0.06] text-white/50 border border-white/[0.08]">
+                              <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-white/[0.06] text-[var(--text-primary)]/50 border border-[var(--border-color)]">
                                 {branches.length} подраздел.
                               </span>
                             )}
                           </div>
 
                           {company.legal_name && (
-                            <p className="text-white/45 text-base truncate">{company.legal_name}</p>
+                            <p className="text-[var(--text-primary)]/45 text-base truncate">{company.legal_name}</p>
                           )}
 
                           <div className="flex flex-wrap gap-2 mt-4">
-                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06]">
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)]">
                               {company.counterparty_type}
                             </span>
-                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
                               ИНН {company.inn}
                             </span>
                             {company.kpp && (
-                              <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-white/65 border border-white/[0.06] font-mono">
+                              <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
                                 КПП {company.kpp}
                               </span>
                             )}
                           </div>
 
-                          <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-sm text-white/40">
+                          <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-sm text-[var(--text-primary)]/40">
                             {company.phone && (
                               <span className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                                 <Phone className="w-3.5 h-3.5" />
@@ -644,7 +644,7 @@ export default function CounterpartiesPage() {
                               }}
                               className="flex items-center gap-2 px-3.5 py-2 rounded-xl
                                bg-white/[0.05] hover:bg-white/[0.08]
-                               text-white/65 hover:text-white transition-colors"
+                               text-[var(--text-primary)]/65 hover:text-[var(--text-primary)] transition-colors"
                             >
                               {isExpanded ? (
                                 <>
@@ -681,10 +681,10 @@ export default function CounterpartiesPage() {
 
                 {/* Branches - остаётся без изменений */}
                 {hasBranches && isExpanded && (
-                  <div className="border-t border-white/[0.08] bg-white/[0.02] px-5 sm:px-6 py-5">
+                  <div className="border-t border-[var(--border-color)] bg-white/[0.02] px-5 sm:px-6 py-5">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-1 h-5 rounded-full bg-red-500" />
-                      <p className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]/70 flex items-center gap-2">
                         <GitBranch className="w-4 h-4" />
                         Подразделения
                       </p>
@@ -702,7 +702,7 @@ export default function CounterpartiesPage() {
                     w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all
                     ${branchIsMatched
                                 ? 'bg-red-500/[0.06] border-red-500/20'
-                                : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.1]'
+                                : 'bg-white/[0.03] border-[var(--border-color)] hover:bg-white/[0.06] hover:border-[var(--border-color)]'
                               }
                   `}
                           >
@@ -712,26 +712,26 @@ export default function CounterpartiesPage() {
 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <span className="text-white font-semibold text-base truncate">
+                                <span className="text-[var(--text-primary)] font-semibold text-base truncate">
                                   {branch.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded text-xs bg-white/[0.05] text-white/40 border border-white/[0.06]">
+                                <span className="px-2 py-0.5 rounded text-xs bg-white/[0.05] text-[var(--text-primary)]/40 border border-[var(--border-color)]">
                                   подразделение
                                 </span>
                               </div>
 
                               {branch.legal_name && (
-                                <p className="text-white/40 text-sm truncate mb-2">{branch.legal_name}</p>
+                                <p className="text-[var(--text-primary)]/40 text-sm truncate mb-2">{branch.legal_name}</p>
                               )}
 
-                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/35">
+                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--text-primary)]/35">
                                 <span className="font-mono">ИНН {branch.inn}</span>
                                 {branch.kpp && <span className="font-mono">КПП {branch.kpp}</span>}
                                 {branch.phone && <span>{branch.phone}</span>}
                               </div>
                             </div>
 
-                            <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0 mt-1" />
+                            <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 flex-shrink-0 mt-1" />
                           </button>
                         );
                       })}
@@ -750,9 +750,9 @@ export default function CounterpartiesPage() {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-white/[0.08]
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
                        hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                       text-white text-base transition-colors"
+                       text-[var(--text-primary)] text-base transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Назад
@@ -767,8 +767,8 @@ export default function CounterpartiesPage() {
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
                   className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
-                      ? 'bg-red-700 text-white'
-                      : 'glass-card text-white/60 border border-white/[0.08] hover:bg-white/[0.08]'
+                      ? 'bg-red-700 text-[var(--text-primary)]'
+                      : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-white/[0.08]'
                     }`}
                 >
                   {pageNum}
@@ -780,9 +780,9 @@ export default function CounterpartiesPage() {
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-white/[0.08]
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
                        hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
-                       text-white text-base transition-colors"
+                       text-[var(--text-primary)] text-base transition-colors"
           >
             Вперёд
             <ChevronRight className="w-4 h-4" />

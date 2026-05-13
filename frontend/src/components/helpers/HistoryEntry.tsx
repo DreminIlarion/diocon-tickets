@@ -1,4 +1,4 @@
-import {
+﻿import {
   Clock, Image as ImageIcon, FileText, Plus, Minus, RefreshCw,
   UserPlus, UserMinus, Tag, Archive, MessageSquare, Edit, Trash2,
   UserCheck, Building2, FolderOpen, CheckCircle
@@ -197,7 +197,7 @@ const ACTION_CONFIG: Record<string, {
 const DEFAULT_ACTION_CONFIG = {
   label: 'Изменение',
   icon: <Clock className="w-4.5 h-4.5" />,
-  color: 'bg-white/10 text-white/50',
+  color: 'bg-[var(--hover-1)] text-[var(--text-primary)]/50',
 };
 
 // ─── Компонент ────────────────────────────────────────────────────────────────
@@ -256,10 +256,10 @@ export const HistoryEntry = ({
 
       <div className="flex-1 min-w-0">
         {/* Заголовок */}
-        <p className="text-white text-base font-medium">
-          {actorName} <span className="text-white/40 font-normal">• {actionLabel}</span>
+        <p className="text-[var(--text-primary)] text-base font-medium">
+          {actorName} <span className="text-[var(--text-primary)]/40 font-normal">• {actionLabel}</span>
         </p>
-        <p className="text-white/35 text-sm mt-0.5">{formatDate(entry.created_at)}</p>
+        <p className="text-[var(--text-primary)]/35 text-sm mt-0.5">{formatDate(entry.created_at)}</p>
 
         {/* Плашка про картинки */}
         {isDescEdit && hasMediaChanges && (
@@ -306,15 +306,15 @@ export const HistoryEntry = ({
         {/* Simple diff для статуса, приоритета и т.д. */}
         {showSimpleDiff && (
           <div className="mt-2 text-sm">
-            <span className="text-white/30 line-through">{entry.old_value}</span>
-            <span className="text-white/30 mx-2">→</span>
-            <span className="text-white/60">{entry.new_value}</span>
+            <span className="text-[var(--text-primary)]/30 line-through">{entry.old_value}</span>
+            <span className="text-[var(--text-primary)]/30 mx-2">→</span>
+            <span className="text-[var(--text-primary)]/60">{entry.new_value}</span>
           </div>
         )}
 
         {/* Описание для ticket_created и других без diff */}
         {entry.action === 'ticket_created' && entry.description && (
-          <p className="mt-1 text-sm text-white/35">{entry.description}</p>
+          <p className="mt-1 text-sm text-[var(--text-primary)]/35">{entry.description}</p>
         )}
       </div>
     </div>

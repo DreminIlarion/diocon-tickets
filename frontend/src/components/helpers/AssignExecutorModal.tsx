@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+﻿import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Sparkles, Loader2, FileText,
@@ -519,13 +519,13 @@ export default function NewTicketPage() {
       <div className="flex items-center gap-6 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+          className="p-3 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] transition-colors"
         >
-          <ArrowLeft className="w-6 h-6 text-white" />
+          <ArrowLeft className="w-6 h-6 text-[var(--text-primary)]" />
         </button>
         <div>
-          <h1 className="text-4xl font-bold text-white">Новая заявка</h1>
-          <p className="text-white/60">Помощник проведёт вас шаг за шагом</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)]">Новая заявка</h1>
+          <p className="text-[var(--text-primary)]/60">Помощник проведёт вас шаг за шагом</p>
         </div>
       </div>
 
@@ -538,10 +538,10 @@ export default function NewTicketPage() {
             { num: 3, label: 'Проверка и отправка', icon: <CheckCircle2 className="w-5 h-5" /> },
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
-              <div className={`flex items-center gap-4 ${step >= s.num ? 'text-white' : 'text-white/40'}`}>
+              <div className={`flex items-center gap-4 ${step >= s.num ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40'}`}>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all
                   ${step === s.num ? 'bg-red-600 border-red-500 scale-110' :
-                    step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-white/10 border-white/20'}`}>
+                    step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-[var(--hover-1)] border-[var(--border-color)]'}`}>
                   {step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}
                 </div>
                 <div>
@@ -550,7 +550,7 @@ export default function NewTicketPage() {
                 </div>
               </div>
               {i < 2 && (
-                <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-white/10'}`} />
+                <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`} />
               )}
             </div>
           ))}
@@ -564,7 +564,7 @@ export default function NewTicketPage() {
             {/* Выбор типа: Проект или Контрагент (для admin/support) */}
             {canSelectCounterparty && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                   Привязать заявку к
                 </label>
                 <div className="flex gap-4">
@@ -573,7 +573,7 @@ export default function NewTicketPage() {
                     onClick={() => handleSelectionTypeChange('project')}
                     className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project'
                         ? 'border-purple-500 bg-purple-500/20 text-purple-400'
-                        : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'
+                        : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'
                       }`}
                   >
                     <FolderOpen className="w-6 h-6" />
@@ -584,7 +584,7 @@ export default function NewTicketPage() {
                     onClick={() => handleSelectionTypeChange('counterparty')}
                     className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty'
                         ? 'border-blue-500 bg-blue-500/20 text-blue-400'
-                        : 'border-white/20 bg-white/5 text-white/60 hover:bg-white/10'
+                        : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'
                       }`}
                   >
                     <Building2 className="w-6 h-6" />
@@ -592,7 +592,7 @@ export default function NewTicketPage() {
                   </button>
                 </div>
                 {selectionType === null && (
-                  <p className="text-white/40 text-sm mt-3 text-center">Выберите, к чему привязать заявку</p>
+                  <p className="text-[var(--text-primary)]/40 text-sm mt-3 text-center">Выберите, к чему привязать заявку</p>
                 )}
               </div>
             )}
@@ -600,13 +600,13 @@ export default function NewTicketPage() {
             {/* Выбор контрагента (когда выбран тип "контрагент") */}
             {canSelectCounterparty && selectionType === 'counterparty' && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                   <Building2 className="inline w-6 h-6 mr-2 text-blue-400" />
                   Выберите контрагента <span className="text-red-400">*</span>
                 </label>
                 <div className="relative" ref={counterpartyDropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input
                       type="text"
                       value={counterpartySearch}
@@ -625,11 +625,11 @@ export default function NewTicketPage() {
                   </div>
 
                   {showCounterpartyDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingCounterparties ? (
                         <div className="p-8 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-white/50" />
-                          <p className="text-white/50 mt-3">Загрузка контрагентов...</p>
+                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--text-primary)]/50" />
+                          <p className="text-[var(--text-primary)]/50 mt-3">Загрузка контрагентов...</p>
                         </div>
                       ) : (
                         <>
@@ -641,18 +641,18 @@ export default function NewTicketPage() {
                                 setCounterpartySearch(getCounterpartyDisplayName(cp));
                                 setShowCounterpartyDropdown(false);
                               }}
-                              className="w-full text-left p-5 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
+                              className="w-full text-left p-5 hover:bg-[var(--hover-1)] transition-colors border-b border-[var(--border-color)] last:border-0"
                             >
-                              <div className="font-semibold text-white text-base">{getCounterpartyDisplayName(cp)}</div>
+                              <div className="font-semibold text-[var(--text-primary)] text-base">{getCounterpartyDisplayName(cp)}</div>
                               {cp.legal_name && cp.legal_name !== cp.name && (
-                                <div className="text-sm text-white/50 mt-1">{cp.legal_name}</div>
+                                <div className="text-sm text-[var(--text-primary)]/50 mt-1">{cp.legal_name}</div>
                               )}
                               <div className="flex gap-3 mt-2">
                                 {cp.inn && (
-                                  <div className="text-xs text-white/40">ИНН: {cp.inn}</div>
+                                  <div className="text-xs text-[var(--text-primary)]/40">ИНН: {cp.inn}</div>
                                 )}
                                 {cp.kpp && (
-                                  <div className="text-xs text-white/40">КПП: {cp.kpp}</div>
+                                  <div className="text-xs text-[var(--text-primary)]/40">КПП: {cp.kpp}</div>
                                 )}
                               </div>
                             </button>
@@ -667,7 +667,7 @@ export default function NewTicketPage() {
                   <div className="mt-4 p-5 rounded-xl bg-green-500/10 border border-green-500/30">
                     <div className="flex items-center gap-3">
                       <CheckCircle2 className="w-6 h-6 text-green-400" />
-                      <span className="text-white text-lg">Выбран контрагент: </span>
+                      <span className="text-[var(--text-primary)] text-lg">Выбран контрагент: </span>
                       <span className="text-green-400 font-semibold text-lg">{getCounterpartyDisplayName(selectedCounterparty)}</span>
                     </div>
                   </div>
@@ -678,13 +678,13 @@ export default function NewTicketPage() {
             {/* Выбор проекта (когда выбран тип "проект") */}
             {canSelectCounterparty && selectionType === 'project' && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                   <FolderOpen className="inline w-6 h-6 mr-2 text-purple-400" />
                   Выберите проект <span className="text-red-400">*</span>
                 </label>
                 <div className="relative" ref={projectDropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input
                       type="text"
                       value={projectSearch}
@@ -706,11 +706,11 @@ export default function NewTicketPage() {
                   </div>
 
                   {showProjectDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingProjects ? (
                         <div className="p-8 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-white/50" />
-                          <p className="text-white/50 mt-3">Загрузка проектов...</p>
+                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--text-primary)]/50" />
+                          <p className="text-[var(--text-primary)]/50 mt-3">Загрузка проектов...</p>
                         </div>
                       ) : (
                         <>
@@ -726,18 +726,18 @@ export default function NewTicketPage() {
                                   setProjectSearch(getProjectDisplayName(project));
                                   setShowProjectDropdown(false);
                                 }}
-                                className="w-full text-left p-5 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
+                                className="w-full text-left p-5 hover:bg-[var(--hover-1)] transition-colors border-b border-[var(--border-color)] last:border-0"
                               >
                                 <div className="flex items-center gap-4">
                                   <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
                                     <FolderOpen className="w-5 h-5 text-purple-400" />
                                   </div>
                                   <div className="flex-1">
-                                    <div className="font-semibold text-white">
+                                    <div className="font-semibold text-[var(--text-primary)]">
                                       <span className="text-purple-400">{project.key}</span> - {project.name}
                                     </div>
                                     {project.description && (
-                                      <div className="text-sm text-white/50 mt-1 line-clamp-1">
+                                      <div className="text-sm text-[var(--text-primary)]/50 mt-1 line-clamp-1">
                                         {project.description}
                                       </div>
                                     )}
@@ -755,12 +755,12 @@ export default function NewTicketPage() {
                   <div className="mt-4 p-5 rounded-xl bg-purple-500/10 border border-purple-500/30">
                     <div className="flex items-center gap-3">
                       <FolderOpen className="w-6 h-6 text-purple-400" />
-                      <span className="text-white text-lg">Выбран проект: </span>
+                      <span className="text-[var(--text-primary)] text-lg">Выбран проект: </span>
                       <span className="text-purple-400 font-semibold text-lg">
                         {selectedProject.key} - {selectedProject.name}
                       </span>
                     </div>
-                    <div className="mt-2 text-sm text-white/50">
+                    <div className="mt-2 text-sm text-[var(--text-primary)]/50">
                       (контрагент будет автоматически взят из проекта)
                     </div>
                   </div>
@@ -771,7 +771,7 @@ export default function NewTicketPage() {
             {/* Для customer - показываем его организацию (без выбора) */}
             {isCustomer && customerCounterparty && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                   <Building2 className="inline w-6 h-6 mr-2 text-blue-400" />
                   Ваш контрагент
                 </label>
@@ -781,9 +781,9 @@ export default function NewTicketPage() {
                       <Building2 className="w-7 h-7 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-[16px] font-semibold text-white">{customerCounterparty.name || customerCounterparty.legal_name}</p>
+                      <p className="text-[16px] font-semibold text-[var(--text-primary)]">{customerCounterparty.name || customerCounterparty.legal_name}</p>
                       {customerCounterparty.inn && (
-                        <p className="text-white/60">ИНН: {customerCounterparty.inn}</p>
+                        <p className="text-[var(--text-primary)]/60">ИНН: {customerCounterparty.inn}</p>
                       )}
                     </div>
                   </div>
@@ -794,13 +794,13 @@ export default function NewTicketPage() {
             {/* Выбор инициатора для admin/support */}
             {canSelectReporter && (selectedCounterparty || selectedProject) && (
               <div>
-                <label className="block text-2xl font-semibold text-white mb-4">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                   <User className="inline w-6 h-6 mr-2 text-green-400" />
-                  Инициатор заявки <span className="text-white/40 text-sm">(опционально, по умолчанию - вы)</span>
+                  Инициатор заявки <span className="text-[var(--text-primary)]/40 text-sm">(опционально, по умолчанию - вы)</span>
                 </label>
                 <div className="relative" ref={reporterDropdownRef}>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input
                       type="text"
                       value={reporterSearch}
@@ -815,17 +815,17 @@ export default function NewTicketPage() {
                   </div>
 
                   {showReporterDropdown && (
-                    <div className="absolute z-50 mt-2 w-full bg-[#0c0c0c] border border-white/20 rounded-xl shadow-2xl max-h-96 overflow-y-auto">
+                    <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-96 overflow-y-auto">
                       {loadingUsers ? (
                         <div className="p-8 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-white/50" />
-                          <p className="text-white/50 mt-3">Загрузка пользователей...</p>
+                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--text-primary)]/50" />
+                          <p className="text-[var(--text-primary)]/50 mt-3">Загрузка пользователей...</p>
                         </div>
                       ) : users.length === 0 ? (
                         <div className="p-8 text-center">
-                          <User className="w-12 h-12 mx-auto mb-3 text-white/20" />
-                          <p className="text-white/50 text-lg">Нет пользователей</p>
-                          <p className="text-white/30 text-sm mt-1">У выбранного контрагента пока нет других пользователей</p>
+                          <User className="w-12 h-12 mx-auto mb-3 text-[var(--text-primary)]/20" />
+                          <p className="text-[var(--text-primary)]/50 text-lg">Нет пользователей</p>
+                          <p className="text-[var(--text-primary)]/30 text-sm mt-1">У выбранного контрагента пока нет других пользователей</p>
                         </div>
                       ) : (
                         <>
@@ -835,17 +835,17 @@ export default function NewTicketPage() {
                               setReporterSearch('');
                               setShowReporterDropdown(false);
                             }}
-                            className="w-full text-left p-5 hover:bg-white/10 transition-colors border-b border-white/10"
+                            className="w-full text-left p-5 hover:bg-[var(--hover-1)] transition-colors border-b border-[var(--border-color)]"
                           >
                             <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
-                                <User className="w-5 h-5 text-white" />
+                                <User className="w-5 h-5 text-[var(--text-primary)]" />
                               </div>
                               <div>
-                                <div className="font-semibold text-white text-base">
+                                <div className="font-semibold text-[var(--text-primary)] text-base">
                                   {user?.full_name || user?.username || 'Вы'} (текущий пользователь)
                                 </div>
-                                <div className="text-sm text-white/50">{user?.email}</div>
+                                <div className="text-sm text-[var(--text-primary)]/50">{user?.email}</div>
                               </div>
                             </div>
                           </button>
@@ -862,19 +862,19 @@ export default function NewTicketPage() {
                                   setReporterSearch(getUserDisplayName(u));
                                   setShowReporterDropdown(false);
                                 }}
-                                className="w-full text-left p-5 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0"
+                                className="w-full text-left p-5 hover:bg-[var(--hover-1)] transition-colors border-b border-[var(--border-color)] last:border-0"
                               >
                                 <div className="flex items-center gap-4">
                                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                                    <User className="w-5 h-5 text-white" />
+                                    <User className="w-5 h-5 text-[var(--text-primary)]" />
                                   </div>
                                   <div className="flex-1">
-                                    <div className="font-semibold text-white text-base">
+                                    <div className="font-semibold text-[var(--text-primary)] text-base">
                                       {u.full_name || u.username}
                                     </div>
-                                    <div className="text-sm text-white/50">{u.email}</div>
+                                    <div className="text-sm text-[var(--text-primary)]/50">{u.email}</div>
                                     {u.role && (
-                                      <div className="text-xs text-white/40 mt-1">
+                                      <div className="text-xs text-[var(--text-primary)]/40 mt-1">
                                         {u.role === 'customer_admin' ? 'Администратор' : 'Сотрудник'}
                                       </div>
                                     )}
@@ -892,7 +892,7 @@ export default function NewTicketPage() {
                   <div className="mt-4 p-5 rounded-xl bg-green-500/10 border border-green-500/30">
                     <div className="flex items-center gap-3">
                       <User className="w-6 h-6 text-green-400" />
-                      <span className="text-white text-lg">Инициатор: </span>
+                      <span className="text-[var(--text-primary)] text-lg">Инициатор: </span>
                       <span className="text-green-400 font-semibold text-lg">
                         {getUserDisplayName(selectedReporter)}
                       </span>
@@ -904,7 +904,7 @@ export default function NewTicketPage() {
                   <div className="mt-4 p-5 rounded-xl bg-gray-500/10 border border-gray-500/30">
                     <div className="flex items-center gap-3">
                       <User className="w-6 h-6 text-gray-400" />
-                      <span className="text-white text-lg">Инициатор: </span>
+                      <span className="text-[var(--text-primary)] text-lg">Инициатор: </span>
                       <span className="text-gray-400 font-semibold text-lg">
                         {user?.full_name || user?.username || 'Вы'} (текущий пользователь, по умолчанию)
                       </span>
@@ -915,7 +915,7 @@ export default function NewTicketPage() {
             )}
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-4">
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 Тема заявки <span className="text-red-400">*</span>
               </label>
               <input
@@ -928,7 +928,7 @@ export default function NewTicketPage() {
             </div>
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-4">
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 Подробное описание <span className="text-red-400">*</span>
               </label>
               <textarea
@@ -949,8 +949,8 @@ export default function NewTicketPage() {
               <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 flex items-center gap-4">
                 <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
                 <div>
-                  <h3 className="text-[16px] font-semibold text-white">ИИ подбирает приоритет и теги...</h3>
-                  <p className="text-white/70">Это займёт пару секунд</p>
+                  <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">ИИ подбирает приоритет и теги...</h3>
+                  <p className="text-[var(--text-primary)]/70">Это займёт пару секунд</p>
                 </div>
               </div>
             )}
@@ -960,15 +960,15 @@ export default function NewTicketPage() {
                 <div className="flex items-center gap-3">
                   <Zap className="w-7 h-7 text-purple-400" />
                   <div>
-                    <h3 className="text-2xl font-semibold text-white">ИИ изучил вашу заявку и подобрал оптимальный приоритет и теги</h3>
-                    <p className="text-white/70 mt-1">Проверьте и при необходимости скорректируйте</p>
+                    <h3 className="text-2xl font-semibold text-[var(--text-primary)]">ИИ изучил вашу заявку и подобрал оптимальный приоритет и теги</h3>
+                    <p className="text-[var(--text-primary)]/70 mt-1">Проверьте и при необходимости скорректируйте</p>
                   </div>
                 </div>
               </div>
             )}
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-6">Приоритет заявки</label>
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет заявки</label>
               <div className="flex flex-wrap gap-3">
                 {PRIORITIES.map((p) => (
                   <button
@@ -976,8 +976,8 @@ export default function NewTicketPage() {
                     onClick={() => setPriority(p.value as TicketPriority)}
                     className={`px-8 py-5 rounded-2xl text-lg font-medium transition-all border flex-1 min-w-[200px] text-left
                       ${priority === p.value
-                        ? 'bg-white/20 text-white border-white/70'
-                        : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
+                        ? 'bg-[var(--hover-1)] text-[var(--text-primary)] border-[var(--border-color)]'
+                        : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)] hover:border-[var(--border-color)]'
                       }`}
                   >
                     <div className="flex items-center gap-4">
@@ -993,11 +993,11 @@ export default function NewTicketPage() {
             </div>
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-6">Теги заявки</label>
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Теги заявки</label>
 
               {aiSuggestedTags.length > 0 && (
                 <div className="mb-8">
-                  <p className="text-white/60 text-sm mb-3 flex items-center gap-2">
+                  <p className="text-[var(--text-primary)]/60 text-sm mb-3 flex items-center gap-2">
                     <Sparkles className="w-4 h-4" /> Предложено ИИ
                   </p>
                   <div className="flex flex-wrap gap-3">
@@ -1008,7 +1008,7 @@ export default function NewTicketPage() {
                           key={tag.name}
                           onClick={() => togglePresetTag(tag)}
                           className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all
-                            ${isSelected ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}
+                            ${isSelected ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}
                         >
                           {tag.name}
                         </button>
@@ -1019,7 +1019,7 @@ export default function NewTicketPage() {
               )}
 
               <div className="mb-8">
-                <p className="text-white/60 text-sm mb-3">Быстрый выбор:</p>
+                <p className="text-[var(--text-primary)]/60 text-sm mb-3">Быстрый выбор:</p>
                 <div className="flex flex-wrap gap-3">
                   {PRESET_TAGS.map((tag) => {
                     const isSelected = tags.some(t => t.name === tag.name);
@@ -1028,7 +1028,7 @@ export default function NewTicketPage() {
                         key={tag.name}
                         onClick={() => togglePresetTag(tag)}
                         className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all
-                          ${isSelected ? 'bg-white/20 border-white/40' : 'bg-white/5 border-white/20 hover:bg-white/10'}`}
+                          ${isSelected ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}
                       >
                         {tag.name}
                       </button>
@@ -1064,17 +1064,17 @@ export default function NewTicketPage() {
               </div>
 
               {tags.length > 0 && (
-                <div className="p-6 bg-white/5 rounded-2xl">
-                  <p className="text-white/60 mb-4">Выбранные теги ({tags.length})</p>
+                <div className="p-6 bg-[var(--hover-1)] rounded-2xl">
+                  <p className="text-[var(--text-primary)]/60 mb-4">Выбранные теги ({tags.length})</p>
                   <div className="flex flex-wrap gap-3">
                     {tags.map((tag) => (
                       <div
                         key={tag.name}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 rounded-2xl text-base"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--hover-1)] rounded-2xl text-base"
                       >
                         <span>{tag.name}</span>
                         <X
-                          className="w-4 h-4 cursor-pointer text-white/60 hover:text-red-400 transition-colors"
+                          className="w-4 h-4 cursor-pointer text-[var(--text-primary)]/60 hover:text-red-400 transition-colors"
                           onClick={() => removeTag(tag.name)}
                         />
                       </div>
@@ -1085,18 +1085,18 @@ export default function NewTicketPage() {
             </div>
 
             <div>
-              <label className="block text-2xl font-semibold text-white mb-4">
+              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 <Upload className="inline w-6 h-6 mr-2 text-green-400" />
                 Прикрепить файлы
               </label>
               <div
                 onDrop={handleDrop}
                 onDragOver={e => e.preventDefault()}
-                className="border-2 border-dashed border-white/20 rounded-xl p-10 text-center hover:border-white/40 transition-colors"
+                className="border-2 border-dashed border-[var(--border-color)] rounded-xl p-10 text-center hover:border-[var(--border-color)] transition-colors"
               >
-                <Upload className="w-12 h-12 text-white/30 mx-auto mb-4" />
-                <p className="text-2xl text-white/60 mb-2">Перетащите файлы сюда</p>
-                <p className="text-base text-white/40 mb-4">или</p>
+                <Upload className="w-12 h-12 text-[var(--text-primary)]/30 mx-auto mb-4" />
+                <p className="text-2xl text-[var(--text-primary)]/60 mb-2">Перетащите файлы сюда</p>
+                <p className="text-base text-[var(--text-primary)]/40 mb-4">или</p>
                 <label className="inline-block">
                   <input
                     type="file"
@@ -1108,23 +1108,23 @@ export default function NewTicketPage() {
                     Выбрать файлы
                   </span>
                 </label>
-                <p className="mt-4 text-sm text-white/40">До 10 файлов, максимум 25 МБ каждый</p>
+                <p className="mt-4 text-sm text-[var(--text-primary)]/40">До 10 файлов, максимум 25 МБ каждый</p>
               </div>
 
               {localFiles.length > 0 && (
                 <div className="mt-6 space-y-3">
                   {localFiles.map((f) => (
-                    <div key={f.id} className="flex items-center gap-4 p-4 rounded-xl bg-white/5">
+                    <div key={f.id} className="flex items-center gap-4 p-4 rounded-xl bg-[var(--hover-1)]">
                       {f.preview ? (
                         <img src={f.preview} alt="" className="w-14 h-14 rounded-lg object-cover" />
                       ) : (
-                        <div className="w-14 h-14 rounded-lg bg-white/10 flex items-center justify-center">
-                          <File className="w-7 h-7 text-white/50" />
+                        <div className="w-14 h-14 rounded-lg bg-[var(--hover-1)] flex items-center justify-center">
+                          <File className="w-7 h-7 text-[var(--text-primary)]/50" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-lg text-white font-medium truncate">{f.file.name}</p>
-                        <p className="text-base text-white/50">{formatFileSize(f.file.size)}</p>
+                        <p className="text-lg text-[var(--text-primary)] font-medium truncate">{f.file.name}</p>
+                        <p className="text-base text-[var(--text-primary)]/50">{formatFileSize(f.file.size)}</p>
                         {f.error && <p className="text-sm text-red-400">{f.error}</p>}
                       </div>
                       <div className="flex items-center gap-3">
@@ -1132,7 +1132,7 @@ export default function NewTicketPage() {
                         <button
                           onClick={() => removeFile(f.id)}
                           disabled={f.status === 'uploading'}
-                          className="p-2 rounded-lg hover:bg-white/10 text-white/50 hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-2 rounded-lg hover:bg-[var(--hover-1)] text-[var(--text-primary)]/50 hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <X className="w-5 h-5" />
                         </button>
@@ -1152,14 +1152,14 @@ export default function NewTicketPage() {
               <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-12 h-12 text-green-400" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-2">Проверьте заявку перед отправкой</h2>
-              <p className="text-lg text-white/60">Убедитесь, что всё правильно</p>
+              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Проверьте заявку перед отправкой</h2>
+              <p className="text-lg text-[var(--text-primary)]/60">Убедитесь, что всё правильно</p>
             </div>
 
             <div className="space-y-8">
               {selectedProject && (
                 <div className="p-8 rounded-3xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30">
-                  <p className="text-[16px] text-white/50 mb-3 flex items-center gap-2">
+                  <p className="text-[16px] text-[var(--text-primary)]/50 mb-3 flex items-center gap-2">
                     <FolderOpen className="w-5 h-5" />
                     Проект
                   </p>
@@ -1168,13 +1168,13 @@ export default function NewTicketPage() {
                       <FolderOpen className="w-7 h-7 text-purple-400" />
                     </div>
                     <div>
-                      <p className="text-[16px] font-semibold text-white">
+                      <p className="text-[16px] font-semibold text-[var(--text-primary)]">
                         <span className="text-purple-400">{selectedProject.key}</span> - {selectedProject.name}
                       </p>
                       {selectedProject.description && (
-                        <p className="text-white/60 mt-1">{selectedProject.description}</p>
+                        <p className="text-[var(--text-primary)]/60 mt-1">{selectedProject.description}</p>
                       )}
-                      <p className="text-sm text-white/40 mt-2">(контрагент будет взят из проекта автоматически)</p>
+                      <p className="text-sm text-[var(--text-primary)]/40 mt-2">(контрагент будет взят из проекта автоматически)</p>
                     </div>
                   </div>
                 </div>
@@ -1182,7 +1182,7 @@ export default function NewTicketPage() {
 
               {!selectedProject && selectedCounterparty && (
                 <div className="p-8 rounded-3xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30">
-                  <p className="text-[16px] text-white/50 mb-3 flex items-center gap-2">
+                  <p className="text-[16px] text-[var(--text-primary)]/50 mb-3 flex items-center gap-2">
                     <Building2 className="w-5 h-5" />
                     Контрагент
                   </p>
@@ -1191,11 +1191,11 @@ export default function NewTicketPage() {
                       <Building2 className="w-7 h-7 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-[16px] font-semibold text-white">
+                      <p className="text-[16px] font-semibold text-[var(--text-primary)]">
                         {getCounterpartyDisplayName(selectedCounterparty)}
                       </p>
                       {selectedCounterparty.inn && (
-                        <p className="text-white/60">ИНН: {selectedCounterparty.inn}</p>
+                        <p className="text-[var(--text-primary)]/60">ИНН: {selectedCounterparty.inn}</p>
                       )}
                     </div>
                   </div>
@@ -1204,7 +1204,7 @@ export default function NewTicketPage() {
 
               {isCustomer && customerCounterparty && !selectedProject && !selectedCounterparty && (
                 <div className="p-8 rounded-3xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30">
-                  <p className="text-[16px] text-white/50 mb-3 flex items-center gap-2">
+                  <p className="text-[16px] text-[var(--text-primary)]/50 mb-3 flex items-center gap-2">
                     <Building2 className="w-5 h-5" />
                     Контрагент
                   </p>
@@ -1213,11 +1213,11 @@ export default function NewTicketPage() {
                       <Building2 className="w-7 h-7 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-[16px] font-semibold text-white">
+                      <p className="text-[16px] font-semibold text-[var(--text-primary)]">
                         {customerCounterparty.name || customerCounterparty.legal_name}
                       </p>
                       {customerCounterparty.inn && (
-                        <p className="text-white/60">ИНН: {customerCounterparty.inn}</p>
+                        <p className="text-[var(--text-primary)]/60">ИНН: {customerCounterparty.inn}</p>
                       )}
                     </div>
                   </div>
@@ -1233,7 +1233,7 @@ export default function NewTicketPage() {
               )}
 
               <div className="p-8 rounded-3xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30">
-                <p className="text-[16px] text-white/50 mb-3 flex items-center gap-2">
+                <p className="text-[16px] text-[var(--text-primary)]/50 mb-3 flex items-center gap-2">
                   <User className="w-5 h-5" />
                   Инициатор
                 </p>
@@ -1242,12 +1242,12 @@ export default function NewTicketPage() {
                     <User className="w-7 h-7 text-green-400" />
                   </div>
                   <div>
-                    <p className="text-[16px] font-semibold text-white">
+                    <p className="text-[16px] font-semibold text-[var(--text-primary)]">
                       {selectedReporter
                         ? getUserDisplayName(selectedReporter)
                         : (user?.full_name || user?.username || 'Вы')}
                     </p>
-                    <p className="text-white/60">
+                    <p className="text-[var(--text-primary)]/60">
                       {selectedReporter
                         ? selectedReporter.email
                         : user?.email}
@@ -1259,29 +1259,29 @@ export default function NewTicketPage() {
                 </div>
               </div>
 
-              <div className="p-8 rounded-3xl bg-white/5">
-                <p className="text-[16px] text-white/50 mb-2">Тема</p>
-                <div className="text-[16px] font-semibold text-white break-words">{title || '—'}</div>
+              <div className="p-8 rounded-3xl bg-[var(--hover-1)]">
+                <p className="text-[16px] text-[var(--text-primary)]/50 mb-2">Тема</p>
+                <div className="text-[16px] font-semibold text-[var(--text-primary)] break-words">{title || '—'}</div>
               </div>
 
-              <div className="p-8 rounded-3xl bg-white/5">
-                <p className="text-[16px] text-white/50 mb-2">Описание</p>
-                <div className="text-[16px] font-semibold text-white whitespace-pre-wrap leading-relaxed">
+              <div className="p-8 rounded-3xl bg-[var(--hover-1)]">
+                <p className="text-[16px] text-[var(--text-primary)]/50 mb-2">Описание</p>
+                <div className="text-[16px] font-semibold text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
                   {description || '—'}
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="p-8 rounded-3xl bg-white/5">
-                  <p className="text-white/50 mb-3">Приоритет</p>
+                <div className="p-8 rounded-3xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Приоритет</p>
                   <div className={`inline-flex items-center gap-4 text-lg px-6 py-3 rounded-2xl ${PRIORITIES.find(p => p.value === priority)?.color || ''}`}>
                     {PRIORITIES.find(p => p.value === priority)?.icon} {priority}
                   </div>
                 </div>
 
                 {tags.length > 0 && (
-                  <div className="p-8 rounded-3xl bg-white/5">
-                    <p className="text-white/50 mb-4">Теги</p>
+                  <div className="p-8 rounded-3xl bg-[var(--hover-1)]">
+                    <p className="text-[var(--text-primary)]/50 mb-4">Теги</p>
                     <div className="flex flex-wrap gap-3">
                       {tags.map(tag => (
                         <span
@@ -1301,11 +1301,11 @@ export default function NewTicketPage() {
               </div>
 
               {localFiles.length > 0 && (
-                <div className="p-8 rounded-3xl bg-white/5">
-                  <p className="text-white/50 mb-4">Вложения ({localFiles.length})</p>
+                <div className="p-8 rounded-3xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-4">Вложения ({localFiles.length})</p>
                   <div className="space-y-2">
                     {localFiles.map(f => (
-                      <div key={f.id} className="flex items-center gap-3 text-white">
+                      <div key={f.id} className="flex items-center gap-3 text-[var(--text-primary)]">
                         <File className="w-5 h-5" />
                         <span>{f.file.name}</span>
                         {f.status === 'pending' && <span className="text-yellow-400 text-sm">(будет загружено после создания)</span>}
@@ -1319,11 +1319,11 @@ export default function NewTicketPage() {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between mt-12 pt-8 border-t border-white/10">
+        <div className="flex justify-between mt-12 pt-8 border-t border-[var(--border-color)]">
           {step > 1 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-lg font-medium transition-colors"
+              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] text-lg font-medium transition-colors"
             >
               <ArrowLeft className="w-5 h-5" /> Назад
             </button>

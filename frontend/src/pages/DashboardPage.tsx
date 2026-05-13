@@ -33,7 +33,7 @@ const GridBackground = ({ variant = 'dots' }: { variant?: 'dots' | 'grid' | 'lin
       <div
         className="absolute inset-0 opacity-[0.15] pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, var(--dot-color) 1px, transparent 1px)',
           backgroundSize: '20px 20px',
           maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%)',
           WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%)',
@@ -47,8 +47,8 @@ const GridBackground = ({ variant = 'dots' }: { variant?: 'dots' | 'grid' | 'lin
         className="absolute inset-0 opacity-[0.08] pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.5) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.5) 1px, transparent 1px)
+            linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px)
           `,
           backgroundSize: '32px 32px',
           maskImage: 'radial-gradient(ellipse 70% 50% at 50% 50%, black 40%, transparent 100%)',
@@ -121,7 +121,7 @@ const DonutChart = ({
       <svg width={size} height={size} className="-rotate-90">
         <circle
           cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="12"
+          fill="none" stroke="var(--border-color)" strokeWidth="12"
         />
         {segments.map((seg, i) => {
           const length = (seg.value / total) * circumference;
@@ -142,8 +142,8 @@ const DonutChart = ({
         })}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold text-white tabular-nums leading-none">{total}</span>
-        <span className="text-[15px] text-white/40 mt-1">всего</span>
+        <span className="text-3xl font-bold text-[var(--text-primary)] tabular-nums leading-none">{total}</span>
+        <span className="text-[15px] text-[var(--text-primary)]/40 mt-1">всего</span>
       </div>
     </div>
   );
@@ -164,7 +164,7 @@ const BarChart = ({ data }: { data: { label: string; value: number; isToday?: bo
           <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
             <div className="relative w-full flex items-end justify-center" style={{ height: '100%' }}>
               {d.value > 0 && (
-                <span className="absolute -top-5 text-[13px] font-semibold text-white/70 opacity-0
+                <span className="absolute -top-5 text-[13px] font-semibold text-[var(--text-primary)]/70 opacity-0
                                  group-hover:opacity-100 transition-opacity tabular-nums">
                   {d.value}
                 </span>
@@ -173,13 +173,13 @@ const BarChart = ({ data }: { data: { label: string; value: number; isToday?: bo
                 className={`w-full rounded-md transition-all duration-300 ${
                   d.isToday
                     ? 'bg-gradient-to-t from-red-600 to-red-500'
-                    : 'bg-white/[0.08] group-hover:bg-white/[0.15]'
+                    : 'bg-[var(--hover-1)] group-hover:bg-[var(--hover-1)]'
                 }`}
                 style={{ height: `${Math.max(height, 4)}%` }}
               />
             </div>
             <span className={`text-[13px] font-medium ${
-              d.isToday ? 'text-red-400' : 'text-white/40'
+              d.isToday ? 'text-red-400' : 'text-[var(--text-primary)]/40'
             }`}>
               {d.label}
             </span>
@@ -313,14 +313,14 @@ export default function DashboardPage() {
     'Решён': 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20',
     'Закрыт': 'bg-neutral-500/15 text-neutral-300 ring-neutral-500/20',
     'Переоткрыт': 'bg-red-500/15 text-red-300 ring-red-500/20',
-  }[s] ?? 'bg-white/5 text-white/50');
+  }[s] ?? 'bg-white/5 text-[var(--text-primary)]/50');
 
   const priorityClr = (p: string) => ({
     'Критический': 'bg-red-500/15 text-red-300',
     'Высокий': 'bg-orange-500/15 text-orange-300',
     'Средний': 'bg-yellow-500/15 text-yellow-300',
     'Низкий': 'bg-emerald-500/15 text-emerald-300',
-  }[p] ?? 'bg-white/5 text-white/50');
+  }[p] ?? 'bg-white/5 text-[var(--text-primary)]/50');
 
   const priorityBar = (p: string) => ({
     'Критический': 'bg-red-500',
@@ -334,7 +334,7 @@ export default function DashboardPage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
-      <p className="text-white/40 text-[15px]">Загружаем данные…</p>
+      <p className="text-[var(--text-primary)]/40 text-[15px]">Загружаем данные…</p>
     </div>
   );
 
@@ -353,15 +353,15 @@ export default function DashboardPage() {
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 text-white/50 text-[15px] font-medium
-                            px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06]">
+            <div className="inline-flex items-center gap-2 text-[var(--text-primary)]/50 text-[15px] font-medium
+                            px-3 py-1.5 rounded-full bg-[var(--hover-1)] border border-white/[0.06]">
               <greeting.icon className="w-4 h-4" />
               {greeting.text}
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] tracking-tight">
               {user?.full_name || user?.username || 'Главная страница'}
             </h1>
-            <p className="text-[15px] text-white/40">
+            <p className="text-[15px] text-[var(--text-primary)]/40">
               {new Date().toLocaleDateString('ru-RU', {
                 weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
               })}
@@ -370,7 +370,7 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30
                                  group-focus-within:text-red-400 transition-colors" />
               <input
                 value={searchQuery}
@@ -381,9 +381,9 @@ export default function DashboardPage() {
                   }
                 }}
                 placeholder="Поиск заявок…"
-                className="pl-11 pr-4 py-3.5 w-72 rounded-2xl bg-white/[0.04] border border-white/[0.08]
-                           text-white text-[15px] placeholder:text-white/25
-                           focus:outline-none focus:border-red-500/40 focus:bg-white/[0.06]
+                className="pl-11 pr-4 py-3.5 w-72 rounded-2xl bg-[var(--hover-1)] border border-white/[0.08]
+                           text-[var(--text-primary)] text-[15px] placeholder:text-[var(--text-primary)]/25
+                           focus:outline-none focus:border-red-500/40 focus:bg-[var(--hover-1)]
                            transition-all"
               />
             </div>
@@ -458,11 +458,11 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              <p className="text-4xl font-bold text-white mb-1 tabular-nums leading-none">
+              <p className="text-4xl font-bold text-[var(--text-primary)] mb-1 tabular-nums leading-none">
                 {card.value}
               </p>
-              <p className="text-[15px] text-white/50 font-medium mb-1">{card.label}</p>
-              <p className="text-[13px] text-white/30 mb-3">{card.sub}</p>
+              <p className="text-[15px] text-[var(--text-primary)]/50 font-medium mb-1">{card.label}</p>
+              <p className="text-[13px] text-[var(--text-primary)]/30 mb-3">{card.sub}</p>
 
               {/* Sparkline */}
               <div className="h-8 -mx-1">
@@ -484,11 +484,11 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-[17px] font-bold text-white mb-1">Структура заявок</h3>
-                <p className="text-[15px] text-white/40">по статусам</p>
+                <h3 className="text-[17px] font-bold text-[var(--text-primary)] mb-1">Структура заявок</h3>
+                <p className="text-[15px] text-[var(--text-primary)]/40">по статусам</p>
               </div>
-              <div className="w-9 h-9 rounded-lg bg-white/[0.05] flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white/40" />
+              <div className="w-9 h-9 rounded-lg bg-[var(--hover-1)] flex items-center justify-center">
+                <Activity className="w-4 h-4 text-[var(--text-primary)]/40" />
               </div>
             </div>
 
@@ -504,15 +504,15 @@ export default function DashboardPage() {
                           className="w-3 h-3 rounded-sm flex-shrink-0"
                           style={{ backgroundColor: seg.color }}
                         />
-                        <span className="text-[15px] text-white/70 flex-1 truncate">{seg.label}</span>
-                        <span className="text-[15px] font-semibold text-white tabular-nums">{seg.value}</span>
+                        <span className="text-[15px] text-[var(--text-primary)]/70 flex-1 truncate">{seg.label}</span>
+                        <span className="text-[15px] font-semibold text-[var(--text-primary)] tabular-nums">{seg.value}</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
             ) : (
-              <div className="h-[150px] flex items-center justify-center text-white/30 text-[15px]">
+              <div className="h-[150px] flex items-center justify-center text-[var(--text-primary)]/30 text-[15px]">
                 Нет данных для отображения
               </div>
             )}
@@ -525,15 +525,15 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-[17px] font-bold text-white mb-1">Активность за неделю</h3>
-                <p className="text-[15px] text-white/40">созданные заявки по дням</p>
+                <h3 className="text-[17px] font-bold text-[var(--text-primary)] mb-1">Активность за неделю</h3>
+                <p className="text-[15px] text-[var(--text-primary)]/40">созданные заявки по дням</p>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04]">
-                <BarChart3 className="w-4 h-4 text-white/40" />
-                <span className="text-[15px] font-semibold text-white tabular-nums">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--hover-1)]">
+                <BarChart3 className="w-4 h-4 text-[var(--text-primary)]/40" />
+                <span className="text-[15px] font-semibold text-[var(--text-primary)] tabular-nums">
                   {ticketsLast7Days.reduce((s, d) => s + d.value, 0)}
                 </span>
-                <span className="text-[13px] text-white/40">за 7 дней</span>
+                <span className="text-[13px] text-[var(--text-primary)]/40">за 7 дней</span>
               </div>
             </div>
 
@@ -555,14 +555,14 @@ export default function DashboardPage() {
             <GridBackground variant="dots" />
             <div className="relative z-10">
               <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
-                <h2 className="text-[17px] font-bold text-white flex items-center gap-2.5">
+                <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center
                                   ring-1 ring-red-500/10">
                     <Ticket className="w-4 h-4 text-red-400" />
                   </div>
                   Последние заявки
                   {tickets.length > 0 && (
-                    <span className="ml-1 px-2.5 py-0.5 rounded-full bg-white/[0.06] text-[13px] text-white/50 tabular-nums">
+                    <span className="ml-1 px-2.5 py-0.5 rounded-full bg-[var(--hover-1)] text-[13px] text-[var(--text-primary)]/50 tabular-nums">
                       {tickets.length}
                     </span>
                   )}
@@ -577,18 +577,18 @@ export default function DashboardPage() {
 
               {tickets.length === 0 ? (
                 <div className="p-14 text-center">
-                  <div className="w-20 h-20 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-5">
-                    <FileText className="w-10 h-10 text-white/15" />
+                  <div className="w-20 h-20 rounded-2xl bg-[var(--hover-1)] flex items-center justify-center mx-auto mb-5">
+                    <FileText className="w-10 h-10 text-[var(--text-primary)]/15" />
                   </div>
-                  <p className="text-white/70 text-[17px] font-semibold mb-2">Заявок пока нет</p>
-                  <p className="text-white/40 text-[15px] mb-6 max-w-xs mx-auto">
+                  <p className="text-[var(--text-primary)]/70 text-[17px] font-semibold mb-2">Заявок пока нет</p>
+                  <p className="text-[var(--text-primary)]/40 text-[15px] mb-6 max-w-xs mx-auto">
                     Создайте первую заявку, чтобы начать работу с системой поддержки
                   </p>
                   <button
                     onClick={() => navigate('/tickets/new')}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl
                                bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500
-                               text-white text-[15px] font-medium transition-all shadow-lg shadow-red-900/25
+                               text-[var(--text-primary)] text-[15px] font-medium transition-all shadow-lg shadow-red-900/25
                                hover:shadow-red-900/40 hover:-translate-y-0.5"
                   >
                     <Sparkles className="w-4 h-4" /> Создать первую заявку
@@ -600,7 +600,7 @@ export default function DashboardPage() {
                     <Link
                       key={ticket.id}
                       to={`/tickets/${ticket.number}`}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02]
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--hover-1)]
                                  transition-all duration-200 group relative"
                     >
                       {/* Цветная полоска приоритета слева */}
@@ -609,7 +609,7 @@ export default function DashboardPage() {
 
                       <div className="flex-1 min-w-0 pl-2">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[15px] font-medium text-white truncate
+                          <span className="text-[15px] font-medium text-[var(--text-primary)] truncate
                                           group-hover:text-red-400 transition-colors">
                             {ticket.title}
                           </span>
@@ -628,10 +628,10 @@ export default function DashboardPage() {
 
                       <div className="flex items-center gap-3 flex-shrink-0">
                         <div className="text-right">
-                          <p className="text-[13px] text-white/40">{fmtDate(ticket.created_at)}</p>
-                          <p className="text-[13px] text-white/25">{fmtTime(ticket.created_at)}</p>
+                          <p className="text-[13px] text-[var(--text-primary)]/40">{fmtDate(ticket.created_at)}</p>
+                          <p className="text-[13px] text-[var(--text-primary)]/25">{fmtTime(ticket.created_at)}</p>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-white/15 group-hover:text-red-400
+                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/15 group-hover:text-red-400
                                                 group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </Link>
@@ -646,14 +646,14 @@ export default function DashboardPage() {
             <GridBackground variant="grid" />
             <div className="relative z-10">
               <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
-                <h2 className="text-[17px] font-bold text-white flex items-center gap-2.5">
+                <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/1f0 flex items-center justify-center
                                   ring-1 ring-blue-500/10">
                     <FolderOpen className="w-4 h-4 text-blue-400" />
                   </div>
                   Проекты
                   {projects.length > 0 && (
-                    <span className="ml-1 px-2.5 py-0.5 rounded-full bg-white/[0.06] text-[13px] text-white/50">
+                    <span className="ml-1 px-2.5 py-0.5 rounded-full bg-[var(--hover-1)] text-[13px] text-[var(--text-primary)]/50">
                       {projects.length}
                     </span>
                   )}
@@ -668,18 +668,18 @@ export default function DashboardPage() {
 
               {projects.length === 0 ? (
                 <div className="p-12 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
-                    <FolderOpen className="w-8 h-8 text-white/15" />
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--hover-1)] flex items-center justify-center mx-auto mb-4">
+                    <FolderOpen className="w-8 h-8 text-[var(--text-primary)]/15" />
                   </div>
-                  <p className="text-white/40 text-[15px]">Проектов пока нет</p>
+                  <p className="text-[var(--text-primary)]/40 text-[15px]">Проектов пока нет</p>
                 </div>
               ) : (
-                <div className="grid sm:grid-cols-2 gap-px bg-white/[0.04]">
+                <div className="grid sm:grid-cols-2 gap-px bg-[var(--hover-1)]">
                   {projects.slice(0, 4).map(proj => (
                     <Link
                       key={proj.id}
                       to={`/projects/${proj.id}`}
-                      className="bg-blue-500/1 p-5 hover:bg-white/[0.03] transition-all group"
+                      className="bg-blue-500/1 p-5 hover:bg-[var(--hover-1)] transition-all group"
                     >
                       <div className="flex items-start gap-3.5">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600/20 to-violet-600/20
@@ -689,21 +689,21 @@ export default function DashboardPage() {
                           <FolderOpen className="w-5 h-5 text-blue-400/70 group-hover:text-blue-400 transition-colors" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[15px] font-semibold text-white truncate mb-1
+                          <p className="text-[15px] font-semibold text-[var(--text-primary)] truncate mb-1
                                        group-hover:text-red-400 transition-colors">
                             {proj.name}
                           </p>
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="font-mono text-[13px] text-white/30">{proj.key}</span>
+                            <span className="font-mono text-[13px] text-[var(--text-primary)]/30">{proj.key}</span>
                             <span className={`text-[13px] px-1.5 py-0.5 rounded font-medium ${
                               proj.status === 'active'
                                 ? 'bg-emerald-500/15 text-emerald-300'
-                                : 'bg-white/[0.06] text-white/40'
+                                : 'bg-[var(--hover-1)] text-[var(--text-primary)]/40'
                             }`}>
                               {proj.status === 'active' ? 'Активен' : 'Архив'}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[13px] text-white/30">
+                          <div className="flex items-center gap-1.5 text-[13px] text-[var(--text-primary)]/30">
                             <Users className="w-3.5 h-3.5" />
                             {proj.memberships?.length ?? 0} участников
                           </div>
@@ -722,7 +722,7 @@ export default function DashboardPage() {
               <GridBackground variant="dots" />
               <div className="relative z-10">
                 <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
-                  <h2 className="text-[17px] font-bold text-white flex items-center gap-2.5">
+                  <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center
                                     ring-1 ring-amber-500/10">
                       <Building2 className="w-4 h-4 text-amber-400" />
@@ -741,7 +741,7 @@ export default function DashboardPage() {
                     <Link
                       key={cp.id}
                       to={`/counterparties/${cp.id}`}
-                      className="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-all group"
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--hover-1)] transition-all group"
                     >
                       <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600/15 to-orange-600/15
                                       flex items-center justify-center flex-shrink-0
@@ -749,11 +749,11 @@ export default function DashboardPage() {
                         <Building2 className="w-5 h-5 text-amber-400/70" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[15px] font-medium text-white truncate
+                        <p className="text-[15px] font-medium text-[var(--text-primary)] truncate
                                       group-hover:text-red-400 transition-colors">
                           {cp.name}
                         </p>
-                        <p className="text-[13px] text-white/35 truncate">
+                        <p className="text-[13px] text-[var(--text-primary)]/35 truncate">
                           {cp.legal_name}
                           {cp.inn && <span className="ml-2 font-mono">ИНН {cp.inn}</span>}
                         </p>
@@ -761,7 +761,7 @@ export default function DashboardPage() {
                       <span className={`text-[13px] px-2.5 py-1 rounded-lg font-medium flex-shrink-0 ${
                         cp.is_active
                           ? 'bg-emerald-500/15 text-emerald-300'
-                          : 'bg-white/[0.06] text-white/40'
+                          : 'bg-[var(--hover-1)] text-[var(--text-primary)]/40'
                       }`}>
                         {cp.is_active ? 'Активен' : 'Неактивен'}
                       </span>
@@ -782,8 +782,8 @@ export default function DashboardPage() {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <p className="text-[17px] font-bold text-white">Производительность</p>
-                  <p className="text-[13px] text-white/40 mt-0.5">за всё время</p>
+                  <p className="text-[17px] font-bold text-[var(--text-primary)]">Производительность</p>
+                  <p className="text-[13px] text-[var(--text-primary)]/40 mt-0.5">за всё время</p>
                 </div>
                 <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center
                                 ring-1 ring-emerald-500/10">
@@ -794,19 +794,19 @@ export default function DashboardPage() {
               {/* Прогресс-бар выполнения */}
               <div className="mb-5">
                 <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[15px] text-white/50">Решено заявок</span>
-                  <span className="text-2xl font-bold text-white tabular-nums">
-                    {resolvePct}<span className="text-[15px] text-white/40">%</span>
+                  <span className="text-[15px] text-[var(--text-primary)]/50">Решено заявок</span>
+                  <span className="text-2xl font-bold text-[var(--text-primary)] tabular-nums">
+                    {resolvePct}<span className="text-[15px] text-[var(--text-primary)]/40">%</span>
                   </span>
                 </div>
-                <div className="h-2 bg-white/[0.05] rounded-full overflow-hidden">
+                <div className="h-2 bg-[var(--hover-1)] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full
                                transition-all duration-700 ease-out"
                     style={{ width: `${resolvePct}%` }}
                   />
                 </div>
-                <p className="text-[13px] text-white/30 mt-2">
+                <p className="text-[13px] text-[var(--text-primary)]/30 mt-2">
                   {stats.resolved} из {stats.total} заявок
                 </p>
               </div>
@@ -814,14 +814,14 @@ export default function DashboardPage() {
               {/* Мини-метрики */}
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/[0.05]">
                 <div>
-                  <p className="text-[13px] text-white/40 mb-1">Открытых</p>
-                  <p className="text-xl font-bold text-white tabular-nums">
+                  <p className="text-[13px] text-[var(--text-primary)]/40 mb-1">Открытых</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">
                     {stats.total - stats.resolved}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[13px] text-white/40 mb-1">В ожидании</p>
-                  <p className="text-xl font-bold text-white tabular-nums">{stats.waiting}</p>
+                  <p className="text-[13px] text-[var(--text-primary)]/40 mb-1">В ожидании</p>
+                  <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{stats.waiting}</p>
                 </div>
               </div>
             </div>
@@ -837,26 +837,26 @@ export default function DashboardPage() {
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-700 to-red-600
                                   flex items-center justify-center shadow-xl shadow-red-900/30
                                   ring-4 ring-[#0d0d0f]">
-                    <Building2 className="w-7 h-7 text-white" />
+                    <Building2 className="w-7 h-7 text-[var(--text-primary)]" />
                   </div>
                 </div>
               </div>
 
               <div className="px-5 pt-10 pb-5">
-                <p className="text-[17px] font-bold text-white">{counterparty.name}</p>
-                <p className="text-[13px] text-white/40 mb-4">{counterparty.counterparty_type}</p>
+                <p className="text-[17px] font-bold text-[var(--text-primary)]">{counterparty.name}</p>
+                <p className="text-[13px] text-[var(--text-primary)]/40 mb-4">{counterparty.counterparty_type}</p>
 
                 <div className="space-y-3 text-[15px]">
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40">ИНН</span>
-                    <span className="text-white/80 font-mono text-[13px] bg-white/[0.05] px-2 py-1 rounded-md">
+                    <span className="text-[var(--text-primary)]/40">ИНН</span>
+                    <span className="text-[var(--text-primary)]/80 font-mono text-[13px] bg-[var(--hover-1)] px-2 py-1 rounded-md">
                       {counterparty.inn}
                     </span>
                   </div>
                   {(counterparty as any).contact_person && (
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40">Контакт</span>
-                      <span className="text-white/80 text-[15px]">
+                      <span className="text-[var(--text-primary)]/40">Контакт</span>
+                      <span className="text-[var(--text-primary)]/80 text-[15px]">
                         {(counterparty as any).contact_person.full_name}
                       </span>
                     </div>
@@ -865,7 +865,7 @@ export default function DashboardPage() {
 
                 <Link to="/my-company"
                   className="mt-5 w-full flex items-center justify-center gap-2 py-3 rounded-xl
-                             bg-white/[0.06] hover:bg-white/[0.1] text-white/70 hover:text-white
+                             bg-[var(--hover-1)] hover:bg-[var(--hover-1)] text-[var(--text-primary)]/70 hover:text-[var(--text-primary)]
                              text-[15px] font-medium transition-all">
                   Подробнее <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -877,7 +877,7 @@ export default function DashboardPage() {
           <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-5">
             <GridBackground variant="dots" />
             <div className="relative z-10">
-              <p className="text-[15px] uppercase tracking-[0.12em] text-white/35 font-bold mb-4">
+              <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
                 Быстрые действия
               </p>
               <div className="space-y-2">
@@ -899,24 +899,24 @@ export default function DashboardPage() {
                     className={`flex items-center gap-3.5 p-3 rounded-xl transition-all group/action ${
                       (action as any).accent
                         ? 'bg-gradient-to-r from-red-900/25 to-red-800/15 hover:from-red-900/35 hover:to-red-800/25 ring-1 ring-red-500/15'
-                        : 'bg-white/[0.03] hover:bg-white/[0.06]'
+                        : 'bg-[var(--hover-1)] hover:bg-[var(--hover-1)]'
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all
                                     group-hover/action:scale-105 ${
                       (action as any).accent
                         ? 'bg-red-600/20 ring-1 ring-red-500/20'
-                        : 'bg-white/[0.06] group-hover/action:bg-white/[0.1]'
+                        : 'bg-[var(--hover-1)] group-hover/action:bg-[var(--hover-1)]'
                     }`}>
                       <action.icon className={`w-5 h-5 ${
-                        (action as any).accent ? 'text-red-400' : 'text-white/50 group-hover/action:text-white/80'
+                        (action as any).accent ? 'text-red-400' : 'text-[var(--text-primary)]/50 group-hover/action:text-[var(--text-primary)]/80'
                       }`} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-[15px] font-medium text-white">{action.label}</p>
-                      <p className="text-[13px] text-white/35">{action.desc}</p>
+                      <p className="text-[15px] font-medium text-[var(--text-primary)]">{action.label}</p>
+                      <p className="text-[13px] text-[var(--text-primary)]/35">{action.desc}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-white/15 group-hover/action:text-white/40
+                    <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/15 group-hover/action:text-[var(--text-primary)]/40
                                             group-hover/action:translate-x-0.5 transition-all" />
                   </Link>
                 ))}
@@ -929,7 +929,7 @@ export default function DashboardPage() {
             <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-5">
               <GridBackground variant="grid" />
               <div className="relative z-10">
-                <p className="text-[15px] uppercase tracking-[0.12em] text-white/35 font-bold mb-4">
+                <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
                   Сводка системы
                 </p>
                 <div className="space-y-1">
@@ -942,14 +942,14 @@ export default function DashboardPage() {
                       color: 'text-violet-400', bg: 'bg-violet-500/10', ring: 'ring-violet-500/10' },
                   ].map(row => (
                     <div key={row.label}
-                      className="flex items-center justify-between py-3 px-1 rounded-lg hover:bg-white/[0.02] transition-colors">
-                      <span className="flex items-center gap-3 text-[15px] text-white/60">
+                      className="flex items-center justify-between py-3 px-1 rounded-lg hover:bg-[var(--hover-1)] transition-colors">
+                      <span className="flex items-center gap-3 text-[15px] text-[var(--text-primary)]/60">
                         <div className={`w-8 h-8 rounded-lg ${row.bg} flex items-center justify-center ring-1 ${row.ring}`}>
                           <row.icon className={`w-4 h-4 ${row.color}`} />
                         </div>
                         {row.label}
                       </span>
-                      <span className="text-[17px] font-bold text-white tabular-nums">{row.value}</span>
+                      <span className="text-[17px] font-bold text-[var(--text-primary)] tabular-nums">{row.value}</span>
                     </div>
                   ))}
                 </div>

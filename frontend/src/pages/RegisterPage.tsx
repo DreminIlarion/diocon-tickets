@@ -57,8 +57,8 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0a]">
         <div className="glass-card-static p-8 max-w-md w-full text-center">
-          <h2 className="text-[16px] font-semibold text-white mb-4">Недействительная ссылка</h2>
-          <p className="text-white/50 mb-6">Ссылка приглашения недействительна или истекла.</p>
+          <h2 className="text-[16px] font-semibold text-[var(--text-primary)] mb-4">Недействительная ссылка</h2>
+          <p className="text-[var(--text-primary)]/50 mb-6">Ссылка приглашения недействительна или истекла.</p>
           <button onClick={() => navigate('/login')} className="btn-primary">
             Перейти к входу
           </button>
@@ -74,8 +74,8 @@ export default function RegisterPage() {
           <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-400" />
           </div>
-          <h2 className="text-[16px] font-semibold text-white mb-2">Регистрация завершена!</h2>
-          <p className="text-white/50">Переход на страницу входа...</p>
+          <h2 className="text-[16px] font-semibold text-[var(--text-primary)] mb-2">Регистрация завершена!</h2>
+          <p className="text-[var(--text-primary)]/50">Переход на страницу входа...</p>
         </div>
       </div>
     );
@@ -93,15 +93,15 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-800 to-red-900 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-bold text-white">ДК</span>
+            <span className="text-2xl font-bold text-[var(--text-primary)]">ДК</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">ДИО-Консалт</h1>
-          <p className="text-white/50 mt-1">Создание аккаунта</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">ДИО-Консалт</h1>
+          <p className="text-[var(--text-primary)]/50 mt-1">Создание аккаунта</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="glass-card-static p-8">
-          <h2 className="text-[16px] font-semibold text-white mb-6 text-center">Регистрация</h2>
+          <h2 className="text-[16px] font-semibold text-[var(--text-primary)] mb-6 text-center">Регистрация</h2>
 
           <div className="space-y-5">
             <div>
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>

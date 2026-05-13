@@ -96,8 +96,8 @@ export default function ProfilePage() {
     <div className=" space-y-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Профиль</h1>
-        <p className="text-white/50 mt-1">Управление аккаунтом и настройками</p>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Профиль</h1>
+        <p className="text-[var(--text-primary)]/50 mt-1">Управление аккаунтом и настройками</p>
       </div>
 
       <div className="grid lg:grid-cols-4 gap-6">
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                     <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <User className="w-10 h-10 text-white" />
+                      <User className="w-10 h-10 text-[var(--text-primary)]" />
                     </div>
                   )}
                 </div>
@@ -122,9 +122,9 @@ export default function ProfilePage() {
                   className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-red-800 hover:bg-red-700 flex items-center justify-center transition-colors"
                 >
                   {uploading ? (
-                    <Loader2 className="w-5 h-5 text-white animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[var(--text-primary)] animate-spin" />
                   ) : (
-                    <Camera className="w-5 h-5 text-white" />
+                    <Camera className="w-5 h-5 text-[var(--text-primary)]" />
                   )}
                 </button>
                 <input
@@ -135,10 +135,10 @@ export default function ProfilePage() {
                   className="hidden"
                 />
               </div>
-              <h2 className="font-semibold text-white mt-4">
+              <h2 className="font-semibold text-[var(--text-primary)] mt-4">
                 {user?.full_name || user?.username || 'Пользователь'}
               </h2>
-              <p className="text-sm text-white/50">{user?.email}</p>
+              <p className="text-sm text-[var(--text-primary)]/50">{user?.email}</p>
               <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-red-800/20 text-red-400 border border-red-800/30">
                 {getRoleLabel(user?.role || '')}
               </span>
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === tab.id
                       ? 'bg-red-800/20 text-red-400'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                      : 'text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:bg-[var(--hover-1)]'
                     }`}
                 >
                   <tab.icon className="w-5 h-5" />
@@ -168,7 +168,7 @@ export default function ProfilePage() {
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div className="glass-card-static p-6">
-              <h3 className="text-lg font-semibold text-white mb-6">Личная информация</h3>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">Личная информация</h3>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <p className="text-white/40 text-sm mt-6">
+              <p className="text-[var(--text-primary)]/40 text-sm mt-6">
                 Для изменения данных профиля обратитесь к администратору системы.
               </p>
             </div>
@@ -218,7 +218,7 @@ export default function ProfilePage() {
           {/* Company Tab */}
           {activeTab === 'company' && myCompany && (
             <div className="glass-card-static p-6">
-              <h3 className="text-lg font-semibold text-white mb-6">Информация о компании</h3>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">Информация о компании</h3>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -275,33 +275,33 @@ export default function ProfilePage() {
           {/* Security Tab */}
           {activeTab === 'security' && (
             <div className="glass-card-static p-6">
-              <h3 className="text-lg font-semibold text-white mb-6">Безопасность</h3>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">Безопасность</h3>
 
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+              <div className="space-y-6 animate-in fade-in duration-500">
+                <div className="p-4 rounded-xl bg-[var(--hover-1)] border border-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
                         <Check className="w-5 h-5 text-green-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">Пароль</p>
-                        <p className="text-sm text-white/50">Установлен</p>
+                        <p className="font-medium text-[var(--text-primary)]">Пароль</p>
+                        <p className="text-sm text-[var(--text-primary)]/50">Установлен</p>
                       </div>
                     </div>
                     <button className="btn-secondary text-sm">Изменить</button>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                <div className="p-4 rounded-xl bg-[var(--hover-1)] border border-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
                         <Shield className="w-5 h-5 text-yellow-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">Двухфакторная аутентификация</p>
-                        <p className="text-sm text-white/50">Не настроена</p>
+                        <p className="font-medium text-[var(--text-primary)]">Двухфакторная аутентификация</p>
+                        <p className="text-sm text-[var(--text-primary)]/50">Не настроена</p>
                       </div>
                     </div>
                     <button className="btn-secondary text-sm">Настроить</button>
@@ -314,7 +314,7 @@ export default function ProfilePage() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div className="glass-card-static p-6">
-              <h3 className="text-lg font-semibold text-white mb-6">Настройки уведомлений</h3>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-6">Настройки уведомлений</h3>
 
               <div className="space-y-4">
                 {[
@@ -323,14 +323,14 @@ export default function ProfilePage() {
                   { label: 'Новый комментарий', desc: 'Комментарии в ваших заявках' },
                   { label: 'Решение заявки', desc: 'Когда заявка решена' },
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-[var(--hover-1)] border border-white/5">
                     <div>
-                      <p className="font-medium text-white">{item.label}</p>
-                      <p className="text-sm text-white/50">{item.desc}</p>
+                      <p className="font-medium text-[var(--text-primary)]">{item.label}</p>
+                      <p className="text-sm text-[var(--text-primary)]/50">{item.desc}</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800"></div>
+                      <div className="w-11 h-6 bg-[var(--hover-1)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800"></div>
                     </label>
                   </div>
                 ))}

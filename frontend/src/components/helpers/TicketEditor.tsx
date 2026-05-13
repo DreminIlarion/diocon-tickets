@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect, useMemo } from 'react';
+﻿import { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import ImageExtension from '@tiptap/extension-image';
@@ -137,7 +137,7 @@ function EditorToolbar({
   const btnCls = (active: boolean) =>
     `px-2.5 py-1.5 rounded-lg border text-sm transition-all ${active
       ? 'bg-red-500/20 border-red-500/40 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.15)]'
-      : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-white/60 hover:text-white'
+      : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-[var(--text-primary)]/60 hover:text-[var(--text-primary)]'
     }`;
 
   return (
@@ -433,7 +433,7 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
     editorProps: {
       attributes: {
         class:
-          'min-h-[200px] p-5 focus:outline-none text-white text-base leading-relaxed prose prose-invert max-w-none',
+          'min-h-[200px] p-5 focus:outline-none text-[var(--text-primary)] text-base leading-relaxed prose prose-invert max-w-none',
       },
       handleDrop: (_view, event) => {
         const files = Array.from(event.dataTransfer?.files || []).filter((f) =>
@@ -548,7 +548,7 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
   if (!urlsReady) {
     return (
       <div className="min-h-[200px] rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center">
-        <div className="flex items-center gap-3 text-white/40">
+        <div className="flex items-center gap-3 text-[var(--text-primary)]/40">
           <Loader2 size={20} className="animate-spin" />
           <span className="text-base">Загрузка изображений...</span>
         </div>
@@ -590,7 +590,7 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
         onClick={() => fileInputRef.current?.click()}
         className="mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm
                    bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08]
-                   text-white/50 hover:text-white/80 transition-all"
+                   text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/80 transition-all"
       >
         <ImagePlus size={16} /> Добавить изображение
       </button>
