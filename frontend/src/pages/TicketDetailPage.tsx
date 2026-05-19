@@ -112,7 +112,7 @@ export default function TicketDetailPage() {
 
   const userRole = user?.role || '';
   const isStaff = ['admin', 'support_agent', 'support_manager'].includes(userRole);
-  const canChangeStatus = STATUS_PERMISSIONS[ticket?.status || '']?.includes(userRole) || false;
+  const canChangeStatus = userRole === 'admin' || STATUS_PERMISSIONS[ticket?.status || '']?.includes(userRole) || false;
   const canShowManage = isStaff;
 
   const canArchive = useCallback(() => {
@@ -613,31 +613,37 @@ export default function TicketDetailPage() {
   const formatFileSize = useCallback((b: number) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1048576).toFixed(1)} MB`, []);
   const getFileIcon = useCallback((m: string) => m.startsWith('image/') ? <Image className="w-6 h-6" /> : <File className="w-6 h-6" />, []);
 
-  const getStatusColor = useCallback((s: string) => ({
-    'Новый': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    'На согласовании': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    'Открыт': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-    'В работе': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    'Ожидает ответа': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-    'Решён': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'Закрыт': 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30',
-    'Переоткрыт': 'bg-red-500/20 text-red-400 border-red-500/30',
-    'Отклонён': 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-  }[s] || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30'), []);
+  const getStatusColor = useCallback((s: string) => {
+    const map: Record<string, string> = {
+      'Новый': 'status-new',
+      'На согласовании': 'status-agreement',
+      'Открыт': 'status-open',
+      'В работе': 'status-progress',
+      'Ожидает ответа': 'status-waiting',
+      'Решён': 'status-resolved',
+      'Закрыт': 'status-closed',
+      'Переоткрыт': 'status-reopened',
+      'Отклонён': 'status-rejected',
+    };
+    return map[s] || 'status-closed';
+  }, []);
 
-  const getPriorityColor = useCallback((p: string) => ({
-    'Низкий': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'Средний': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    'Высокий': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-    'Критический': 'bg-red-500/20 text-red-400 border-red-500/30',
-  }[p] || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30'), []);
+  const getPriorityColor = useCallback((p: string) => {
+    const map: Record<string, string> = {
+      'Низкий': 'priority-low',
+      'Средний': 'priority-medium',
+      'Высокий': 'priority-high',
+      'Критический': 'priority-critical',
+    };
+    return map[p] || 'priority-medium';
+  }, []);
 
   const formatDate = useCallback((d: string) =>
     new Date(d).toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }), []);
 
   // ── Render ──
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-12 h-12 text-red-500 animate-spin" /></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-12 h-12 text-[var(--accent)] animate-spin" /></div>;
   if (!ticket) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
@@ -669,7 +675,7 @@ export default function TicketDetailPage() {
             {!ticket.is_archived && (user?.user_id === ticket.created_by || user?.user_id === ticket.reporter_id) && (
               <button onClick={openEditModal}
                 className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-base
-                              bg-white/[0.05] hover:bg-white/[0.10] border border-[var(--border-color)]
+                              bg-[var(--hover-2)] hover:bg-[var(--hover-3)] border border-[var(--border-color)]
                               text-[var(--text-primary)]/70 hover:text-[var(--text-primary)] transition-colors">
                 <Edit className="w-4 h-4" /> Редактировать
               </button>
@@ -691,7 +697,7 @@ export default function TicketDetailPage() {
           <div className="flex gap-2 border-b border-[var(--border-color)] overflow-x-auto">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-red-800/50 text-[var(--text-primary)] border-b-2 border-red-500' : 'text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-1)]'
+                className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-[var(--accent)]/50 text-[var(--text-primary)] border-b-2 border-[var(--accent)] shadow-[0_-4px_12px_var(--accent-glow)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'
                   }`}>
                 <tab.icon className="w-5 h-5" />
                 <span className="text-base font-medium">{tab.label}</span>
@@ -716,7 +722,7 @@ export default function TicketDetailPage() {
                       <div className="flex gap-1 bg-[var(--hover-1)] rounded-lg p-0.5">
                         {(['newest', 'oldest'] as const).map(order => (
                           <button key={order} onClick={() => setCommentSortOrder(order)}
-                            className={`px-3 py-1.5 text-base rounded-md transition-colors ${commentSortOrder === order ? 'bg-red-800/50 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60'
+                            className={`px-3 py-1.5 text-base rounded-md transition-colors ${commentSortOrder === order ? 'bg-[var(--accent)]/50 text-white' : 'text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60'
                               }`}>
                             {order === 'newest' ? 'Сначала новые' : 'Сначала старые'}
                           </button>
@@ -860,7 +866,7 @@ export default function TicketDetailPage() {
                 <div className="bg-[var(--hover-1)] rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-3">
-                      <CheckCircle2 className="w-6 h-6 text-green-400" /> Текущий статус
+                      <CheckCircle2 className="w-6 h-6 text-[var(--success)]" /> Текущий статус
                     </h3>
                     <span className={`px-4 py-1.5 rounded-xl text-base font-medium border ${getStatusColor(ticket.status)}`}>{ticket.status}</span>
                   </div>
@@ -870,26 +876,33 @@ export default function TicketDetailPage() {
                 {/* Смена статуса */}
                 <div>
                   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-5 flex items-center gap-3">
-                    <RefreshCw className="w-5 h-5 text-blue-400" /> Изменить статус
+                    <RefreshCw className="w-5 h-5 text-[var(--info)]" /> Изменить статус
                   </h3>
                   {!canChangeStatus ? (
                     <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-5 flex items-center gap-4">
-                      <AlertCircle className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-                      <p className="text-yellow-400/80 text-base">У вас нет прав</p>
+                      <AlertCircle className="w-6 h-6 text-[var(--warning)] flex-shrink-0" />
+                      <p className="text-[var(--warning)]/80 text-base">У вас нет прав</p>
                     </div>
                   ) : availableStatuses.length === 0 ? (
                     <div className="bg-[var(--hover-1)] rounded-xl p-8 text-center"><p className="text-[var(--text-primary)]/50 text-lg">Нет доступных переходов</p></div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       {availableStatuses.map(status => {
-                        let cls = 'bg-[var(--hover-1)] hover:bg-[var(--hover-1)] text-[var(--text-primary)]';
-                        if (status === 'Решён') cls = 'bg-green-500/20 hover:bg-green-500/30 text-green-400';
-                        else if (status === 'Закрыт') cls = 'bg-neutral-500/20 hover:bg-neutral-500/30 text-neutral-400';
-                        else if (status === 'В работе') cls = 'bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400';
-                        else if (status === 'Переоткрыт') cls = 'bg-orange-500/20 hover:bg-orange-500/30 text-orange-400';
+                        const statusBtnMap: Record<string, string> = {
+                          'Новый': 'status-new',
+                          'На согласовании': 'status-agreement',
+                          'Открыт': 'status-open',
+                          'В работе': 'status-progress',
+                          'Ожидает ответа': 'status-waiting',
+                          'Решён': 'status-resolved',
+                          'Закрыт': 'status-closed',
+                          'Переоткрыт': 'status-reopened',
+                          'Отклонён': 'status-rejected',
+                        };
+                        const cls = statusBtnMap[status] || 'bg-[var(--hover-1)] text-[var(--text-primary)]';
                         return (
                           <button key={status} onClick={() => handleStatusChange(status)} disabled={updatingStatus}
-                            className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all ${cls} disabled:opacity-50 text-base`}>
+                            className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all border ${cls} hover:opacity-90 disabled:opacity-50 text-base`}>
                             {updatingStatus ? <Loader2 className="w-5 h-5 animate-spin" /> : status}
                           </button>
                         );
@@ -902,14 +915,14 @@ export default function TicketDetailPage() {
                 {canAssign && (
                   <div>
                     <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-5 flex items-center gap-3">
-                      <UserCheck className="w-5 h-5 text-blue-400" /> Исполнитель
+                      <UserCheck className="w-5 h-5 text-[var(--info)]" /> Исполнитель
                     </h3>
                     <div className="bg-[var(--hover-1)] rounded-xl p-6">
                       {ticket.assigned_to ? (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-700 to-red-800 flex items-center justify-center">
-                              <User className="w-6 h-6 text-[var(--text-primary)]" />
+                              <User className="w-6 h-6 text-white" />
                             </div>
                             <div>
                               <p className="text-[var(--text-primary)] font-semibold text-base">{getAssigneeName() || 'Исполнитель'}</p>
@@ -917,13 +930,13 @@ export default function TicketDetailPage() {
                             </div>
                           </div>
                           <button onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
-                            className="text-base text-red-400 hover:text-red-300">{showAssigneeDropdown ? 'Скрыть' : 'Изменить'}</button>
+                            className="text-base text-[var(--accent)] hover:text-[var(--accent-hover)]">{showAssigneeDropdown ? 'Скрыть' : 'Изменить'}</button>
                         </div>
                       ) : (
                         <div className="text-center py-5">
                           <p className="text-[var(--text-primary)]/50 text-lg mb-4">Не назначен</p>
                           <button onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
-                            className="px-5 py-2.5 rounded-xl bg-red-800/50 hover:bg-red-700 text-[var(--text-primary)] text-base">
+                            className="px-5 py-2.5 rounded-xl bg-[var(--accent)]/50 hover:bg-[var(--accent)] text-white text-base">
                             <UserPlus className="w-5 h-5 inline mr-2" />Назначить
                           </button>
                         </div>
@@ -940,13 +953,13 @@ export default function TicketDetailPage() {
                             : filteredUsers.length === 0 ? <div className="text-center py-6 text-[var(--text-primary)]/40">Нет сотрудников</div>
                               : (
                                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                                  <button onClick={() => handleAssign(null)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--hover-1)] text-red-400">
-                                    <div className="w-9 h-9 rounded-full bg-red-500/20 flex items-center justify-center"><X className="w-5 h-5" /></div>
+                                  <button onClick={() => handleAssign(null)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--hover-1)] text-[var(--accent)]">
+                                    <div className="w-9 h-9 rounded-full bg-[var(--accent-soft)] flex items-center justify-center"><X className="w-5 h-5" /></div>
                                     <span className="text-base">Снять</span>
                                   </button>
                                   {filteredUsers.map(emp => (
                                     <button key={emp.id} onClick={() => handleAssign(emp.id)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--hover-1)] text-left">
-                                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-700 to-red-800 flex items-center justify-center"><User className="w-5 h-5 text-[var(--text-primary)]" /></div>
+                                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-700 to-red-800 flex items-center justify-center"><User className="w-5 h-5 text-white" /></div>
                                       <div className="flex-1 min-w-0">
                                         <p className="text-[var(--text-primary)] font-medium text-base truncate">{emp.full_name || emp.username}</p>
                                         <p className="text-[var(--text-primary)]/40 text-base truncate">{emp.email}</p>
@@ -962,9 +975,9 @@ export default function TicketDetailPage() {
                 )}
 
                 {/* Архивирование */}
-                <div className="border border-red-900/40 rounded-xl overflow-hidden">
-                  <div className="px-6 py-4 bg-red-950/20 border-b border-red-900/40">
-                    <h3 className="text-base font-semibold text-red-400/80 uppercase tracking-wider">Архивирование</h3>
+                <div className="border border-[var(--accent)]/30 rounded-xl overflow-hidden">
+                  <div className="px-6 py-4 bg-red-950/20 border-b border-[var(--accent)]/30">
+                    <h3 className="text-base font-semibold text-[var(--accent)]/80 uppercase tracking-wider">Архивирование</h3>
                   </div>
                   <div className="p-6">
                     {ticket.is_archived ? (
@@ -1074,8 +1087,8 @@ export default function TicketDetailPage() {
 
                 return (
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-                      <User className="w-6 h-6 text-[var(--text-primary)]" />
+                    <div className="w-12 h-12 rounded-xl bg-[var(--accent)] flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--text-primary)] text-base">{name}</p>
@@ -1093,8 +1106,8 @@ export default function TicketDetailPage() {
               if (fallbackName) {
                 return (
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-                      <User className="w-6 h-6 text-[var(--text-primary)]" />
+                    <div className="w-12 h-12 rounded-xl bg-[var(--accent)] flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--text-primary)] text-base">{fallbackName}</p>
@@ -1108,8 +1121,8 @@ export default function TicketDetailPage() {
               if (createdById === user?.user_id) {
                 return (
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-800 to-red-700 flex items-center justify-center">
-                      <User className="w-6 h-6 text-[var(--text-primary)]" />
+                    <div className="w-12 h-12 rounded-xl bg-[var(--accent)] flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--text-primary)] text-base">{user?.full_name || user?.username || 'Вы'}</p>
@@ -1139,7 +1152,7 @@ export default function TicketDetailPage() {
                 : <div className="text-center">
                   <File className="w-24 h-24 mx-auto mb-6 text-[var(--text-primary)]/30" />
                   <p className="text-2xl text-[var(--text-primary)] mb-3">Предпросмотр недоступен</p>
-                  <button onClick={() => handleDownload(previewFile.id)} className="mt-6 px-10 py-3.5 bg-red-800/50 hover:bg-red-800/80 rounded-2xl text-[var(--text-primary)] font-medium">Скачать</button>
+                  <button onClick={() => handleDownload(previewFile.id)} className="mt-6 px-10 py-3.5 bg-[var(--accent)]/50 hover:bg-[var(--accent)]/80 rounded-2xl text-white font-medium">Скачать</button>
                 </div>
               }
             </div>
@@ -1151,24 +1164,24 @@ export default function TicketDetailPage() {
       {showEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !savingEdit && setShowEditModal(false)} />
-          <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-[#1a1a1a] border border-[var(--border-color)] rounded-2xl overflow-hidden"
-            style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 24px 80px rgba(0,0,0,0.7)' }}>
+          <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden"
+            style={{ boxShadow: 'var(--shadow-lg)' }}>
 
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-color)] bg-white/[0.02] flex-shrink-0">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border-color)] bg-[var(--hover-1)] flex-shrink-0">
               <div>
                 <h2 className="text-lg font-bold text-[var(--text-primary)]">Редактировать заявку</h2>
                 <p className="text-sm text-[var(--text-primary)]/40 mt-0.5">#{ticket.number}</p>
               </div>
               <button onClick={() => setShowEditModal(false)} disabled={savingEdit}
-                className="p-2 rounded-xl hover:bg-white/[0.06] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]"><X size={20} /></button>
+                className="p-2 rounded-xl hover:bg-[var(--hover-2)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]"><X size={20} /></button>
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
               {/* Тема */}
               <div>
-                <label className="block text-base font-medium text-[var(--text-primary)]/70 mb-2">Тема <span className="text-red-400">*</span></label>
+                <label className="block text-base font-medium text-[var(--text-primary)]/70 mb-2">Тема <span className="text-[var(--accent)]">*</span></label>
                 <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10" />
+                  className="w-full px-4 py-3 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)]" />
               </div>
 
               {/* Описание */}
@@ -1182,13 +1195,13 @@ export default function TicketDetailPage() {
                 <label className="block text-base font-medium text-[var(--text-primary)]/70 mb-3">Приоритет</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { value: 'Низкий', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
-                    { value: 'Средний', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' },
-                    { value: 'Высокий', color: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
-                    { value: 'Критический', color: 'bg-red-500/15 text-red-400 border-red-500/30' },
+                    { value: 'Низкий', cls: 'priority-low' },
+                    { value: 'Средний', cls: 'priority-medium' },
+                    { value: 'Высокий', cls: 'priority-high' },
+                    { value: 'Критический', cls: 'priority-critical' },
                   ].map(p => (
                     <button key={p.value} type="button" onClick={() => setEditPriority(p.value)}
-                      className={`px-3 py-2.5 rounded-xl text-base font-medium border transition-all ${editPriority === p.value ? p.color : 'bg-white/[0.03] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:bg-white/[0.06]'
+                      className={`px-3 py-2.5 rounded-xl text-base font-medium border transition-all ${editPriority === p.value ? p.cls : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-muted)] hover:bg-[var(--hover-2)]'
                         }`}>{p.value}</button>
                   ))}
                 </div>
@@ -1202,7 +1215,7 @@ export default function TicketDetailPage() {
                     <span key={tag.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-base font-medium"
                       style={{ backgroundColor: (tag.color || '#64748b') + '25', color: tag.color || '#94a3b8' }}>
                       {tag.name}
-                      <button type="button" onClick={() => setEditTags(p => p.filter(t => t.name !== tag.name))} className="text-[var(--text-primary)]/30 hover:text-red-400"><X size={13} /></button>
+                      <button type="button" onClick={() => setEditTags(p => p.filter(t => t.name !== tag.name))} className="text-[var(--text-primary)]/30 hover:text-[var(--accent)]"><X size={13} /></button>
                     </span>
                   ))}
                 </div>
@@ -1214,19 +1227,19 @@ export default function TicketDetailPage() {
                         if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); }
                       }
                     }}
-                    placeholder="Новый тег (Enter)" className="flex-1 px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base placeholder-white/25 focus:outline-none" />
+                    placeholder="Новый тег (Enter)" className="flex-1 px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base placeholder-[var(--text-muted)] focus:outline-none" />
                   <button type="button" disabled={!editNewTag.trim()}
                     onClick={() => { const n = editNewTag.trim(); if (n && !editTags.some(t => t.name.toLowerCase() === n.toLowerCase())) { setEditTags(p => [...p, { name: n, color: '#64748b' }]); setEditNewTag(''); } }}
-                    className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/60 disabled:opacity-30"><Plus className="w-4 h-4" /></button>
+                    className="px-4 py-2.5 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/60 disabled:opacity-30"><Plus className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--border-color)] bg-white/[0.01] flex-shrink-0">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--border-color)] bg-[var(--hover-1)] flex-shrink-0">
               <button onClick={() => setShowEditModal(false)} disabled={savingEdit}
-                className="px-5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/70 text-base">Отмена</button>
+                className="px-5 py-2.5 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/70 text-base">Отмена</button>
               <button onClick={handleSaveEdit} disabled={savingEdit || !editTitle.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-base font-medium disabled:opacity-40 shadow-lg shadow-red-900/30">
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-base font-medium disabled:opacity-40 shadow-[var(--shadow-md)]">
                 {savingEdit && <Loader2 size={16} className="animate-spin" />}
                 {savingEdit ? 'Сохранение...' : 'Сохранить'}
               </button>

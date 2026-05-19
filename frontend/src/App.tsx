@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <Loader2 className="w-12 h-12 text-red-500 animate-spin" />
+    <Loader2 className="w-12 h-12 text-[var(--accent)] animate-spin" />
   </div>
 );
 

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Sparkles, Loader2, FileText,
   Tag, Upload, X, CheckCircle2, File, Building2, Zap, Plus,
-  Search, FolderOpen, User,
+  Search, FolderOpen, User, AlertCircle,
 } from 'lucide-react';
 import { SignalLow, SignalMedium, SignalHigh, Flame } from 'lucide-react';
 
@@ -20,10 +20,10 @@ import {
 // ─── Константы ────────────────────────────────────────────────────────────────
 
 const PRIORITIES = [
-  { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
-  { value: 'Средний', label: 'Средний', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
-  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
-  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
+  { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
+  { value: 'Средний', label: 'Средний', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', activeColor: 'bg-amber-500/30 text-amber-300 border-amber-400 ring-2 ring-amber-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
+  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
+  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
 ];
 
 const PRESET_TAGS = [
@@ -58,6 +58,7 @@ export default function NewTicketPage() {
 
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState('');
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Описание — блоковая модель
   const [descriptionBlocks, setDescriptionBlocks] = useState<DescriptionBlock[]>([
@@ -93,6 +94,7 @@ export default function NewTicketPage() {
 
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<any>(null);
+  const [aiTriggered, setAiTriggered] = useState(false);
   const [newTagInput, setNewTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showCustomTagInput, setShowCustomTagInput] = useState(false);
@@ -105,6 +107,11 @@ export default function NewTicketPage() {
   const counterpartyDropdownRef = useRef<HTMLDivElement>(null);
   const projectDropdownRef = useRef<HTMLDivElement>(null);
   const reporterDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Проверяет, есть ли текстовое содержимое в описании
+  const hasDescription = descriptionBlocks.some(
+    b => (b.type === 'text' && b.value.trim().length > 0) || (b.type === 'image' && b.localFile)
+  );
 
   // ─── Effects ───────────────────────────────────────────────────────────────
 
@@ -121,10 +128,10 @@ export default function NewTicketPage() {
   useEffect(() => { pageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [step]);
   useEffect(() => { if (isCustomer && user?.counterparty_id) loadCustomerCounterparty(); }, [user]);
   useEffect(() => {
-  if (canSelectCounterparty) {
-    loadCounterparties();
-  }
-}, [canSelectCounterparty]);
+    if (canSelectCounterparty) {
+      loadCounterparties();
+    }
+  }, [canSelectCounterparty]);
 
   useEffect(() => {
     if (selectionType === 'counterparty' && selectedCounterparty) loadProjects(selectedCounterparty.id);
@@ -138,57 +145,66 @@ export default function NewTicketPage() {
     else { setUsers([]); setSelectedReporter(null); setReporterSearch(''); }
   }, [selectedCounterparty, selectedProject]);
 
-useEffect(() => {
-  if (!preselectedProjectId || !canSelectCounterparty) return;
+  useEffect(() => {
+    if (!preselectedProjectId || !canSelectCounterparty) return;
 
-  const autoSelectProject = async () => {
-    setSelectionType('project');
-    
-    try {
-      // Загружаем все проекты
-      const items = (await projectsApi.getAll(1, 100)).items;
-      setProjects(items);
-      
-      // Ищем нужный проект
-      const found = items.find(p => p.id === preselectedProjectId);
-      if (found) {
-        setSelectedProject(found);
-        setProjectSearch(`${found.key} - ${found.name}`);
-        
-        // Если у проекта есть контрагент — тоже выбираем его
-        if (found.counterparty_id) {
-          try {
-            const cp = await counterpartiesApi.getById(found.counterparty_id);
-            setSelectedCounterparty(cp);
-            setCounterpartySearch(cp.name || cp.legal_name || '');
-          } catch { }
+    const autoSelectProject = async () => {
+      setSelectionType('project');
+
+      try {
+        const items = (await projectsApi.getAll(1, 100)).items;
+        setProjects(items);
+
+        const found = items.find(p => p.id === preselectedProjectId);
+        if (found) {
+          setSelectedProject(found);
+          setProjectSearch(`${found.key} - ${found.name}`);
+
+          if (found.counterparty_id) {
+            try {
+              const cp = await counterpartiesApi.getById(found.counterparty_id);
+              setSelectedCounterparty(cp);
+              setCounterpartySearch(cp.name || cp.legal_name || '');
+            } catch { }
+          }
         }
+      } catch (err) {
+        console.error('Failed to auto-select project:', err);
+      } finally {
+        setLoadingProjects(false);
       }
-    } catch (err) {
-      console.error('Failed to auto-select project:', err);
-    } finally {
-      setLoadingProjects(false);
-    }
-  };
+    };
 
-  autoSelectProject();
-}, [preselectedProjectId, canSelectCounterparty]);
-  // AI
+    autoSelectProject();
+  }, [preselectedProjectId, canSelectCounterparty]);
+
+  // AI — запускаем при переходе на шаг 2
   const runAI = useCallback(async () => {
-    if (!title || !description) return;
+    if (!title.trim() || !description.trim()) return;
     setAiLoading(true);
+    setAiTriggered(true);
     try {
       const r = await ticketsApi.predict(title, description);
-      setAiSuggestion(r); setAiSuggestedTags(r.suggested_tags || []);
-      setPriority(r.suggested_priority); setTags(r.suggested_tags || []);
+      setAiSuggestion(r);
+      setAiSuggestedTags(r.suggested_tags || []);
+      setPriority(r.suggested_priority);
+      setTags(r.suggested_tags || []);
     } catch { } finally { setAiLoading(false); }
   }, [title, description]);
 
+  // Запускаем AI при входе на шаг 2 (если ещё не запускали или данные поменялись)
   useEffect(() => {
-    if (step === 1 && aiAutoEnabled) { const t = setTimeout(runAI, 1000); return () => clearTimeout(t); }
-  }, [title, description, step, aiAutoEnabled, runAI]);
+    if (step === 2 && !aiTriggered && title.trim() && description.trim()) {
+      runAI();
+    }
+  }, [step]);
 
-  useEffect(() => { if (step === 2) setAiAutoEnabled(false); else if (step === 1) setAiAutoEnabled(true); }, [step]);
+  // Сбрасываем триггер AI если вернулись на шаг 1 и поменяли данные
+  useEffect(() => {
+    if (step === 1) {
+      setAiTriggered(false);
+    }
+  }, [title, description]);
 
   // ─── Loaders ───────────────────────────────────────────────────────────────
 
@@ -197,50 +213,49 @@ useEffect(() => {
     try { setCustomerCounterparty(await counterpartiesApi.getById(user.counterparty_id)); } catch { }
   };
 
-const loadCounterparties = async (search?: string) => {
-  setLoadingCounterparties(true);
-  try {
-    let items = (await counterpartiesApi.getAll(1, 50)).items;
-    if (search) {
-      const q = search.toLowerCase();
-      items = items.filter(c =>
-        c.name?.toLowerCase().includes(q) ||
-        c.legal_name?.toLowerCase().includes(q) ||
-        c.inn?.includes(search)
-      );
-    }
-    setCounterparties(items);
-
-    // Автовыбор из URL — только при первой загрузке (без поиска)
-    if (!search && preselectedCounterpartyId && !selectedCounterparty) {
-      const found = items.find(c => c.id === preselectedCounterpartyId);
-      if (found) {
-        setSelectionType('counterparty');
-        setSelectedCounterparty(found);
-        setCounterpartySearch(found.name || found.legal_name || '');
+  const loadCounterparties = async (search?: string) => {
+    setLoadingCounterparties(true);
+    try {
+      let items = (await counterpartiesApi.getAll(1, 50)).items;
+      if (search) {
+        const q = search.toLowerCase();
+        items = items.filter(c =>
+          c.name?.toLowerCase().includes(q) ||
+          c.legal_name?.toLowerCase().includes(q) ||
+          c.inn?.includes(search)
+        );
       }
-    }
-  } catch { }
-  finally { setLoadingCounterparties(false); }
-};
+      setCounterparties(items);
+
+      if (!search && preselectedCounterpartyId && !selectedCounterparty) {
+        const found = items.find(c => c.id === preselectedCounterpartyId);
+        if (found) {
+          setSelectionType('counterparty');
+          setSelectedCounterparty(found);
+          setCounterpartySearch(found.name || found.legal_name || '');
+        }
+      }
+    } catch { }
+    finally { setLoadingCounterparties(false); }
+  };
 
   const loadProjects = async (cpId: string) => {
     setLoadingProjects(true);
     try { setProjects((await projectsApi.getByCounterparty(cpId, 1, 50)).items); } catch { } finally { setLoadingProjects(false); }
   };
 
-const loadProjectsForAll = async (): Promise<Project[]> => {
-  setLoadingProjects(true);
-  try {
-    const items = (await projectsApi.getAll(1, 100)).items;
-    setProjects(items);
-    return items;
-  } catch {
-    return [];
-  } finally {
-    setLoadingProjects(false);
-  }
-};
+  const loadProjectsForAll = async (): Promise<Project[]> => {
+    setLoadingProjects(true);
+    try {
+      const items = (await projectsApi.getAll(1, 100)).items;
+      setProjects(items);
+      return items;
+    } catch {
+      return [];
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
 
   const loadUsers = async (cpId: string) => {
     setLoadingUsers(true);
@@ -272,6 +287,30 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
     setTags(p => [...p, { name: n, color: '#a1a1aa' }]); setNewTagInput(''); setShowCustomTagInput(false);
   };
   const removeTag = (name: string) => setTags(p => p.filter(t => t.name !== name));
+
+  // Валидация перехода на следующий шаг
+  const validateStep1 = (): boolean => {
+    const errors: string[] = [];
+    if (!title.trim()) errors.push('Укажите тему заявки');
+    if (!hasDescription) errors.push('Добавьте описание заявки');
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
+
+  const handleNextStep = () => {
+    if (step === 1) {
+      if (!validateStep1()) return;
+    }
+    setValidationErrors([]);
+    setStep(step + 1);
+  };
+
+  // Убираем ошибки при вводе
+  useEffect(() => {
+    if (validationErrors.length > 0 && title.trim() && hasDescription) {
+      setValidationErrors([]);
+    }
+  }, [title, descriptionBlocks]);
 
   // Обычные файлы
   const handleGeneralFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,8 +344,6 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      // Собираем только текстовую часть для первичного создания
-      // (чтобы в БД не попал [[local-image:...]])
       const textOnlyDesc = descriptionBlocks
         .filter(
           (b): b is Extract<DescriptionBlock, { type: 'text' }> =>
@@ -335,7 +372,6 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
 
       const ticket = await ticketsApi.create(data);
 
-      // 1. Загружаем картинки из блоков описания
       const imageBlocks = descriptionBlocks.filter(
         (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
           b.type === 'image' && !!b.localFile
@@ -356,27 +392,24 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
         }
       }
 
-      // 2. Собираем финальное описание с реальными ID вложений
       if (imageBlocks.length > 0) {
         let finalDesc = serializeBlocks(descriptionBlocks);
 
         for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
           finalDesc = finalDesc.replaceAll(
-            `[[local-image:${blockId}]]`,
-            `[[image:${attachmentId}]]`
+            `![image](local:${blockId})`,
+            `![image](attachment:${attachmentId})`
           );
         }
 
-        // Убираем оставшиеся local-image (если upload упал)
         finalDesc = finalDesc.replace(
-          /\[\[local-image:[^\]]+\]\]\n*/g,
+          /!\[image\]\(local:[a-f0-9-]+\)\n*/gi,
           ''
         );
 
         await ticketsApi.update(ticket.id, { description: finalDesc });
       }
 
-      // 3. Загружаем обычные файлы
       for (const f of generalFiles.filter((x) => x.status === 'pending')) {
         try {
           await attachmentsApi.uploadAttachment(f.file, 'ticket', ticket.id);
@@ -416,9 +449,9 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
       <div className="glass-card p-6 mb-10">
         <div className="flex justify-center">
           {[
-            { num: 1, label: 'Описание', icon: <FileText className="w-5 h-5" /> },
+            { num: 1, label: 'Название и описание', icon: <FileText className="w-5 h-5" /> },
             { num: 2, label: 'Приоритет и теги', icon: <Tag className="w-5 h-5" /> },
-            { num: 3, label: 'Проверка', icon: <CheckCircle2 className="w-5 h-5" /> },
+            { num: 3, label: 'Проверка и отправка', icon: <CheckCircle2 className="w-5 h-5" /> },
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
               <div className={`flex items-center gap-4 ${step >= s.num ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40'}`}>
@@ -437,6 +470,18 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
         {/* ═══ Step 1 ═══ */}
         {step === 1 && (
           <div className="space-y-10">
+            {/* Ошибки валидации */}
+            {validationErrors.length > 0 && (
+              <div className="p-5 rounded-2xl bg-red-500/10 border border-red-500/30 space-y-2">
+                {validationErrors.map((err, i) => (
+                  <div key={i} className="flex items-center gap-3 text-red-400">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-base font-medium">{err}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Привязка (admin/support) */}
             {canSelectCounterparty && (
               <>
@@ -444,7 +489,7 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                   <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Привязать заявку к</label>
                   <div className="flex gap-4">
                     <button type="button" onClick={() => handleSelectionTypeChange('project')}
-                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-purple-500 bg-purple-500/20 text-purple-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-amber-500 bg-amber-500/20 text-amber-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
                       <FolderOpen className="w-6 h-6" /><span className="text-lg font-medium">Проекту</span>
                     </button>
                     <button type="button" onClick={() => handleSelectionTypeChange('counterparty')}
@@ -508,14 +553,14 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                         projects.filter(p => !projectSearch || p.name.toLowerCase().includes(projectSearch.toLowerCase()) || p.key.toLowerCase().includes(projectSearch.toLowerCase())).map(p => (
                           <button key={p.id} onClick={() => { setSelectedProject(p); setProjectSearch(prjName(p)); setShowProjectDropdown(false); }}
                             className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
-                            <span className="text-purple-400">{p.key}</span> — {p.name}
+                            <span className="text-amber-400">{p.key}</span> — {p.name}
                           </button>
                         ))
                       }
                     </div>
                   )}
                 </div>
-                {selectedProject && <div className="mt-3 p-4 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">✓ {prjName(selectedProject)}</div>}
+                {selectedProject && <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">✓ {prjName(selectedProject)}</div>}
               </div>
             )}
 
@@ -567,9 +612,10 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             )}
 
             {/* Тема */}
-            <SpellCheckField  value={title} onChange={setTitle} label="Тема заявки *">
+            <SpellCheckField value={title} onChange={setTitle} label="Тема заявки *">
               <input type="text" value={title} onChange={e => setTitle(e.target.value)}
-                placeholder="Кратко опишите проблему..." className="input-field py-5 text-2xl w-full" />
+                placeholder="Кратко опишите проблему..."
+                className={`input-field py-5 text-2xl w-full ${validationErrors.includes('Укажите тему заявки') ? 'border-red-500 ring-1 ring-red-500/50' : ''}`} />
             </SpellCheckField>
 
             {/* Описание */}
@@ -577,7 +623,9 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 Подробное описание <span className="text-red-400">*</span>
               </label>
-              <TicketEditor blocks={descriptionBlocks} onChange={setDescriptionBlocks} />
+              <div className={validationErrors.includes('Добавьте описание заявки') ? 'ring-1 ring-red-500/50 rounded-2xl' : ''}>
+                <TicketEditor blocks={descriptionBlocks} onChange={setDescriptionBlocks} />
+              </div>
             </div>
 
             {/* Обычные вложения */}
@@ -592,7 +640,7 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                 <p className="text-lg text-[var(--text-primary)]/50 mb-2">Перетащите файлы сюда</p>
                 <label className="inline-block">
                   <input type="file" multiple onChange={handleGeneralFileSelect} className="hidden" />
-                  <span className="px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-base font-medium cursor-pointer transition-colors">
+                  <span className="px-5 py-2.5 rounded-xl bg-red-700 hover:bg-red-600 text-white text-base font-medium cursor-pointer transition-colors">
                     Выбрать файлы
                   </span>
                 </label>
@@ -602,17 +650,17 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
               {generalFiles.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {generalFiles.map(f => (
-                    <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-[var(--border-color)]">
+                    <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--hover-2)] border border-[var(--border-color)]">
                       {f.preview
                         ? <img src={f.preview} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                        : <div className="w-12 h-12 rounded-lg bg-white/[0.06] flex items-center justify-center"><File className="w-5 h-5 text-[var(--text-primary)]/40" /></div>
+                        : <div className="w-12 h-12 rounded-lg bg-[var(--hover-2)] flex items-center justify-center"><File className="w-5 h-5 text-[var(--text-primary)]/40" /></div>
                       }
                       <div className="flex-1 min-w-0">
                         <p className="text-base text-[var(--text-primary)] truncate">{f.file.name}</p>
                         <p className="text-sm text-[var(--text-primary)]/40">{formatFileSize(f.file.size)}</p>
                       </div>
                       <button onClick={() => removeGeneralFile(f.id)}
-                        className="p-1.5 rounded-lg hover:bg-white/[0.08] text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
+                        className="p-1.5 rounded-lg hover:bg-[var(--hover-3)] text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -626,75 +674,149 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
         {/* ═══ Step 2 ═══ */}
         {step === 2 && (
           <div className="space-y-12">
-            {aiSuggestion && !aiLoading && (
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 flex items-center gap-3">
-                <Zap className="w-7 h-7 text-purple-400" />
-                <div>
-                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">ИИ подобрал приоритет и теги</h3>
-                  <p className="text-[var(--text-primary)]/60 mt-1">Проверьте и скорректируйте</p>
+            {/* Индикатор загрузки ИИ */}
+            {aiLoading && (
+              <div className="p-8 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-amber-400 animate-pulse" />
+                  </div>
+                  <Loader2 className="w-16 h-16 text-amber-400 animate-spin absolute inset-0" />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-[var(--text-primary)]">ИИ анализирует вашу заявку...</h3>
+                  <p className="text-[var(--text-secondary)] mt-2">Подбираем оптимальный приоритет и теги на основе описания</p>
                 </div>
               </div>
             )}
 
-            <div>
-              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет</label>
-              <div className="flex flex-wrap gap-3">
-                {PRIORITIES.map(p => (
-                  <button key={p.value} onClick={() => setPriority(p.value as TicketPriority)}
-                    className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${priority === p.value ? 'bg-[var(--hover-1)] text-[var(--text-primary)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'
-                      }`}>
-                    <div className="flex items-center gap-4">{p.icon}<div><div className="font-semibold">{p.label}</div><div className="text-sm opacity-70">{p.desc}</div></div></div>
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Уведомление об успешном предложении ИИ */}
+            {aiSuggestion && !aiLoading && (
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/30 to-orange-500/20
+                              dark:from-amber-500/10 dark:to-orange-500/10
+                              border border-amber-500/20 dark:border-amber-500/30
+                              flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/50
+                                flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </div>
 
-            <div>
-              <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Теги</label>
-              {aiSuggestedTags.length > 0 && (
-                <div className="mb-6">
-                  <p className="text-[var(--text-primary)]/50 text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4" />Предложено ИИ</p>
-                  <div className="flex flex-wrap gap-3">
-                    {aiSuggestedTags.map(t => (
-                      <button key={t.name} onClick={() => togglePresetTag(t)}
-                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}>
-                        {t.name}
-                      </button>
-                    ))}
-                  </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                    ИИ предложил приоритет и теги
+                  </h3>
+                  <p className="text-[var(--text-secondary)] mt-1">
+                    Проверьте и внесите правки при необходимости
+                  </p>
                 </div>
-              )}
-              <div className="flex flex-wrap gap-3 mb-6">
-                {PRESET_TAGS.map(t => (
-                  <button key={t.name} onClick={() => togglePresetTag(t)}
-                    className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${tags.some(x => x.name === t.name) ? 'bg-[var(--hover-1)] border-[var(--border-color)]' : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-1)]'}`}>
-                    {t.name}
-                  </button>
-                ))}
               </div>
-              <button onClick={() => setShowCustomTagInput(!showCustomTagInput)} className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm mb-4">
-                <Plus className="w-4 h-4" />{showCustomTagInput ? 'Скрыть' : 'Свой тег'}
-              </button>
-              {showCustomTagInput && (
-                <div className="flex gap-3 mb-6">
-                  <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addCustomTag()}
-                    placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
-                  <button onClick={addCustomTag} disabled={!newTagInput.trim()}
-                    className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] font-medium disabled:opacity-40">Добавить</button>
+            )}
+
+            <div className={aiLoading ? 'opacity-40 pointer-events-none transition-opacity' : 'transition-opacity'}>
+              <div>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет</label>
+                <div className="flex flex-wrap gap-3">
+                  {PRIORITIES.map(p => {
+                    const isSelected = priority === p.value;
+                    return (
+                      <button key={p.value} onClick={() => setPriority(p.value as TicketPriority)}
+                        className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${isSelected
+                            ? `${p.activeColor} scale-[1.02] shadow-lg`
+                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                          }`}>
+                        <div className="flex items-center gap-4">
+                          <div className={isSelected ? '' : 'opacity-40'}>{p.icon}</div>
+                          <div>
+                            <div className="font-semibold">{p.label}</div>
+                            <div className="text-sm opacity-70">{p.desc}</div>
+                          </div>
+                          {isSelected && (
+                            <CheckCircle2 className="w-6 h-6 ml-auto flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
-              {tags.length > 0 && (
-                <div className="p-5 bg-[var(--hover-1)] rounded-2xl">
-                  <p className="text-[var(--text-primary)]/50 mb-3">Выбрано: {tags.length}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {tags.map(t => (
-                      <div key={t.name} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--hover-1)] rounded-2xl">
-                        {t.name}<X className="w-4 h-4 cursor-pointer text-[var(--text-primary)]/50 hover:text-red-400" onClick={() => removeTag(t.name)} />
-                      </div>
-                    ))}
+              </div>
+
+              <div className="mt-12">
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Теги</label>
+                {aiSuggestedTags.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-[var(--text-primary)]/50 text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4" />Предложено ИИ</p>
+                    <div className="flex flex-wrap gap-3">
+                      {aiSuggestedTags.map(t => {
+                        const isSelected = tags.some(x => x.name === t.name);
+                        return (
+                          <button key={t.name} onClick={() => togglePresetTag(t)}
+                            className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${isSelected
+                                ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 ring-1 ring-amber-500/30'
+                                : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                              }`}>
+                            <span className="flex items-center gap-2">
+                              {isSelected && <CheckCircle2 className="w-4 h-4" />}
+                              {t.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
+                )}
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {PRESET_TAGS.map(t => {
+                    const isSelected = tags.some(x => x.name === t.name);
+                    return (
+                      <button key={t.name} onClick={() => togglePresetTag(t)}
+                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${isSelected
+                            ? 'border-[color:var(--tag-color)] ring-1 ring-[color:var(--tag-color)]'
+                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                          }`}
+                        style={{
+                          '--tag-color': t.color,
+                          backgroundColor: isSelected ? `${t.color}25` : undefined,
+                          color: isSelected ? t.color : undefined,
+                          borderColor: isSelected ? `${t.color}80` : undefined,
+                        } as React.CSSProperties}>
+                        <span className="flex items-center gap-2">
+                          {isSelected && <CheckCircle2 className="w-4 h-4" />}
+                          {t.name}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+                <button onClick={() => setShowCustomTagInput(!showCustomTagInput)} className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm mb-4">
+                  <Plus className="w-4 h-4" />{showCustomTagInput ? 'Скрыть' : 'Свой тег'}
+                </button>
+                {showCustomTagInput && (
+                  <div className="flex gap-3 mb-6">
+                    <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addCustomTag()}
+                      placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
+                    <button onClick={addCustomTag} disabled={!newTagInput.trim()}
+                      className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">Добавить</button>
+                  </div>
+                )}
+                {tags.length > 0 && (
+                  <div className="p-5 bg-[var(--hover-1)] rounded-2xl">
+                    <p className="text-[var(--text-primary)]/50 mb-3">Выбрано: {tags.length}</p>
+                    <div className="flex flex-wrap gap-3">
+                      {tags.map(t => (
+                        <div key={t.name} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border"
+                          style={{
+                            backgroundColor: `${t.color || '#71717a'}20`,
+                            borderColor: `${t.color || '#71717a'}50`,
+                            color: t.color || '#d1d5db',
+                          }}>
+                          {t.name}
+                          <X className="w-4 h-4 cursor-pointer opacity-60 hover:opacity-100 hover:text-red-400 transition-all" onClick={() => removeTag(t.name)} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -713,8 +835,8 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
             <div className="space-y-6 animate-in fade-in duration-500">
               {/* Привязка */}
               {selectedProject && (
-                <div className="p-6 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center gap-4">
-                  <FolderOpen className="w-8 h-8 text-purple-400" />
+                <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-4">
+                  <FolderOpen className="w-8 h-8 text-amber-400" />
                   <div><p className="text-[var(--text-primary)] font-semibold">{prjName(selectedProject)}</p><p className="text-[var(--text-primary)]/40 text-sm">контрагент из проекта</p></div>
                 </div>
               )}
@@ -751,7 +873,7 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
                 <p className="text-[var(--text-primary)] font-semibold text-lg break-words">{title || '—'}</p>
               </div>
 
-              {/* Описание — с картинками и форматированием */}
+              {/* Описание */}
               <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                 <p className="text-[var(--text-primary)]/50 mb-4">Описание</p>
                 <div className="space-y-4">
@@ -824,19 +946,20 @@ const loadProjectsForAll = async (): Promise<Project[]> => {
         <div className="flex justify-between mt-12 pt-8 border-t border-[var(--border-color)]">
           {step > 1 ? (
             <button onClick={() => setStep(step - 1)}
-              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] text-lg font-medium">
+              className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-[var(--hover-1)] hover:bg-[var(--hover-2)] text-lg font-medium transition-colors">
               <ArrowLeft className="w-5 h-5" /> Назад
             </button>
           ) : <div />}
 
           {step < 3 ? (
-            <button onClick={() => setStep(step + 1)}
-              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors">
+            <button onClick={handleNextStep}
+              disabled={step === 1 && (!title.trim() || !hasDescription)}
+              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-700">
               Далее <ArrowRight className="w-5 h-5 inline ml-2" />
             </button>
           ) : (
             <button onClick={handleSubmit} disabled={submitting}
-              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-[var(--text-primary)] text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
+              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
               {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <><FileText className="w-5 h-5" /> Создать заявку</>}
             </button>
           )}

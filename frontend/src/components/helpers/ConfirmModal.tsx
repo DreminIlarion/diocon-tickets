@@ -29,7 +29,7 @@ export const ConfirmModal = ({
       case 'danger':
         return {
           icon: <AlertTriangle className="w-6 h-6 text-red-400" />,
-          confirmButton: 'bg-red-800 hover:bg-red-700 text-[var(--text-primary)]',
+          confirmButton: 'bg-red-800 hover:bg-red-700 text-white',
           titleColor: 'text-[var(--text-primary)]'
         };
       case 'warning':

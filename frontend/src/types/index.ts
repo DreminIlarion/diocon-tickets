@@ -17,12 +17,12 @@ export const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export const ROLE_COLORS: Record<UserRole, string> = {
-  customer_admin: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  customer: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-  support_agent: 'bg-green-500/20 text-green-400 border-green-500/30',
-  support_manager: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  executor: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  admin: 'bg-red-500/20 text-red-400 border-red-500/30',
+  customer_admin: 'bg-[var(--info)]/8 text-[var(--info)] border-[var(--info)]/15',
+  customer: 'bg-cyan-500/20 text-[var(--info)] border-cyan-500/30',
+  support_agent: 'bg-[var(--success)]/8 text-[var(--success)] border-[var(--success)]/15',
+  support_manager: 'bg-[var(--info)]/8 text-[var(--info)] border-[var(--info)]/15',
+  executor: 'bg-[var(--warning)]/8 text-[var(--warning)] border-[var(--warning)]/15',
+  admin: 'bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent)]/15',
 };
 
 // Пользователь
@@ -202,13 +202,13 @@ export const TICKET_STATUS_LIST: TicketStatus[] = [
 ];
 
 export const TICKET_STATUS_COLORS: Record<TicketStatus, string> = {
-  'Новый': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  'Открыт': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-  'В работе': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  'Ожидает ответа': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  'Решён': 'bg-green-500/20 text-green-400 border-green-500/30',
-  'Закрыт': 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30',
-  'Переоткрыт': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  'Новый': 'bg-[var(--info)]/8 text-[var(--info)] border-[var(--info)]/15',
+  'Открыт': 'bg-cyan-500/20 text-[var(--info)] border-cyan-500/30',
+  'В работе': 'bg-[var(--warning)]/8 text-[var(--warning)] border-[var(--warning)]/15',
+  'Ожидает ответа': 'bg-[var(--info)]/8 text-[var(--info)] border-[var(--info)]/15',
+  'Решён': 'bg-[var(--success)]/8 text-[var(--success)] border-[var(--success)]/15',
+  'Закрыт': 'bg-[var(--text-muted)]/8 text-[var(--text-muted)] border-[var(--text-muted)]/15',
+  'Переоткрыт': 'bg-[var(--warning)]/8 text-[var(--warning)] border-[var(--warning)]/15',
 };
 
 // Приоритет заявки (из API)
@@ -222,10 +222,10 @@ export const TICKET_PRIORITY_LIST: TicketPriority[] = [
 ];
 
 export const TICKET_PRIORITY_COLORS: Record<TicketPriority, string> = {
-  'Низкий': 'bg-green-500/20 text-green-400 border-green-500/30',
-  'Средний': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  'Высокий': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  'Критический': 'bg-red-500/20 text-red-400 border-red-500/30',
+  'Низкий': 'bg-[var(--success)]/8 text-[var(--success)] border-[var(--success)]/15',
+  'Средний': 'bg-[var(--warning)]/8 text-[var(--warning)] border-[var(--warning)]/15',
+  'Высокий': 'bg-[var(--warning)]/8 text-[var(--warning)] border-[var(--warning)]/15',
+  'Критический': 'bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent)]/15',
 };
 
 // Тег заявки
@@ -298,8 +298,11 @@ export interface TicketListItem {
   title: string;
   status: TicketStatus;
   priority: TicketPriority;
-  number: string;           // ← добавить
-  closed_at: string | null; // ← добавить
+  number: string;
+  closed_at: string | null;
+  project_id?: string | null;
+  counterparty_id?: string | null;
+  reporter_id?: string | null;
 }
 
 // Создание заявки

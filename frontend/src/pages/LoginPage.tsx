@@ -66,9 +66,9 @@ export default function LoginPage() {
           <p className="text-[var(--text-primary)]/60 mb-8">Введите данные для входа</p>
 
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400">{error}</p>
+            <div className="mb-6 p-4 rounded-xl bg-[var(--accent-soft)] border border-[var(--accent)]/15 flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-[var(--accent)] flex-shrink-0" />
+              <p className="text-[var(--accent)]">{error}</p>
             </div>
           )}
 
@@ -114,7 +114,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowForgotModal(true)}
-                className="text-red-400 hover:text-red-300 transition-colors text-base"
+                className="text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors text-base"
               >
                 Забыли пароль?
               </button>
@@ -136,7 +136,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-center">
+          <div className="mt-8 pt-6 border-t border-[var(--border-color)] text-center">
             <p className="text-[var(--text-primary)]/50">
               Нет аккаунта?{' '}
               <span className="text-[var(--text-primary)]/70">
@@ -155,7 +155,7 @@ export default function LoginPage() {
       {/* Forgot Password Modal */}
       {showForgotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => {
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => {
             setShowForgotModal(false);
             setForgotSent(false);
             setForgotEmail('');
@@ -185,7 +185,7 @@ export default function LoginPage() {
                       setShowForgotModal(false);
                       setForgotEmail('');
                     }}
-                    className="flex-1 py-4 px-6 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-primary)] transition-colors text-base font-medium"
+                    className="flex-1 py-4 px-6 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-2)] text-[var(--text-primary)] transition-colors text-base font-medium"
                   >
                     Отмена
                   </button>
@@ -201,8 +201,8 @@ export default function LoginPage() {
             ) : (
               <>
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[var(--success)]/8 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>

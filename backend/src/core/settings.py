@@ -80,7 +80,7 @@ class JWTSettings(BaseSettings):
 class MailSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="MAIL_")
 
-    smtp_host: str = "localhost"
+    smtp_host: str = "maildev"
     smtp_port: int = 1025
     smtp_use_tls: bool = False
     smtp_user: str = ""

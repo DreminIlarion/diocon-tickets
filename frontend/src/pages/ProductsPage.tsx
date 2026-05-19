@@ -11,18 +11,18 @@ import { useNavigate } from 'react-router-dom';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { value: 'ERP', label: 'ERP', icon: Server, color: 'text-orange-400', bg: 'bg-orange-500/10' },
-  { value: 'WEB', label: 'Web', icon: Globe, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  { value: 'MOBILE', label: 'Mobile', icon: Smartphone, color: 'text-green-400', bg: 'bg-green-500/10' },
+  { value: 'ERP', label: 'ERP', icon: Server, color: 'text-[var(--warning)]', bg: 'bg-orange-500/10' },
+  { value: 'WEB', label: 'Web', icon: Globe, color: 'text-[var(--info)]', bg: 'bg-blue-500/10' },
+  { value: 'MOBILE', label: 'Mobile', icon: Smartphone, color: 'text-[var(--success)]', bg: 'bg-[var(--success)]/8' },
   { value: 'API', label: 'API', icon: Code, color: 'text-violet-400', bg: 'bg-violet-500/10' },
-  { value: 'DESKTOP', label: 'Desktop', icon: Monitor, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+  { value: 'DESKTOP', label: 'Desktop', icon: Monitor, color: 'text-[var(--info)]', bg: 'bg-cyan-500/10' },
   { value: 'HARDWARE', label: 'Hardware', icon: Cpu, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-  { value: 'OTHER', label: 'Прочее', icon: HelpCircle, color: 'text-[var(--text-primary)]/50', bg: 'bg-white/[0.06]' },
+  { value: 'OTHER', label: 'Прочее', icon: HelpCircle, color: 'text-[var(--text-primary)]/50', bg: 'bg-[var(--hover-2)]' },
 ] as const;
 
 const STATUSES = [
-  { value: 'active', label: 'Активный', dot: 'bg-emerald-400', color: 'text-emerald-400' },
-  { value: 'beta', label: 'Бета', dot: 'bg-blue-400', color: 'text-blue-400' },
+  { value: 'active', label: 'Активный', dot: 'bg-emerald-400', color: 'text-[var(--success)]' },
+  { value: 'beta', label: 'Бета', dot: 'bg-blue-400', color: 'text-[var(--info)]' },
   { value: 'deprecated', label: 'Устаревший', dot: 'bg-[var(--hover-1)]', color: 'text-[var(--text-primary)]/40' },
 ] as const;
 
@@ -104,14 +104,14 @@ function FilterDropdown({
           flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-base
           transition-all whitespace-nowrap cursor-pointer
           ${open
-            ? 'bg-white/[0.08] border-red-500/40 text-[var(--text-primary)]'
+            ? 'bg-[var(--hover-2)] border-[var(--accent)]/30 text-[var(--text-primary)]'
             : value
-              ? 'bg-white/[0.06] border-[var(--border-color)] text-[var(--text-primary)]/90'
-              : 'bg-white/[0.03] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
+              ? 'bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/90'
+              : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
           }
         `}
       >
-        <span className={value ? 'text-red-400' : 'text-[var(--text-primary)]/40'}>{icon}</span>
+        <span className={value ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/40'}>{icon}</span>
         <span>{selected ? selected.label : placeholder}</span>
         {value ? (
           <span
@@ -128,24 +128,24 @@ function FilterDropdown({
       {open && (
         <div
           className={`
-            absolute z-[100] min-w-[200px] w-max bg-[#1e1e1e] border border-[var(--border-color)]
+            absolute z-[100]             min-w-[200px] w-max bg-[var(--bg-card)] border border-[var(--border-color)]
             rounded-xl overflow-hidden
             ${openUp ? 'bottom-full mb-2' : 'top-full mt-2'}
             ${alignRight ? 'right-0' : 'left-0'}
           `}
-          style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)' }}
+          style={{ boxShadow: 'var(--shadow-lg)' }}
         >
           <div className="py-1.5 max-h-[300px] overflow-y-auto">
             <button
               type="button"
               onClick={() => { onChange(''); setOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/60 hover:bg-white/[0.04]'
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${!value ? 'bg-[var(--accent-soft)] text-[var(--text-primary)]' : 'text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'
                 }`}
             >
-              {!value ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
+              {!value ? <Check size={16} className="text-[var(--accent)] flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
               <span>{placeholder}</span>
             </button>
-            <div className="h-px bg-white/[0.08] mx-3 my-1" />
+            <div className="h-px bg-[var(--hover-2)] mx-3 my-1" />
             {options.map(opt => {
               const active = opt.value === value;
               return (
@@ -153,10 +153,10 @@ function FilterDropdown({
                   type="button"
                   key={opt.value}
                   onClick={() => { onChange(opt.value); setOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${active ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70 hover:bg-white/[0.04]'
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors ${active ? 'bg-[var(--accent-soft)] text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70 hover:bg-[var(--hover-1)]'
                     }`}
                 >
-                  {active ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
+                  {active ? <Check size={16} className="text-[var(--accent)] flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
                   <span className="flex items-center gap-2.5">
                     {opt.dot && <span className={`w-2.5 h-2.5 rounded-full ${opt.dot}`} />}
                     {opt.icon}
@@ -199,7 +199,7 @@ function ActiveFilters({
         </span>
       )}
       {status && sInfo && (
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.06] border border-[var(--border-color)] text-base text-[var(--text-primary)]/80">
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--hover-2)] border border-[var(--border-color)] text-base text-[var(--text-primary)]/80">
           <span className={`w-2.5 h-2.5 rounded-full ${sInfo.dot}`} />
           {sInfo.label}
           <span onClick={onClearStatus} className="ml-0.5 p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
@@ -207,7 +207,7 @@ function ActiveFilters({
           </span>
         </span>
       )}
-      <button onClick={onClearAll} className="text-base text-red-400/60 hover:text-red-400 transition-colors ml-1">
+      <button onClick={onClearAll} className="text-base text-[var(--accent)]/60 hover:text-[var(--accent)] transition-colors ml-1">
         Сбросить
       </button>
     </div>
@@ -228,9 +228,9 @@ const ProductRow = ({ product, onClick }: { product: any; onClick: () => void })
     <button
       onClick={onClick}
       className="w-full flex items-center gap-4 px-5 py-4 text-left rounded-xl
-                 hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors duration-100 group"
+                 hover:bg-[var(--hover-1)] active:bg-[var(--hover-2)] transition-colors duration-100 group"
     >
-      <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${cat?.bg || 'bg-white/[0.06]'}
+      <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${cat?.bg || 'bg-[var(--hover-2)]'}
                       flex items-center justify-center ${cat?.color || 'text-[var(--text-primary)]/40'}
                       group-hover:scale-105 transition-transform`}>
         <Icon size={18} />
@@ -250,7 +250,7 @@ const ProductRow = ({ product, onClick }: { product: any; onClick: () => void })
         <span className="text-base text-[var(--text-primary)]/30 hidden lg:block w-[70px] text-right font-mono">
           {product.version ? `v${product.version}` : '—'}
         </span>
-        <span className={`text-base px-2.5 py-1 rounded-lg ${cat?.bg || 'bg-white/[0.06]'} ${cat?.color || 'text-[var(--text-primary)]/50'} hidden sm:block w-[90px] text-center`}>
+        <span className={`text-base px-2.5 py-1 rounded-lg ${cat?.bg || 'bg-[var(--hover-2)]'} ${cat?.color || 'text-[var(--text-primary)]/50'} hidden sm:block w-[90px] text-center`}>
           {cat?.label || product.category}
         </span>
         <div className="flex items-center gap-2 w-[100px] justify-end">
@@ -284,12 +284,12 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div
         className="relative w-full max-w-2xl max-h-[85vh] flex flex-col
-                   bg-[#1a1a1a] border border-[var(--border-color)] rounded-2xl overflow-hidden"
-        style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 24px 80px rgba(0,0,0,0.7)' }}
+                   bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl overflow-hidden"
+        style={{ boxShadow: 'var(--shadow-lg)' }}
       >
-        <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[var(--border-color)] flex-shrink-0 bg-white/[0.02]">
+        <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[var(--border-color)] flex-shrink-0 bg-[var(--hover-1)]">
           <div className="flex items-center gap-4 min-w-0">
-            <div className={`w-12 h-12 rounded-xl ${cat?.bg || 'bg-white/[0.06]'} flex items-center justify-center ${cat?.color || 'text-[var(--text-primary)]/40'} flex-shrink-0`}>
+            <div className={`w-12 h-12 rounded-xl ${cat?.bg || 'bg-[var(--hover-2)]'} flex items-center justify-center ${cat?.color || 'text-[var(--text-primary)]/40'} flex-shrink-0`}>
               <Icon size={22} />
             </div>
             <div className="min-w-0">
@@ -297,25 +297,25 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
               <p className="text-base text-[var(--text-primary)]/50 truncate">{product.vendor}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl hover:bg-white/[0.08] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)] transition-colors flex-shrink-0">
+          <button onClick={onClose} className="p-2.5 rounded-xl hover:bg-[var(--hover-2)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)] transition-colors flex-shrink-0">
             <X size={20} />
           </button>
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6">
           <div className="flex flex-wrap gap-2.5">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.05] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--hover-1)] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)]">
               <Building2 size={16} className="text-[var(--text-primary)]/40" />{product.vendor}
             </div>
             {product.version && (
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.05] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)] font-mono">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--hover-1)] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)] font-mono">
                 <Tag size={16} className="text-[var(--text-primary)]/40" />v{product.version}
               </div>
             )}
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${cat?.bg || 'bg-white/[0.05]'} text-base ${cat?.color || 'text-[var(--text-primary)]/60'} border border-[var(--border-color)]`}>
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl ${cat?.bg || 'bg-[var(--hover-1)]'} text-base ${cat?.color || 'text-[var(--text-primary)]/60'} border border-[var(--border-color)]`}>
               {cat && <cat.icon size={16} />}{cat?.label || product.category}
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.05] text-base border border-[var(--border-color)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--hover-1)] text-base border border-[var(--border-color)]">
               <div className={`w-2.5 h-2.5 rounded-full ${statusDot(product.status)}`} />
               <span className={sInfo?.color || 'text-[var(--text-primary)]/50'}>{statusLabel(product.status)}</span>
             </div>
@@ -331,7 +331,7 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
           {attrEntries.length > 0 && (
             <div>
               <div className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3 font-semibold">Характеристики</div>
-              <div className="rounded-xl border border-[var(--border-color)] divide-y divide-white/[0.06] bg-white/[0.02]">
+              <div className="rounded-xl border border-[var(--border-color)] divide-y divide-[var(--border-color)] bg-[var(--hover-1)]">
                 {attrEntries.map(([key, value]) => (
                   <div key={key} className="flex items-start gap-4 px-5 py-3.5">
                     <span className="text-base text-[var(--text-primary)]/40 w-[150px] flex-shrink-0 pt-0.5">{getAttrLabel(key)}</span>
@@ -416,7 +416,7 @@ export default function ProductsPage() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={loadProducts}
-            className="p-2.5 rounded-xl hover:bg-white/[0.06] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 transition-colors"
+            className="p-2.5 rounded-xl hover:bg-[var(--hover-2)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 transition-colors"
             title="Обновить"
           >
             <RefreshCcw size={18} />
@@ -441,8 +441,8 @@ export default function ProductsPage() {
             onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
             placeholder="Поиск по названию, вендору..."
             className="w-full pl-10 pr-10 py-3 glass-card border border-[var(--border-color)]
-                       rounded-xl text-[var(--text-primary)] text-base placeholder-white/30
-                       focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10
+                       rounded-xl text-[var(--text-primary)] text-base placeholder-[var(--text-muted)]
+                       focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)]
                        transition-all"
           />
           {searchQuery && (
@@ -450,7 +450,7 @@ export default function ProductsPage() {
               type="button"
               onClick={() => setSearchQuery('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                         text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-white/[0.06] transition-colors"
+                         text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
             >
               <X size={14} />
             </button>
@@ -495,10 +495,10 @@ export default function ProductsPage() {
       {/* ── Список ───────────────────────────────────────────────────────── */}
       {loading ? (
         <div className="flex justify-center py-24">
-          <Loader2 size={24} className="animate-spin text-red-500/50" />
+          <Loader2 size={24} className="animate-spin text-[var(--accent)]/50" />
         </div>
       ) : error ? (
-        <div className="px-5 py-10 text-base text-red-400">{error}</div>
+        <div className="px-5 py-10 text-base text-[var(--accent)]">{error}</div>
       ) : filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center py-24 text-[var(--text-primary)]/30">
           <Package size={40} className="mb-4 text-[var(--text-primary)]/15" />
@@ -507,7 +507,7 @@ export default function ProductsPage() {
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-white/[0.05]">
+        <div className="divide-y divide-[var(--border-color)]">
           {filteredProducts.map(product => (
             <ProductRow key={product.id} product={product} onClick={() => setSelectedProduct(product)} />
           ))}
@@ -521,7 +521,7 @@ export default function ProductsPage() {
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page <= 1}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                       hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
+                       hover:bg-[var(--hover-2)] disabled:opacity-40 disabled:cursor-not-allowed
                        text-[var(--text-primary)] text-base transition-colors"
           >
             <ChevronLeft size={16} /> Назад
@@ -536,8 +536,8 @@ export default function ProductsPage() {
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
                   className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
-                      ? 'bg-red-700 text-[var(--text-primary)]'
-                      : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-white/[0.08]'
+                      ? 'bg-[var(--accent)] text-white'
+                      : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-[var(--hover-2)]'
                     }`}
                 >
                   {pageNum}
@@ -550,7 +550,7 @@ export default function ProductsPage() {
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                       hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
+                       hover:bg-[var(--hover-2)] disabled:opacity-40 disabled:cursor-not-allowed
                        text-[var(--text-primary)] text-base transition-colors"
           >
             Вперёд <ChevronRight size={16} />

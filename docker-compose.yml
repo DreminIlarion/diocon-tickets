@@ -165,19 +165,19 @@ services:
       minio:
         condition: service_healthy
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-      - VITE_API_URL=${VITE_API_URL}
-    container_name: diocon-tickets-frontend
-    ports:
-      - "3001:80"
-    restart: unless-stopped
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     args:
+  #     - VITE_API_URL=${VITE_API_URL}
+  #   container_name: diocon-tickets-frontend
+  #   ports:
+  #     - "3001:80"
+  #   restart: unless-stopped
     
-    networks:
-      - default
+  #   networks:
+  #     - default
 
   backup:
     image: alpine:3.20

@@ -82,10 +82,10 @@ export default function NotificationsPage() {
 
   const getIconColor = (type: string) => {
     switch (type) {
-      case 'ticket': return 'bg-blue-500/20 text-blue-400';
-      case 'comment': return 'bg-green-500/20 text-green-400';
-      case 'assignment': return 'bg-purple-500/20 text-purple-400';
-      default: return 'bg-yellow-500/20 text-yellow-400';
+      case 'ticket': return 'bg-blue-500/20 text-[var(--info)]';
+      case 'comment': return 'bg-[var(--success)]/8 text-[var(--success)]';
+      case 'assignment': return 'bg-purple-500/20 text-[var(--info)]';
+      default: return 'bg-[var(--warning)]/8 text-[var(--warning)]';
     }
   };
 
@@ -108,7 +108,7 @@ export default function NotificationsPage() {
           <Bell className="w-4 h-4 mr-2 inline" />
           Все
           {unreadCount > 0 && (
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-red-800 text-[var(--text-primary)] text-xs">
+            <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--accent)] text-white text-xs">
               {unreadCount}
             </span>
           )}
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
                 {unreadCount > 0 ? `${unreadCount} непрочитанных` : 'Все прочитано'}
               </span>
               {unreadCount > 0 && (
-                <button onClick={markAllAsRead} className="text-sm text-red-400 hover:text-red-300">
+                <button onClick={markAllAsRead} className="text-sm text-[var(--accent)] hover:text-[var(--accent-hover)]">
                   Прочитать все
                 </button>
               )}
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
                 return (
                   <div
                     key={n.id}
-                    className={`p-4 hover:bg-[var(--hover-1)] transition-colors ${!n.read ? 'bg-white/[0.02]' : ''}`}
+                    className={`p-4 hover:bg-[var(--hover-1)] transition-colors ${!n.read ? 'bg-[var(--hover-1)]' : ''}`}
                   >
                     <div className="flex items-start gap-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${getIconColor(n.type)}`}>
@@ -169,7 +169,7 @@ export default function NotificationsPage() {
                             {!n.read && (
                               <button
                                 onClick={() => markAsRead(n.id)}
-                                className="p-2 rounded-lg hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-green-400"
+                                className="p-2 rounded-lg hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--success)]"
                                 title="Прочитано"
                               >
                                 <Check className="w-4 h-4" />
@@ -177,7 +177,7 @@ export default function NotificationsPage() {
                             )}
                             <button
                               onClick={() => deleteNotification(n.id)}
-                              className="p-2 rounded-lg hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-red-400"
+                              className="p-2 rounded-lg hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--accent)]"
                               title="Удалить"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function NotificationsPage() {
                       onChange={(e) => setSettings({ ...settings, [item.key]: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800" />
+                    <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]" />
                   </label>
                 </div>
               ))}
@@ -247,7 +247,7 @@ export default function NotificationsPage() {
                       onChange={(e) => setSettings({ ...settings, [item.key]: e.target.checked })}
                       className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800" />
+                    <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]" />
                   </label>
                 </div>
               ))}
@@ -268,7 +268,7 @@ export default function NotificationsPage() {
                   onChange={(e) => setSettings({ ...settings, soundEnabled: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800" />
+                <div className="w-11 h-6 bg-[var(--hover-1)] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]" />
               </label>
             </div>
           </div>

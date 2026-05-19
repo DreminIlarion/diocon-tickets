@@ -314,17 +314,17 @@ const checkKeyAvailability = async () => {
 
   const getKeyStatusIcon = () => {
     if (keyValidating) {
-      return <Loader2 className="w-5 h-5 text-yellow-400 animate-spin" />;
+      return <Loader2 className="w-5 h-5 text-[var(--warning)] animate-spin" />;
     }
     if (!key) return null;
     if (!isValidKey(key)) {
-      return <XCircle className="w-5 h-5 text-red-400" />;
+      return <XCircle className="w-5 h-5 text-[var(--accent)]" />;
     }
     if (keyAvailability?.available) {
-      return <CheckCircle className="w-5 h-5 text-green-400" />;
+      return <CheckCircle className="w-5 h-5 text-[var(--success)]" />;
     }
     if (keyAvailability && !keyAvailability.available) {
-      return <XCircle className="w-5 h-5 text-red-400" />;
+      return <XCircle className="w-5 h-5 text-[var(--accent)]" />;
     }
     return null;
   };
@@ -350,7 +350,7 @@ const checkKeyAvailability = async () => {
         {/* Организация */}
         <div>
           <label className="block text-lg font-semibold text-[var(--text-primary)] mb-2">
-            Контрагент <span className="text-red-400">*</span>
+            Контрагент <span className="text-[var(--accent)]">*</span>
           </label>
           <div className="relative" ref={counterpartyDropdownRef}>
             <div className="relative">
@@ -404,8 +404,8 @@ const checkKeyAvailability = async () => {
             )}
           </div>
           {counterpartyId && (
-            <div className="mt-4 p-4 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-green-400" />
+            <div className="mt-4 p-4 rounded-xl bg-[var(--success)]/8 border border-green-500/30 flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-[var(--success)]" />
               <span className="text-[var(--text-primary)]">Контрагнет выбран</span>
             </div>
           )}
@@ -414,7 +414,7 @@ const checkKeyAvailability = async () => {
         {/* Название проекта с AI помощником */}
         <div>
           <label className="block text-lg font-semibold text-[var(--text-primary)] mb-2">
-            Название проекта <span className="text-red-400">*</span>
+            Название проекта <span className="text-[var(--accent)]">*</span>
           </label>
           <div className="relative">
             <input
@@ -427,12 +427,12 @@ const checkKeyAvailability = async () => {
             />
             {aiLoading && (
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <Loader2 className="w-5 h-5 text-purple-400 animate-spin" />
+                <Loader2 className="w-5 h-5 text-[var(--info)] animate-spin" />
               </div>
             )}
             {!aiLoading && aiSuggestion && name && (
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <Sparkles className="w-5 h-5 text-purple-400" />
+                <Sparkles className="w-5 h-5 text-[var(--info)]" />
               </div>
             )}
           </div>
@@ -442,14 +442,14 @@ const checkKeyAvailability = async () => {
             <div className="mt-3 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  <Sparkles className="w-5 h-5 text-[var(--info)]" />
                   <span className="text-[var(--text-primary)]">Предложенный ключ:</span>
-                  <span className="text-purple-400 font-mono font-bold text-lg">{aiSuggestion}</span>
+                  <span className="text-[var(--info)] font-mono font-bold text-lg">{aiSuggestion}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setKey(aiSuggestion)}
-                  className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 text-sm transition-colors"
+                  className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-[var(--info)] text-sm transition-colors"
                 >
                   Использовать
                 </button>
@@ -461,7 +461,7 @@ const checkKeyAvailability = async () => {
         {/* Ключ проекта с проверкой доступности */}
         <div>
           <label className="block text-lg font-semibold text-[var(--text-primary)] mb-2">
-            Ключ проекта <span className="text-red-400">*</span>
+            Ключ проекта <span className="text-[var(--accent)]">*</span>
           </label>
           <div className="relative">
             <input
@@ -484,11 +484,11 @@ const checkKeyAvailability = async () => {
           
           {/* Ошибка валидации ключа */}
           {key && !isValidKey(key) && (
-            <div className="mt-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+            <div className="mt-3 p-4 rounded-xl bg-[var(--accent-soft)] border border-[var(--accent)]/15">
               <div className="flex items-start gap-2">
-                <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[var(--accent)] mt-0.5" />
                 <div>
-                  <p className="text-red-400 font-medium">Неверный формат ключа</p>
+                  <p className="text-[var(--accent)] font-medium">Неверный формат ключа</p>
                   <p className="text-[var(--text-primary)]/70 text-sm">
                     Ключ должен быть 2-10 символов, начинаться с буквы и содержать только буквы, цифры или подчёркивания
                   </p>
@@ -499,11 +499,11 @@ const checkKeyAvailability = async () => {
           
           {/* Статус доступности ключа */}
           {key && isValidKey(key) && keyAvailability && !keyAvailability.available && (
-            <div className="mt-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+            <div className="mt-3 p-4 rounded-xl bg-[var(--accent-soft)] border border-[var(--accent)]/15">
               <div className="flex items-start gap-2">
-                <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[var(--accent)] mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-red-400 font-medium">Ключ уже занят</p>
+                  <p className="text-[var(--accent)] font-medium">Ключ уже занят</p>
                   {keyAvailability.suggestions && keyAvailability.suggestions.length > 0 && (
                     <div className="mt-2">
                       <p className="text-[var(--text-primary)]/70 text-sm mb-2">Предлагаем альтернативы:</p>
@@ -527,9 +527,9 @@ const checkKeyAvailability = async () => {
           )}
           
           {key && isValidKey(key) && keyAvailability?.available && (
-            <div className="mt-3 p-3 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-green-400" />
-              <span className="text-green-400 text-sm">Ключ доступен</span>
+            <div className="mt-3 p-3 rounded-xl bg-[var(--success)]/8 border border-green-500/30 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
+              <span className="text-[var(--success)] text-sm">Ключ доступен</span>
             </div>
           )}
         </div>
@@ -538,16 +538,16 @@ const checkKeyAvailability = async () => {
         {counterpartyId && (
           <div>
             <label className="block text-lg font-semibold text-[var(--text-primary)] mb-2">
-              <Crown className="inline w-5 h-5 mr-2 text-yellow-400" />
-              Владелец проекта <span className="text-red-400">*</span>
+              <Crown className="inline w-5 h-5 mr-2 text-[var(--warning)]" />
+              Владелец проекта <span className="text-[var(--accent)]">*</span>
             </label>
             
             {/* Отображение выбранного владельца */}
             {selectedOwner && (
-              <div className="mb-3 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
+              <div className="mb-3 p-4 rounded-xl bg-[var(--success)]/8 border border-green-500/30">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-[var(--success)] flex items-center justify-center">
                       {selectedOwner.id === user?.user_id ? (
                         <User className="w-5 h-5 text-[var(--text-primary)]" />
                       ) : (
@@ -558,7 +558,7 @@ const checkKeyAvailability = async () => {
                       <div className="text-[var(--text-primary)] font-medium">
                         {getUserDisplayName(selectedOwner)}
                         {selectedOwner.id === user?.user_id && (
-                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400">
+                          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--success)]/8 text-[var(--success)]">
                             Вы (владелец по умолчанию)
                           </span>
                         )}
@@ -609,16 +609,16 @@ const checkKeyAvailability = async () => {
                             setShowOwnerDropdown(false);
                           }}
                           className={`w-full text-left p-4 hover:bg-[var(--hover-1)] transition-colors border-b border-white/10 last:border-0 ${
-                            isSelected ? 'bg-green-500/10' : ''
+                            isSelected ? 'bg-[var(--success)]/8' : ''
                           } ${
-                            isCurrentUser ? 'bg-gradient-to-r from-green-500/5 to-transparent' : ''
+                            isCurrentUser ? 'bg-[var(--success)]/5' : ''
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                               isCurrentUser 
-                                ? 'bg-gradient-to-br from-green-500 to-green-600'
-                                : 'bg-gradient-to-br from-yellow-500 to-yellow-600'
+                                ? 'bg-[var(--success)]'
+                                : 'bg-[var(--warning)]'
                             }`}>
                               {isCurrentUser ? (
                                 <User className="w-5 h-5 text-[var(--text-primary)]" />
@@ -630,12 +630,12 @@ const checkKeyAvailability = async () => {
                               <div className="font-semibold text-[var(--text-primary)]">
                                 {getUserDisplayName(u)}
                                 {isCurrentUser && (
-                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400">
+                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--success)]/8 text-[var(--success)]">
                                     Вы (по умолчанию)
                                   </span>
                                 )}
                                 {!isCurrentUser && u.role === 'customer_admin' && (
-                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
+                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-[var(--info)]">
                                     Админ
                                   </span>
                                 )}
@@ -643,7 +643,7 @@ const checkKeyAvailability = async () => {
                               <div className="text-sm text-[var(--text-primary)]/50">{u.email}</div>
                             </div>
                             {isSelected && (
-                              <CheckCircle2 className="w-5 h-5 text-green-400" />
+                              <CheckCircle2 className="w-5 h-5 text-[var(--success)]" />
                             )}
                           </div>
                         </button>
@@ -656,7 +656,7 @@ const checkKeyAvailability = async () => {
 
             {/* Информация о владельце по умолчанию */}
             {selectedOwner && selectedOwner.id === user?.user_id && !showOwnerDropdown && (
-              <div className="mt-2 text-xs text-green-400/60">
+              <div className="mt-2 text-xs text-[var(--success)]/60">
                 Вы назначены владельцем проекта по умолчанию
               </div>
             )}

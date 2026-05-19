@@ -359,7 +359,7 @@ export const CommentForm = React.memo(({
           <button
             onClick={handleSend}
             disabled={isSendDisabled}
-            className="px-5 py-1.5 rounded-lg bg-red-800 hover:bg-red-700 text-[var(--text-primary)] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-l"
+            className="px-5 py-1.5 rounded-lg bg-red-800 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-l"
           >
             {(sending || uploadingFiles) ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-5 h-5" />}
             Отправить

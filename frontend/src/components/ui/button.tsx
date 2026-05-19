@@ -4,27 +4,27 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
         default:
-          'bg-[var(--accent)] text-[var(--text-primary)] hover:bg-[var(--accent-light)] active:bg-[var(--accent-dark)]',
+          'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] active:bg-[var(--accent-active)]',
         destructive:
-          'bg-[var(--error)]/20 text-[var(--error)] border border-[var(--error)]/20 hover:bg-[var(--error)]/30',
+          'bg-[var(--error)]/8 text-[var(--error)] border border-[var(--error)]/15 hover:bg-[var(--error)]/15',
         outline:
-          'border border-[var(--border-color)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--hover-1)]',
+          'border border-[var(--border-color)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--hover-1)] hover:border-[var(--border-hover)]',
         secondary:
           'bg-[var(--hover-2)] text-[var(--text-primary)] hover:bg-[var(--hover-3)] border border-[var(--border-color)]',
         ghost:
           'text-[var(--text-secondary)] hover:bg-[var(--hover-1)] hover:text-[var(--text-primary)]',
         link:
-          'text-[var(--accent)] underline-offset-4 hover:underline hover:text-[var(--accent-light)]',
+          'text-[var(--accent)] underline-offset-4 hover:underline hover:text-[var(--accent-hover)]',
       },
       size: {
-        default: 'h-10 px-4 py-2',
+        default: 'h-9 px-4',
         sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-11 rounded-lg px-6',
+        lg: 'h-10 rounded-lg px-6',
         icon: 'h-9 w-9',
       },
     },

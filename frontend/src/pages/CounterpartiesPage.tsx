@@ -134,10 +134,10 @@ function FilterDropdown({
         className={`
           w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border text-base transition-all
           ${open
-            ? 'bg-white/[0.08] border-red-500/40 text-[var(--text-primary)]'
+            ? 'bg-[var(--hover-3)] border-[var(--accent)]/30 text-[var(--text-primary)]'
             : value
-              ? 'bg-white/[0.06] border-[var(--border-color)] text-[var(--text-primary)]/90'
-              : 'bg-white/[0.03] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
+              ? 'bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/90'
+              : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
           }
         `}
       >
@@ -170,11 +170,11 @@ function FilterDropdown({
         <div
           className={`
             absolute z-[100] min-w-[220px] w-full max-w-[320px]
-            bg-[#1d1d1d] border border-[var(--border-color)] rounded-xl overflow-hidden
+            bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden
             ${openUp ? 'bottom-full mb-2' : 'top-full mt-2'}
             ${alignRight ? 'right-0' : 'left-0'}
           `}
-          style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}
+          style={{ boxShadow: 'var(--shadow-lg)' }}
         >
           {searchable && (
             <div className="p-2 border-b border-[var(--border-color)]">
@@ -198,14 +198,14 @@ function FilterDropdown({
               onClick={() => { onChange(''); setOpen(false); }}
               className={`
                 w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/55 hover:glass-card'}
+                ${!value ? 'bg-[var(--accent-soft)] text-[var(--text-primary)]' : 'text-[var(--text-primary)]/55 hover:glass-card'}
               `}
             >
-              {!value ? <Check size={14} className="text-red-400" /> : <span className="w-[14px]" />}
+              {!value ? <Check size={14} className="text-[var(--accent)]" /> : <span className="w-[14px]" />}
               <span>{placeholder}</span>
             </button>
 
-            <div className="h-px bg-white/[0.06] mx-3 my-1" />
+            <div className="h-px bg-[var(--hover-2)] mx-3 my-1" />
 
             {filtered.length === 0 ? (
               <div className="px-4 py-6 text-center text-sm text-[var(--text-primary)]/30">Ничего не найдено</div>
@@ -219,10 +219,10 @@ function FilterDropdown({
                     onClick={() => { onChange(opt.value); setOpen(false); }}
                     className={`
                       w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                      ${active ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/65 hover:glass-card'}
+                      ${active ? 'bg-[var(--accent-soft)] text-[var(--text-primary)]' : 'text-[var(--text-primary)]/65 hover:glass-card'}
                     `}
                   >
-                    {active ? <Check size={14} className="text-red-400 flex-shrink-0" /> : <span className="w-[14px] flex-shrink-0" />}
+                    {active ? <Check size={14} className="text-[var(--accent)] flex-shrink-0" /> : <span className="w-[14px] flex-shrink-0" />}
                     {opt.icon}
                     <div className="min-w-0">
                       <span className="block truncate">{opt.label}</span>
@@ -259,7 +259,7 @@ export default function CounterpartiesPage() {
   const loadCounterparties = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await counterpartiesApi.getAll(page, 1);
+      const response = await counterpartiesApi.getAll(page, 10);
       setCounterparties(response.items);
       setTotalPages(response.total_pages);
       setTotalItems(response.total_items);
@@ -374,7 +374,7 @@ export default function CounterpartiesPage() {
   if (loading && counterparties.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+        <Loader2 className="w-10 h-10 text-[var(--accent)] animate-spin" />
       </div>
     );
   }
@@ -389,7 +389,7 @@ export default function CounterpartiesPage() {
           <p className="text-base text-[var(--text-primary)]/50">
             Управление компаниями и подразделениями
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-white/[0.08] text-[var(--text-primary)]/50 text-sm">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-[var(--text-primary)]/50 text-sm">
                 {totalItems}
               </span>
             )}
@@ -417,7 +417,7 @@ export default function CounterpartiesPage() {
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-12 pr-10 py-3 glass-card border border-[var(--border-color)]
                          rounded-xl text-[var(--text-primary)] text-base placeholder-white/30
-                         focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10
+                         focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)]
                          transition-all"
             />
             {search && (
@@ -425,7 +425,7 @@ export default function CounterpartiesPage() {
                 type="button"
                 onClick={() => setSearch('')}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                           text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-white/[0.06] transition-colors"
+                           text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
               >
                 <X size={14} />
               </button>
@@ -455,7 +455,7 @@ export default function CounterpartiesPage() {
 
             {search && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                               bg-white/[0.06] text-[var(--text-primary)]/70 border border-[var(--border-color)]">
+                               bg-[var(--hover-2)] text-[var(--text-primary)]/70 border border-[var(--border-color)]">
                 <Search size={12} />
                 «{search}»
                 <span
@@ -469,11 +469,11 @@ export default function CounterpartiesPage() {
 
             {typeFilter && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                               bg-red-500/10 text-red-400 border border-red-500/20">
+                               bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent)]/15">
                 {TYPE_OPTIONS.find(t => t.value === typeFilter)?.label}
                 <span
                   onClick={() => setTypeFilter('')}
-                  className="cursor-pointer text-red-400/60 hover:text-red-400"
+                  className="cursor-pointer text-[var(--accent)]/60 hover:text-[var(--accent)]"
                 >
                   <X size={12} />
                 </span>
@@ -502,7 +502,7 @@ export default function CounterpartiesPage() {
             key={stat.label}
             className="glass-card rounded-2xl border border-[var(--border-color)] p-4 flex items-center gap-3.5"
           >
-            <div className="w-11 h-11 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
               <stat.icon className="w-5 h-5 text-[var(--text-primary)]/35" />
             </div>
             <div>
@@ -524,7 +524,7 @@ export default function CounterpartiesPage() {
           {!hasFilters && (
             <button
               onClick={() => navigate('/counterparties/new')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)]
                          text-[var(--text-primary)] text-base font-medium transition-colors"
             >
               <Plus className="w-4 h-4" />
@@ -560,11 +560,11 @@ export default function CounterpartiesPage() {
               >
                 {/* Main company - весь блок кликабельный */}
                 <div
-                  className="p-5 sm:p-6 cursor-pointer transition-all hover:bg-white/[0.02]"
+                  className="p-5 sm:p-6 cursor-pointer transition-all hover:bg-[var(--hover-1)]"
                   onClick={() => navigate(`/counterparties/${company.id}`)}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
                       {getTypeIcon(company.counterparty_type)}
                     </div>
 
@@ -577,14 +577,14 @@ export default function CounterpartiesPage() {
                             </h2>
 
                             <span className={`px-2.5 py-1 rounded-lg text-sm font-medium border ${company.is_active
-                                ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                                : 'bg-white/[0.06] text-[var(--text-primary)]/40 border-[var(--border-color)]'
+                                ? 'status-resolved'
+                                : 'status-closed'
                               }`}>
                               {company.is_active ? 'Активен' : 'Неактивен'}
                             </span>
 
                             {hasBranches && (
-                              <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-white/[0.06] text-[var(--text-primary)]/50 border border-[var(--border-color)]">
+                              <span className="px-2.5 py-1 rounded-lg text-sm font-medium bg-[var(--hover-2)] text-[var(--text-primary)]/50 border border-[var(--border-color)]">
                                 {branches.length} подраздел.
                               </span>
                             )}
@@ -595,14 +595,14 @@ export default function CounterpartiesPage() {
                           )}
 
                           <div className="flex flex-wrap gap-2 mt-4">
-                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)]">
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-[var(--hover-2)] text-[var(--text-primary)]/65 border border-[var(--border-color)]">
                               {company.counterparty_type}
                             </span>
-                            <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
+                            <span className="px-2.5 py-1 rounded-lg text-sm bg-[var(--hover-2)] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
                               ИНН {company.inn}
                             </span>
                             {company.kpp && (
-                              <span className="px-2.5 py-1 rounded-lg text-sm bg-white/[0.05] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
+                              <span className="px-2.5 py-1 rounded-lg text-sm bg-[var(--hover-2)] text-[var(--text-primary)]/65 border border-[var(--border-color)] font-mono">
                                 КПП {company.kpp}
                               </span>
                             )}
@@ -643,7 +643,7 @@ export default function CounterpartiesPage() {
                                 toggleCompany(company.id);
                               }}
                               className="flex items-center gap-2 px-3.5 py-2 rounded-xl
-                               bg-white/[0.05] hover:bg-white/[0.08]
+                               bg-[var(--hover-2)] hover:bg-[var(--hover-3)]
                                text-[var(--text-primary)]/65 hover:text-[var(--text-primary)] transition-colors"
                             >
                               {isExpanded ? (
@@ -667,8 +667,8 @@ export default function CounterpartiesPage() {
                               navigate(`/counterparties/${company.id}`);
                             }}
                             className="flex items-center gap-2 px-3.5 py-2 rounded-xl
-                             bg-red-700/15 hover:bg-red-700/25
-                             text-red-400 hover:text-red-300 transition-colors"
+                             bg-[var(--accent-soft)] hover:bg-[var(--accent-glow)]
+                             text-[var(--accent)] hover:text-[var(--accent)] transition-colors border border-[var(--accent)]/10"
                           >
                             <span className="text-sm font-medium">Открыть</span>
                             <ChevronRight className="w-4 h-4" />
@@ -681,7 +681,7 @@ export default function CounterpartiesPage() {
 
                 {/* Branches - остаётся без изменений */}
                 {hasBranches && isExpanded && (
-                  <div className="border-t border-[var(--border-color)] bg-white/[0.02] px-5 sm:px-6 py-5">
+                  <div className="border-t border-[var(--border-color)] bg-[var(--hover-1)] px-5 sm:px-6 py-5">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-1 h-5 rounded-full bg-red-500" />
                       <p className="text-sm font-semibold text-[var(--text-primary)]/70 flex items-center gap-2">
@@ -701,12 +701,12 @@ export default function CounterpartiesPage() {
                             className={`
                     w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all
                     ${branchIsMatched
-                                ? 'bg-red-500/[0.06] border-red-500/20'
-                                : 'bg-white/[0.03] border-[var(--border-color)] hover:bg-white/[0.06] hover:border-[var(--border-color)]'
+                                ? 'bg-[var(--accent-soft)] border-[var(--accent)]/20'
+                                : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-2)] hover:border-[var(--border-color)]'
                               }
                   `}
                           >
-                            <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
                               {getTypeIcon(branch.counterparty_type, 'sm')}
                             </div>
 
@@ -715,7 +715,7 @@ export default function CounterpartiesPage() {
                                 <span className="text-[var(--text-primary)] font-semibold text-base truncate">
                                   {branch.name}
                                 </span>
-                                <span className="px-2 py-0.5 rounded text-xs bg-white/[0.05] text-[var(--text-primary)]/40 border border-[var(--border-color)]">
+                                <span className="px-2 py-0.5 rounded text-xs bg-[var(--hover-2)] text-[var(--text-primary)]/40 border border-[var(--border-color)]">
                                   подразделение
                                 </span>
                               </div>
@@ -751,7 +751,7 @@ export default function CounterpartiesPage() {
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                       hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
+                       hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed
                        text-[var(--text-primary)] text-base transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -767,8 +767,8 @@ export default function CounterpartiesPage() {
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
                   className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
-                      ? 'bg-red-700 text-[var(--text-primary)]'
-                      : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-white/[0.08]'
+                      ? 'bg-[var(--accent)] text-white'
+                      : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-[var(--hover-3)]'
                     }`}
                 >
                   {pageNum}
@@ -781,7 +781,7 @@ export default function CounterpartiesPage() {
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                       hover:bg-white/[0.07] disabled:opacity-40 disabled:cursor-not-allowed
+                       hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed
                        text-[var(--text-primary)] text-base transition-colors"
           >
             Вперёд

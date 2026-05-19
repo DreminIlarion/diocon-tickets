@@ -185,7 +185,7 @@ export default function CreateProductPage() {
       <div className="flex items-center gap-3 mb-8">
         <button
           onClick={() => navigate('/products')}
-          className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/50 transition-colors"
+          className="p-2 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/50 transition-colors"
         >
           <ArrowLeft size={18} />
         </button>
@@ -206,10 +206,10 @@ export default function CreateProductPage() {
             >
               <span
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-base font-bold transition-colors ${i < step
-                    ? 'bg-green-700 text-[var(--text-primary)]'
+                    ? 'bg-[var(--success)] text-[var(--text-primary)]'
                     : i === step
-                      ? 'bg-red-800 text-[var(--text-primary)]'
-                      : 'bg-white/[0.06] text-[var(--text-primary)]/25'
+                      ? 'bg-[var(--accent)] text-white'
+                      : 'bg-[var(--hover-2)] text-[var(--text-primary)]/25'
                   }`}
               >
                 {i < step ? <Check size={14} /> : i + 1}
@@ -220,7 +220,7 @@ export default function CreateProductPage() {
               </span>
             </button>
             {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-px mx-4 ${i < step ? 'bg-green-700/40' : 'bg-white/[0.06]'}`} />
+              <div className={`flex-1 h-px mx-4 ${i < step ? 'bg-[var(--success)]/40' : 'bg-[var(--hover-2)]'}`} />
             )}
           </React.Fragment>
         ))}
@@ -237,7 +237,7 @@ export default function CreateProductPage() {
                   value={form.name}
                   onChange={(e) => updateForm('name', e.target.value)}
                   placeholder="Например: 1С Бухгалтерия"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] text-base transition-colors"
                 />
               </FormField>
 
@@ -246,7 +246,7 @@ export default function CreateProductPage() {
                   value={form.vendor}
                   onChange={(e) => updateForm('vendor', e.target.value)}
                   placeholder="Например: 1С"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] text-base transition-colors"
                 />
               </FormField>
             </div>
@@ -261,11 +261,11 @@ export default function CreateProductPage() {
                       key={cat.value}
                       onClick={() => handleCategoryChange(cat.value)}
                       className={`flex items-center gap-2.5 px-3 py-3 rounded-xl border text-left transition-all text-base ${sel
-                          ? 'border-red-800/50 bg-red-800/10 text-[var(--text-primary)]'
-                          : 'border-[var(--border-color)] bg-white/[0.02] text-[var(--text-primary)]/50 hover:bg-white/[0.04] hover:border-[var(--border-color)]'
+                          ? 'border-[var(--accent)]/30 bg-[var(--accent)]/10 text-[var(--text-primary)]'
+                          : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/50 hover:bg-[var(--hover-2)] hover:border-[var(--border-color)]'
                         }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center ${sel ? 'text-red-400' : 'text-[var(--text-primary)]/30'}`}>
+                      <div className={`w-8 h-8 rounded-lg bg-[var(--hover-2)] flex items-center justify-center ${sel ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/30'}`}>
                         <Icon size={16} />
                       </div>
                       <span>{cat.label}</span>
@@ -281,7 +281,7 @@ export default function CreateProductPage() {
                   value={form.version}
                   onChange={(e) => updateForm('version', e.target.value)}
                   placeholder="3.0.1"
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors"
+                  className="w-full px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] text-base transition-colors"
                 />
               </FormField>
 
@@ -289,7 +289,7 @@ export default function CreateProductPage() {
                 <select
                   value={form.status}
                   onChange={(e) => updateForm('status', e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base focus:outline-none focus:border-red-800/60 transition-colors"
+                  className="w-full px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base focus:outline-none focus:border-[var(--accent)] transition-colors"
                 >
                   {PRODUCT_STATUSES.map((s) => (
                     <option key={s.value} value={s.value} className="bg-[var(--bg-primary)]">{s.label}</option>
@@ -304,7 +304,7 @@ export default function CreateProductPage() {
                 onChange={(e) => updateForm('description', e.target.value)}
                 rows={3}
                 placeholder="Краткое описание..."
-                className="w-full px-4 py-2.5 bg-white/[0.04] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-white/20 focus:outline-none focus:border-red-800/60 text-base transition-colors resize-none"
+                className="w-full px-4 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] text-base transition-colors resize-none"
               />
             </FormField>
           </div>
@@ -347,7 +347,7 @@ export default function CreateProductPage() {
           <div className="space-y-5">
             <h3 className="text-[var(--text-primary)] font-medium">Проверьте данные</h3>
 
-            <div className="rounded-xl border border-[var(--border-color)] bg-white/[0.02] divide-y divide-white/[0.04]">
+            <div className="rounded-xl border border-[var(--border-color)] bg-[var(--hover-1)] divide-y divide-[var(--border-color)]">
               <SummaryRow label="Название" value={form.name} />
               <SummaryRow label="Вендор" value={form.vendor} />
               <SummaryRow label="Категория" value={getCategoryLabel(form.category)} />
@@ -359,7 +359,7 @@ export default function CreateProductPage() {
             {attrEntries.length > 0 && (
               <div>
                 <div className="text-base text-[var(--text-primary)]/35 mb-2">Атрибуты</div>
-                <div className="rounded-xl border border-[var(--border-color)] bg-white/[0.02] divide-y divide-white/[0.04]">
+                <div className="rounded-xl border border-[var(--border-color)] bg-[var(--hover-1)] divide-y divide-[var(--border-color)]">
                   {attrEntries.map(([key, value]) => (
                     <SummaryRow key={key} label={getAttrLabel(key)} value={formatAttrValue(value)} />
                   ))}
@@ -376,7 +376,7 @@ export default function CreateProductPage() {
           {step > 0 ? (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/60 text-base transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/60 text-base transition-colors"
             >
               <ArrowLeft size={14} />
               Назад
@@ -384,7 +384,7 @@ export default function CreateProductPage() {
           ) : (
             <button
               onClick={() => navigate('/products')}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-[var(--text-primary)]/60 text-base transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/60 text-base transition-colors"
             >
               Отмена
             </button>
@@ -396,7 +396,7 @@ export default function CreateProductPage() {
             <button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canGoNext()}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-[var(--text-primary)] text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Далее
               <ArrowRight size={14} />
@@ -405,7 +405,7 @@ export default function CreateProductPage() {
             <button
               onClick={handleCreate}
               disabled={creating}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-red-800 hover:bg-red-700 text-[var(--text-primary)] text-base font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-base font-medium transition-colors disabled:opacity-50"
             >
               {creating ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
               Создать продукт
@@ -431,7 +431,7 @@ const FormField = ({
   <div className="space-y-2">
     <label className="block text-base text-[var(--text-primary)]/60">
       {label}
-      {required && <span className="ml-1 text-red-400">*</span>}
+      {required && <span className="ml-1 text-[var(--accent)]">*</span>}
     </label>
     {children}
   </div>

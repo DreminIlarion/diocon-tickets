@@ -1,4 +1,4 @@
-﻿import {
+import {
   Clock, Image as ImageIcon, FileText, Plus, Minus, RefreshCw,
   UserPlus, UserMinus, Tag, Archive, MessageSquare, Edit, Trash2,
   UserCheck, Building2, FolderOpen, CheckCircle

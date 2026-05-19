@@ -1,10 +1,12 @@
 // pages/TicketsPage.tsx
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import type { ElementType, ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus, Search, FileText, ChevronRight, ChevronLeft, Loader2,
   Clock, AlertTriangle, CheckCircle2, Calendar, XCircle, Hash,
   Building2, FolderOpen, User, X, SlidersHorizontal, ChevronDown, Check,
+  Sparkles, Flame,
 } from 'lucide-react';
 import { ticketsApi, counterpartiesApi, projectsApi, usersApi } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
@@ -13,39 +15,53 @@ import type {
   Counterparty, Project, CounterpartyCustomer, SimpleUser,
 } from '../types';
 
-// ─── Константы ────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONSTANTS
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 const STATUSES: { value: TicketStatus; label: string; color: string }[] = [
-  { value: 'Новый', label: 'Новый', color: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30' },
-  { value: 'На согласовании', label: 'На согласовании', color: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/30' },
-  { value: 'Открыт', label: 'Открыт', color: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border-cyan-200 dark:border-cyan-500/30' },
-  { value: 'В работе', label: 'В работе', color: 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/30' },
-  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30' },
-  { value: 'Решён', label: 'Решён', color: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30' },
-  { value: 'Закрыт', label: 'Закрыт', color: 'bg-gray-100 dark:bg-gray-500/20 text-gray-700 dark:text-gray-400 border-gray-300 dark:border-gray-500/30' },
-  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30' },
+  { value: 'Новый', label: 'Новый', color: 'status-new' },
+  { value: 'На согласовании', label: 'На согласовании', color: 'status-agreement' },
+  { value: 'Открыт', label: 'Открыт', color: 'status-open' },
+  { value: 'В работе', label: 'В работе', color: 'status-progress' },
+  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'status-waiting' },
+  { value: 'Решён', label: 'Решён', color: 'status-resolved' },
+  { value: 'Закрыт', label: 'Закрыт', color: 'status-closed' },
+  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'status-reopened' },
 ];
 
 const PRIORITIES: { value: TicketPriority; label: string; color: string }[] = [
-  { value: 'Низкий', label: 'Низкий', color: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30' },
-  { value: 'Средний', label: 'Средний', color: 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/30' },
-  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30' },
-  { value: 'Критический', label: 'Критический', color: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30' },
+  { value: 'Низкий', label: 'Низкий', color: 'priority-low' },
+  { value: 'Средний', label: 'Средний', color: 'priority-medium' },
+  { value: 'Высокий', label: 'Высокий', color: 'priority-high' },
+  { value: 'Критический', label: 'Критический', color: 'priority-critical' },
 ];
 
-// ─── Кастомный Dropdown ──────────────────────────────────────────────────────
+const STATUS_ICON: Record<string, ReactNode> = {
+  'Новый': <Sparkles size={11} />,
+  'На согласовании': <Clock size={11} />,
+  'Открыт': <CheckCircle2 size={11} />,
+  'В работе': <Loader2 size={11} />,
+  'Ожидает ответа': <Clock size={11} />,
+  'Решён': <CheckCircle2 size={11} />,
+  'Закрыт': <XCircle size={11} />,
+  'Переоткрыт': <AlertTriangle size={11} />,
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FILTER DROPDOWN
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 interface DropdownOption {
   value: string;
   label: string;
   sublabel?: string;
   color?: string;
-  icon?: React.ReactNode;
 }
 
 interface FilterDropdownProps {
   label: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   options: DropdownOption[];
   value: string;
   onChange: (value: string) => void;
@@ -74,6 +90,7 @@ function FilterDropdown({
         setQuery('');
       }
     };
+
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
@@ -87,124 +104,170 @@ function FilterDropdown({
 
   const filtered = query
     ? options.filter(o =>
-      o.label.toLowerCase().includes(query.toLowerCase()) ||
-      (o.sublabel && o.sublabel.toLowerCase().includes(query.toLowerCase()))
-    )
+        o.label.toLowerCase().includes(query.toLowerCase()) ||
+        (o.sublabel?.toLowerCase().includes(query.toLowerCase()))
+      )
     : options;
 
   return (
     <div ref={ref} className="relative">
-      <p className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-1.5 flex items-center gap-2">
-        {icon}
-        {label}
-      </p>
-
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className={`
-          w-full flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border text-base transition-all
+          w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl border text-base
+          transition-all whitespace-nowrap cursor-pointer
           ${open
             ? 'bg-[var(--hover-2)] border-red-500/40 text-[var(--text-primary)]'
             : value
-              ? 'bg-[var(--hover-1)] border-[var(--border-color)] text-white/90'
-              : 'bg-[var(--bg-tertiary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]'
+              ? 'bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/90'
+              : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
           }
         `}
       >
-        <span className="truncate">
-          {selected ? (
-            <span className="flex items-center gap-2">
-              {selected.color && (
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${selected.color.split(' ')[0].replace('/20', '/60')}`} />
-              )}
-              {selected.label}
+        <span className="flex items-center gap-2 truncate">
+          {icon && (
+            <span className={value ? 'text-red-400' : 'text-[var(--text-primary)]/40'}>
+              {icon}
             </span>
-          ) : placeholder}
-        </span>
+          )}
 
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {value ? (
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={e => { e.stopPropagation(); onChange(''); setOpen(false); }}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onChange(''); setOpen(false); } }}
-              className="p-0.5 rounded hover:bg-[var(--hover-2)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
-            >
-              <X size={13} />
+          {selected ? (
+            <span className="flex items-center gap-2 truncate">
+              {selected.color && (
+                <span
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: `var(--${selected.color}-text)` }}
+                />
+              )}
+              <span className="truncate">{selected.label}</span>
             </span>
           ) : (
-            <ChevronDown size={15} className={`text-[var(--text-muted)] transition-transform ${open ? 'rotate-180' : ''}`} />
+            <span className="truncate">{label}</span>
           )}
-        </div>
+        </span>
+
+        {value ? (
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={e => {
+              e.stopPropagation();
+              onChange('');
+              setOpen(false);
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.stopPropagation();
+                onChange('');
+                setOpen(false);
+              }
+            }}
+            className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors"
+          >
+            <X size={14} />
+          </span>
+        ) : (
+          <ChevronDown
+            size={16}
+            className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          />
+        )}
       </button>
 
       {open && (
         <div
-          className="absolute top-full left-0 right-0 mt-1.5 z-[100] bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden"
-          style={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}
+          className="absolute z-[100] min-w-[220px] w-max top-full mt-2 left-0 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden"
+          style={{ boxShadow: 'var(--shadow-lg)' }}
         >
           {searchable && (
             <div className="p-2 border-b border-[var(--border-color)]">
               <div className="relative">
-                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                <Search
+                  size={12}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                />
                 <input
                   ref={inputRef}
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Поиск..."
-                  className="w-full pl-8 pr-3 py-2 rounded-lg glass-card border border-[var(--border-color)]
-                             text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-hover)]"
+                  className="w-full pl-7 pr-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-color)]
+                             text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)]
+                             focus:outline-none focus:border-[var(--border-hover)]"
                 />
               </div>
             </div>
           )}
 
-          <div className="max-h-64 overflow-y-auto py-1">
+          <div className="py-1.5 max-h-[300px] overflow-y-auto">
             <button
               type="button"
-              onClick={() => { onChange(''); setOpen(false); setQuery(''); }}
+              onClick={() => {
+                onChange('');
+                setOpen(false);
+                setQuery('');
+              }}
               className={`
-                w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'}
+                w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors
+                ${!value
+                  ? 'bg-red-500/10 text-[var(--text-primary)]'
+                  : 'text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'
+                }
               `}
             >
-              {!value ? <Check size={14} className="text-red-400 flex-shrink-0" /> : <span className="w-[14px]" />}
+              {!value ? (
+                <Check size={16} className="text-red-400 flex-shrink-0" />
+              ) : (
+                <span className="w-4 flex-shrink-0" />
+              )}
               <span>{placeholder}</span>
             </button>
 
-            <div className="h-px bg-[var(--hover-1)] mx-3 my-1" />
+            <div className="h-px bg-[var(--hover-2)] mx-3 my-1" />
 
             {filtered.length === 0 ? (
-              <div className="px-4 py-6 text-center text-sm text-[var(--text-muted)]">Ничего не найдено</div>
+              <div className="px-4 py-6 text-center text-sm text-[var(--text-muted)]">
+                Ничего не найдено
+              </div>
             ) : (
               filtered.map(option => {
                 const isSelected = option.value === value;
+
                 return (
                   <button
                     type="button"
                     key={option.value}
-                    onClick={() => { onChange(option.value); setOpen(false); setQuery(''); }}
+                    onClick={() => {
+                      onChange(option.value);
+                      setOpen(false);
+                      setQuery('');
+                    }}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-2.5 text-left text-base transition-colors
-                      ${isSelected ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'}
+                      w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors
+                      ${isSelected
+                        ? 'bg-red-500/10 text-[var(--text-primary)]'
+                        : 'text-[var(--text-primary)]/70 hover:bg-[var(--hover-1)]'
+                      }
                     `}
                   >
-                    {isSelected
-                      ? <Check size={14} className="text-red-400 flex-shrink-0" />
-                      : <span className="w-[14px] flex-shrink-0" />
-                    }
+                    {isSelected ? (
+                      <Check size={16} className="text-red-400 flex-shrink-0" />
+                    ) : (
+                      <span className="w-4 flex-shrink-0" />
+                    )}
 
                     {option.color ? (
-                      <span className={`px-2 py-0.5 rounded text-sm font-medium border ${option.color}`}>
+                      <span className={`px-2.5 py-1 rounded-lg text-sm font-medium border ${option.color}`}>
                         {option.label}
                       </span>
                     ) : (
                       <div className="min-w-0">
                         <span className="block truncate">{option.label}</span>
                         {option.sublabel && (
-                          <span className="block text-xs text-[var(--text-muted)] truncate">{option.sublabel}</span>
+                          <span className="block text-xs text-[var(--text-muted)] truncate">
+                            {option.sublabel}
+                          </span>
                         )}
                       </div>
                     )}
@@ -219,7 +282,237 @@ function FilterDropdown({
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════════════
+   STAT CARD
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  color,
+  bg,
+}: {
+  label: string;
+  value: number;
+  icon: ElementType;
+  color: string;
+  bg: string;
+}) {
+  return (
+    <div
+      className="glass-card rounded-xl border border-[var(--border-color)] p-4 flex items-center gap-3
+                 hover:border-[var(--border-hover)] hover:-translate-y-0.5 transition-all duration-200"
+    >
+      <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
+        <Icon className={`w-5 h-5 ${color}`} />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-[var(--text-primary)] leading-none mb-0.5">
+          {value}
+        </p>
+        <p className="text-xs text-[var(--text-secondary)]">
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FILTER TAG
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function FilterTag({
+  label,
+  icon,
+  colorClass,
+  onRemove,
+}: {
+  label: string;
+  icon?: ReactNode;
+  colorClass?: string;
+  onRemove: () => void;
+}) {
+  return (
+    <span
+      className={`
+        inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-base border transition-all hover:opacity-80
+        ${colorClass || 'bg-[var(--hover-2)] text-[var(--text-primary)]/80 border-[var(--border-color)]'}
+      `}
+    >
+      {icon}
+      <span className="truncate max-w-[180px]">{label}</span>
+      <X
+        size={12}
+        className="cursor-pointer opacity-50 hover:opacity-100 transition-opacity flex-shrink-0"
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+          onRemove();
+        }}
+      />
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TICKET ROW — PRODUCTS-LIKE LIST ROW
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function TicketRow({
+  ticket,
+  formatDate,
+  getStatusColor,
+  getPriorityColor,
+  isTicketClosed,
+}: {
+  ticket: TicketListItem;
+  formatDate: (d: string) => string;
+  getStatusColor: (s: string) => string;
+  getPriorityColor: (p: string) => string;
+  isTicketClosed: (s: string) => boolean;
+}) {
+  const closed = isTicketClosed(ticket.status);
+  const isCritical = ticket.priority === 'Критический';
+
+  return (
+    <Link
+      to={`/tickets/${ticket.number}`}
+      className="w-full flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-4 text-left rounded-xl
+                 hover:bg-[var(--hover-1)] active:bg-[var(--hover-2)]
+                 transition-colors duration-100 group"
+    >
+      {/* Контент — растягивается */}
+      <div className="flex-1 min-w-0">
+        <span
+          className="text-base text-[var(--text-primary)] font-semibold block
+                     group-hover:text-[var(--accent-light)] transition-colors
+                     break-words hyphens-auto"
+          style={{
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            whiteSpace: 'normal',
+            maxWidth: '100%',
+          }}
+        >
+          {ticket.title}
+        </span>
+
+        <div className="flex items-center gap-2 mt-0.5 text-sm min-w-0 flex-wrap">
+          <span className="font-mono text-[var(--text-primary)]/55 whitespace-nowrap">
+            #{ticket.number}
+          </span>
+
+          <span className="text-[var(--text-primary)]/20 hidden sm:inline">•</span>
+
+          {closed ? (
+            <span className="flex items-center gap-1.5 text-[var(--text-primary)]/35 whitespace-nowrap">
+              <XCircle size={12} />
+              <span className="sm:hidden">Закрыта</span>
+              <span className="hidden sm:inline">Закрыта</span>
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-green-400 whitespace-nowrap">
+              <span className="sm:hidden">Активна</span>
+              <span className="hidden sm:inline">Активна</span>
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Статус — фикс ширина */}
+      <div className="sm:w-[165px] flex-shrink-0">
+        <span
+          className={`
+            inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
+            border whitespace-nowrap ${getStatusColor(ticket.status)}
+          `}
+        >
+          {STATUS_ICON[ticket.status]}
+          {ticket.status}
+        </span>
+      </div>
+
+      {/* Приоритет — фикс ширина */}
+      <div className="sm:w-[135px] flex-shrink-0">
+        <span
+          className={`
+            inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium
+            border whitespace-nowrap ${getPriorityColor(ticket.priority)}
+          `}
+        >
+          {ticket.priority === 'Критический' && <Flame size={11} />}
+          {ticket.priority}
+        </span>
+      </div>
+
+      {/* Дата — фикс ширина */}
+      <div className="sm:w-[155px] flex-shrink-0">
+        <span className="text-base text-[var(--text-primary)]/50 whitespace-nowrap">
+          {formatDate(ticket.created_at)}
+        </span>
+
+        {closed && ticket.closed_at && (
+          <span className="block text-xs text-[var(--text-primary)]/30 mt-0.5 whitespace-nowrap">
+            Закр. {formatDate(ticket.closed_at)}
+          </span>
+        )}
+      </div>
+
+      {/* Стрелка */}
+      <ChevronRight
+        size={16}
+        className="hidden sm:block text-[var(--text-primary)]/25 group-hover:text-[var(--accent-light)]
+                   group-hover:translate-x-0.5 transition-all flex-shrink-0"
+      />
+    </Link>
+  );
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+function EmptyState({
+  hasFilters,
+  hasSearch,
+  onCreateClick,
+}: {
+  hasFilters: boolean;
+  hasSearch: boolean;
+  onCreateClick: () => void;
+}) {
+  return (
+    <div className="glass-card rounded-2xl border border-[var(--border-color)] p-16 text-center">
+      <div className="w-20 h-20 rounded-2xl bg-[var(--hover-1)] flex items-center justify-center mx-auto mb-6">
+        <FileText className="w-10 h-10 text-[var(--text-primary)]/20" />
+      </div>
+
+      <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
+        Нет заявок
+      </h3>
+
+      <p className="text-base text-[var(--text-secondary)] mb-8 max-w-md mx-auto">
+        {hasSearch
+          ? 'По вашему запросу ничего не найдено'
+          : hasFilters
+            ? 'Попробуйте изменить параметры фильтрации'
+            : 'Создайте первую заявку, чтобы начать работу'}
+      </p>
+
+      {!hasFilters && !hasSearch && (
+        <button onClick={onCreateClick} className="btn-primary py-4 px-8 text-base">
+          <Plus size={18} />
+          Создать заявку
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function TicketsPage() {
   const navigate = useNavigate();
@@ -231,7 +524,6 @@ export default function TicketsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
-  // Фильтры
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<TicketStatus | ''>('');
   const [priorityFilter, setPriorityFilter] = useState<TicketPriority | ''>('');
@@ -240,21 +532,21 @@ export default function TicketsPage() {
   const [reporterFilter, setReporterFilter] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Данные для дропдаунов
   const [counterparties, setCounterparties] = useState<Counterparty[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [allUsers, setAllUsers] = useState<SimpleUser[]>([]);
   const [companyUsers, setCompanyUsers] = useState<CounterpartyCustomer[]>([]);
 
-  // Роли
   const isCustomer = user?.role === 'customer';
   const isCustomerAdmin = user?.role === 'customer_admin';
   const isSupport = user?.role === 'support_agent' || user?.role === 'support_manager';
   const isAdmin = user?.role === 'admin';
 
-  // ── Загрузка фильтров ────────────────────────────────────────────────────
+  /* ── Load filter data ───────────────────────────────────────────────── */
 
-  useEffect(() => { loadFilters(); }, []);
+  useEffect(() => {
+    loadFilters();
+  }, []);
 
   useEffect(() => {
     if (isAdmin || isSupport) loadAllUsers();
@@ -262,14 +554,23 @@ export default function TicketsPage() {
   }, [isAdmin, isSupport, isCustomerAdmin, user?.counterparty_id]);
 
   const loadAllUsers = async () => {
-    try { const r = await usersApi.getAllUsers(1, 100); setAllUsers(r.items); }
-    catch (e) { console.error(e); }
+    try {
+      const r = await usersApi.getAllUsers(1, 100);
+      setAllUsers(r.items);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const loadCompanyUsers = async () => {
     if (!user?.counterparty_id) return;
-    try { const u = await ticketsApi.getCompanyUsers(user.counterparty_id); setCompanyUsers(u); }
-    catch (e) { console.error(e); }
+
+    try {
+      const u = await ticketsApi.getCompanyUsers(user.counterparty_id);
+      setCompanyUsers(u);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const loadFilters = async () => {
@@ -278,6 +579,7 @@ export default function TicketsPage() {
         const res = await counterpartiesApi.getAll(1, 100);
         setCounterparties(res.items);
       }
+
       if (isCustomer || isCustomerAdmin) {
         const res = await projectsApi.getMyProjects('all', 1, 100);
         setProjects(res.items);
@@ -285,11 +587,12 @@ export default function TicketsPage() {
         const res = await projectsApi.getAll(1, 100);
         setProjects(res.items);
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  // ── Загрузка тикетов ─────────────────────────────────────────────────────
-  // Поиск убран из API — делается локально через useMemo
+  /* ── Load tickets ───────────────────────────────────────────────────── */
 
   useEffect(() => {
     setPage(1);
@@ -301,6 +604,7 @@ export default function TicketsPage() {
 
   const loadTickets = async () => {
     setLoading(true);
+
     try {
       const filters = {
         status: statusFilter || undefined,
@@ -312,11 +616,20 @@ export default function TicketsPage() {
       let response;
 
       if (isCustomer && user?.counterparty_id) {
-        response = await ticketsApi.getAllWithFilters(page, 10, { ...filters, counterparty_id: user.counterparty_id });
+        response = await ticketsApi.getAllWithFilters(page, 10, {
+          ...filters,
+          counterparty_id: user.counterparty_id,
+        });
       } else if (isCustomerAdmin && user?.counterparty_id) {
-        response = await ticketsApi.getAllWithFilters(page, 10, { ...filters, counterparty_id: user.counterparty_id });
+        response = await ticketsApi.getAllWithFilters(page, 10, {
+          ...filters,
+          counterparty_id: user.counterparty_id,
+        });
       } else if (isSupport || isAdmin) {
-        response = await ticketsApi.getAllWithFilters(page, 10, { ...filters, counterparty_id: counterpartyFilter || undefined });
+        response = await ticketsApi.getAllWithFilters(page, 10, {
+          ...filters,
+          counterparty_id: counterpartyFilter || undefined,
+        });
       } else {
         response = await ticketsApi.getAll(page, 10);
       }
@@ -331,12 +644,13 @@ export default function TicketsPage() {
     }
   };
 
-  // ── Локальный поиск ───────────────────────────────────────────────────────
+  /* ── Local search ───────────────────────────────────────────────────── */
 
   const normalizedSearch = search.trim().toLowerCase();
 
   const filteredTickets = useMemo(() => {
     if (!normalizedSearch) return tickets;
+
     return tickets.filter(t =>
       (t.title || '').toLowerCase().includes(normalizedSearch) ||
       (t.number || '').toLowerCase().includes(normalizedSearch) ||
@@ -345,7 +659,7 @@ export default function TicketsPage() {
     );
   }, [tickets, normalizedSearch]);
 
-  // ── Reset, helpers ────────────────────────────────────────────────────────
+  /* ── Helpers ────────────────────────────────────────────────────────── */
 
   const resetFilters = () => {
     setStatusFilter('');
@@ -357,42 +671,113 @@ export default function TicketsPage() {
     setPage(1);
   };
 
-  const hasActiveFilters = !!(statusFilter || priorityFilter || counterpartyFilter || projectFilter || reporterFilter || search);
-  const activeFiltersCount = [statusFilter, priorityFilter, counterpartyFilter, projectFilter, reporterFilter].filter(Boolean).length;
+  const hasServerFilters = !!(
+    statusFilter ||
+    priorityFilter ||
+    counterpartyFilter ||
+    projectFilter ||
+    reporterFilter
+  );
 
-  const getStatusColor = (s: string) => STATUSES.find(x => x.value === s)?.color || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30';
-  const getPriorityColor = (p: string) => PRIORITIES.find(x => x.value === p)?.color || 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30';
+  const hasActiveFilters = !!(hasServerFilters || search);
+
+  const activeFiltersCount = [
+    statusFilter,
+    priorityFilter,
+    counterpartyFilter,
+    projectFilter,
+    reporterFilter,
+  ].filter(Boolean).length;
+
+  const getStatusColor = (s: string) =>
+    STATUSES.find(x => x.value === s)?.color || 'status-closed';
+
+  const getPriorityColor = (p: string) =>
+    PRIORITIES.find(x => x.value === p)?.color || 'priority-medium';
 
   const formatDate = (d: string) => {
     if (!d) return '—';
+
     const date = new Date(d);
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 86400000);
-    if (diff === 0) return `Сегодня, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
-    if (diff === 1) return `Вчера, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+
+    if (diff === 0) {
+      return `Сегодня, ${date.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })}`;
+    }
+
+    if (diff === 1) {
+      return `Вчера, ${date.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })}`;
+    }
+
     if (diff < 7) return `${diff} дн. назад`;
-    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    return date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'short',
+    });
   };
 
-  const isClosed = (s: string) => s === 'Закрыт' || s === 'Решён';
+  const isTicketClosed = (s: string) => s === 'Закрыт' || s === 'Решён';
 
   const getUserDisplayName = (uid: string) => {
-    if (isAdmin || isSupport) { const u = allUsers.find(x => x.id === uid); return u?.full_name || u?.username || u?.email || uid; }
-    if (isCustomerAdmin) { const u = companyUsers.find(x => x.id === uid); return u?.full_name || u?.username || u?.email || uid; }
+    if (isAdmin || isSupport) {
+      const u = allUsers.find(x => x.id === uid);
+      return u?.full_name || u?.username || u?.email || uid;
+    }
+
+    if (isCustomerAdmin) {
+      const u = companyUsers.find(x => x.id === uid);
+      return u?.full_name || u?.username || u?.email || uid;
+    }
+
     return uid;
   };
 
-  // ── Опции для дропдаунов ──────────────────────────────────────────────────
+  /* ── Dropdown options ───────────────────────────────────────────────── */
 
-  const statusOptions: DropdownOption[] = STATUSES.map(s => ({ value: s.value, label: s.label, color: s.color }));
-  const priorityOptions: DropdownOption[] = PRIORITIES.map(p => ({ value: p.value, label: p.label, color: p.color }));
-  const counterpartyOptions: DropdownOption[] = counterparties.map(c => ({ value: c.id, label: c.name || c.legal_name, sublabel: c.inn ? `ИНН: ${c.inn}` : undefined }));
-  const projectOptions: DropdownOption[] = projects.map(p => ({ value: p.id, label: p.name }));
+  const statusOptions: DropdownOption[] = STATUSES.map(s => ({
+    value: s.value,
+    label: s.label,
+    color: s.color,
+  }));
+
+  const priorityOptions: DropdownOption[] = PRIORITIES.map(p => ({
+    value: p.value,
+    label: p.label,
+    color: p.color,
+  }));
+
+  const counterpartyOptions: DropdownOption[] = counterparties.map(c => ({
+    value: c.id,
+    label: c.name || c.legal_name || 'Без названия',
+    sublabel: c.inn ? `ИНН: ${c.inn}` : undefined,
+  }));
+
+  const projectOptions: DropdownOption[] = projects.map(p => ({
+    value: p.id,
+    label: p.name,
+  }));
+
   const userOptions: DropdownOption[] = (isAdmin || isSupport)
-    ? allUsers.map(u => ({ value: u.id, label: u.full_name || u.username || u.email, sublabel: u.email && u.full_name ? u.email : undefined }))
-    : companyUsers.map(u => ({ value: u.id, label: u.full_name || u.username || u.email, sublabel: u.email && (u.full_name || u.username) ? u.email : undefined }));
+    ? allUsers.map(u => ({
+        value: u.id,
+        label: u.full_name || u.username || u.email,
+        sublabel: u.email && u.full_name ? u.email : undefined,
+      }))
+    : companyUsers.map(u => ({
+        value: u.id,
+        label: u.full_name || u.username || u.email,
+        sublabel: u.email && (u.full_name || u.username) ? u.email : undefined,
+      }));
 
-  // ── Рендер ────────────────────────────────────────────────────────────────
+  /* ── Render ─────────────────────────────────────────────────────────── */
 
   if (loading && tickets.length === 0) {
     return (
@@ -403,363 +788,450 @@ export default function TicketsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 animate-in fade-in duration-500">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2">
+          <h1 className="text-[var(--text-primary)] text-3xl md:text-4xl font-bold tracking-tight">
             {isCustomer ? 'Мои заявки' : 'Заявки'}
           </h1>
-          <p className="text-base text-[var(--text-secondary)]">
+
+          <p className="text-base text-[var(--text-primary)]/40 mt-1">
             Управление обращениями
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-2)] text-[var(--text-secondary)] text-sm">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-1)] text-[var(--text-secondary)] text-sm">
                 {totalItems}
               </span>
             )}
           </p>
         </div>
+
         <button
           onClick={() => navigate('/tickets/new')}
           className="btn-primary py-4 px-8 text-base font-semibold"
         >
-          <Plus className="w-6 h-6" />
+          <Plus size={18} />
           Создать заявку
         </button>
       </div>
 
-      {/* ── Поиск + кнопка фильтров ──────────────────────────────────────── */}
-      <div className="flex gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)] pointer-events-none" />
+      {/* ── Stats ──────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard
+          label="Всего"
+          value={totalItems}
+          icon={FileText}
+          color="text-[var(--text-secondary)]"
+          bg="bg-[var(--hover-1)]"
+        />
+
+        <StatCard
+          label="Новых"
+          value={tickets.filter(t => t.status === 'Новый').length}
+          icon={Clock}
+          color="text-[var(--status-new-text)]"
+          bg="bg-[var(--status-new-bg)]"
+        />
+
+        <StatCard
+          label="В работе"
+          value={tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length}
+          icon={CheckCircle2}
+          color="text-[var(--status-progress-text)]"
+          bg="bg-[var(--status-progress-bg)]"
+        />
+
+        <StatCard
+          label="Критических"
+          value={tickets.filter(t => t.priority === 'Критический').length}
+          icon={AlertTriangle}
+          color="text-[var(--priority-critical-text)]"
+          bg="bg-[var(--priority-critical-bg)]"
+        />
+      </div>
+
+      {/* ── Search + filters button ────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2.5">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search
+            size={16}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none"
+          />
+
           <input
             type="text"
-            placeholder="Поиск по теме, номеру, статусу..."
+            placeholder="Поиск по теме, номеру..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-10 py-3 glass-card border border-[var(--border-color)]
+            className="w-full pl-10 pr-10 py-3 glass-card border border-[var(--border-color)]
                        rounded-xl text-[var(--text-primary)] text-base placeholder-[var(--text-muted)]
                        focus:outline-none focus:border-red-500/40 focus:ring-2 focus:ring-red-500/10
                        transition-all"
           />
+
           {search && (
             <button
               type="button"
               onClick={() => setSearch('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                         text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--hover-1)] transition-colors"
+                         text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60
+                         hover:bg-[var(--hover-2)] transition-colors"
             >
               <X size={14} />
             </button>
           )}
         </div>
 
-        {/* Кнопка фильтров */}
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={`
-            flex items-center gap-2 px-5 py-3 rounded-xl text-base font-medium
-            transition-all duration-150
+            flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-base
+            transition-all whitespace-nowrap cursor-pointer
             ${showFilters || activeFiltersCount > 0
-              ? 'bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/20'
-              : 'bg-[var(--hover-1)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--hover-1)] hover:text-white/80'
+              ? 'bg-red-500/10 border-red-500/40 text-[var(--text-primary)]'
+              : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:border-[var(--border-color)] hover:text-[var(--text-primary)]/70'
             }
           `}
         >
-          <SlidersHorizontal size={16} />
-          <span className="hidden sm:inline">Фильтры</span>
-          {activeFiltersCount > 0 && (
-            <span className="ml-0.5 w-5 h-5 rounded-full bg-red-600 text-[var(--text-primary)] text-[11px] font-bold flex items-center justify-center">
+          <SlidersHorizontal
+            size={16}
+            className={showFilters || activeFiltersCount > 0 ? 'text-red-400' : 'text-[var(--text-primary)]/40'}
+          />
+          <span>Фильтры</span>
+
+          {activeFiltersCount > 0 ? (
+            <span className="w-5 h-5 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">
               {activeFiltersCount}
             </span>
+          ) : (
+            <ChevronDown
+              size={16}
+              className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}
+            />
           )}
         </button>
       </div>
 
-      {/* ── Активные теги поиска/фильтров ────────────────────────────────── */}
-      {hasActiveFilters && !showFilters && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-[var(--text-muted)]">Активно:</span>
-
-          {search && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                             bg-[var(--hover-1)] text-[var(--text-primary)] border border-[var(--border-color)]">
-              <Search size={12} />
-              «{search}»
-              <X size={12} className="cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-secondary)]" onClick={() => setSearch('')} />
-            </span>
-          )}
-
-          {statusFilter && (
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium border ${getStatusColor(statusFilter)}`}>
-              {statusFilter}
-              <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setStatusFilter(''); setPage(1); }} />
-            </span>
-          )}
-
-          {priorityFilter && (
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium border ${getPriorityColor(priorityFilter)}`}>
-              {priorityFilter}
-              <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setPriorityFilter(''); setPage(1); }} />
-            </span>
-          )}
-
-          {counterpartyFilter && (isAdmin || isSupport) && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20">
-              <Building2 size={10} />
-              {counterparties.find(c => c.id === counterpartyFilter)?.name}
-              <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setCounterpartyFilter(''); setPage(1); }} />
-            </span>
-          )}
-
-          {projectFilter && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-              <FolderOpen size={10} />
-              {projects.find(p => p.id === projectFilter)?.name}
-              <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setProjectFilter(''); setPage(1); }} />
-            </span>
-          )}
-
-          {reporterFilter && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
-              <User size={10} />
-              {getUserDisplayName(reporterFilter)}
-              <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setReporterFilter(''); setPage(1); }} />
-            </span>
-          )}
-
-          <button
-            onClick={resetFilters}
-            className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors ml-1"
-          >
-            Сбросить всё
-          </button>
-        </div>
-      )}
-
-      {/* ── Панель фильтров ──────────────────────────────────────────────── */}
+      {/* ── Filters panel ──────────────────────────────────────────────── */}
       {showFilters && (
-        <div className="bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-2xl p-5 space-y-4
-                        animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="glass-card rounded-xl border border-[var(--border-color)] p-3.5 space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[var(--text-primary)] flex items-center gap-2">
-              <SlidersHorizontal size={14} className="text-[var(--text-muted)]" />
-              Фильтры
-            </h3>
+            <span className="text-xs font-semibold text-[var(--text-primary)]/30 uppercase tracking-widest">
+              Фильтрация
+            </span>
+
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}
-                className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1 transition-colors"
+                className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 transition-colors"
               >
-                <X size={12} /> Сбросить
+                <X size={10} />
+                Сбросить
               </button>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
             <FilterDropdown
               label="Статус"
               options={statusOptions}
               value={statusFilter}
-              onChange={v => { setStatusFilter(v as TicketStatus | ''); setPage(1); }}
+              onChange={v => {
+                setStatusFilter(v as TicketStatus | '');
+                setPage(1);
+              }}
               placeholder="Все статусы"
             />
+
             <FilterDropdown
               label="Приоритет"
               options={priorityOptions}
               value={priorityFilter}
-              onChange={v => { setPriorityFilter(v as TicketPriority | ''); setPage(1); }}
+              onChange={v => {
+                setPriorityFilter(v as TicketPriority | '');
+                setPage(1);
+              }}
               placeholder="Все приоритеты"
             />
+
             {(isAdmin || isSupport) && (
               <FilterDropdown
                 label="Контрагент"
-                icon={<Building2 size={14} />}
+                icon={<Building2 size={16} />}
                 options={counterpartyOptions}
                 value={counterpartyFilter}
-                onChange={v => { setCounterpartyFilter(v); setPage(1); }}
+                onChange={v => {
+                  setCounterpartyFilter(v);
+                  setPage(1);
+                }}
                 placeholder="Все контрагенты"
                 searchable
               />
             )}
+
             <FilterDropdown
               label="Проект"
-              icon={<FolderOpen size={14} />}
+              icon={<FolderOpen size={16} />}
               options={projectOptions}
               value={projectFilter}
-              onChange={v => { setProjectFilter(v); setPage(1); }}
+              onChange={v => {
+                setProjectFilter(v);
+                setPage(1);
+              }}
               placeholder="Все проекты"
               searchable
             />
+
             {(isAdmin || isSupport || isCustomerAdmin) && (
               <FilterDropdown
                 label="Инициатор"
-                icon={<User size={14} />}
+                icon={<User size={16} />}
                 options={userOptions}
                 value={reporterFilter}
-                onChange={v => { setReporterFilter(v); setPage(1); }}
+                onChange={v => {
+                  setReporterFilter(v);
+                  setPage(1);
+                }}
                 placeholder="Все инициаторы"
                 searchable
               />
             )}
           </div>
-
-          {/* Активные фильтры-теги внутри панели */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-[var(--border-color)]">
-              {search && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm
-                                 bg-[var(--hover-1)] text-[var(--text-primary)] border border-[var(--border-color)]">
-                  <Search size={10} /> «{search}»
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => setSearch('')} />
-                </span>
-              )}
-              {statusFilter && (
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium border ${getStatusColor(statusFilter)}`}>
-                  {statusFilter}
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setStatusFilter(''); setPage(1); }} />
-                </span>
-              )}
-              {priorityFilter && (
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium border ${getPriorityColor(priorityFilter)}`}>
-                  {priorityFilter}
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setPriorityFilter(''); setPage(1); }} />
-                </span>
-              )}
-              {counterpartyFilter && (isAdmin || isSupport) && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20">
-                  <Building2 size={10} />
-                  {counterparties.find(c => c.id === counterpartyFilter)?.name}
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setCounterpartyFilter(''); setPage(1); }} />
-                </span>
-              )}
-              {projectFilter && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                  <FolderOpen size={10} />
-                  {projects.find(p => p.id === projectFilter)?.name}
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setProjectFilter(''); setPage(1); }} />
-                </span>
-              )}
-              {reporterFilter && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
-                  <User size={10} />
-                  {getUserDisplayName(reporterFilter)}
-                  <X size={10} className="cursor-pointer opacity-60 hover:opacity-100" onClick={() => { setReporterFilter(''); setPage(1); }} />
-                </span>
-              )}
-            </div>
-          )}
         </div>
       )}
 
-      {/* ── Статистика ───────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Всего', value: totalItems, icon: FileText, color: 'text-[var(--text-secondary)]' },
-          { label: 'Новых', value: tickets.filter(t => t.status === 'Новый').length, icon: Clock, color: 'text-blue-400' },
-          { label: 'В работе', value: tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length, icon: CheckCircle2, color: 'text-purple-400' },
-          { label: 'Критических', value: tickets.filter(t => t.priority === 'Критический').length, icon: AlertTriangle, color: 'text-red-400' },
-        ].map(stat => (
-          <div key={stat.label} className="glass-card rounded-2xl border border-[var(--border-color)] p-5 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[var(--hover-1)] flex items-center justify-center flex-shrink-0">
-              <stat.icon className={`w-6 h-6 ${stat.color}`} />
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
-              <p className="text-base text-[var(--text-secondary)]">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ── Active filters ─────────────────────────────────────────────── */}
+      {hasActiveFilters && (
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="text-base text-[var(--text-primary)]/40 flex items-center gap-1.5">
+            <SlidersHorizontal size={14} />
+            Фильтры:
+          </span>
 
-      {/* ── Список ───────────────────────────────────────────────────────── */}
-      {filteredTickets.length === 0 ? (
-        <div className="glass-card rounded-2xl border border-[var(--border-color)] p-16 text-center">
-          <FileText className="w-20 h-20 text-[var(--text-primary)]/20 mx-auto mb-6" />
-          <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">Нет заявок</h3>
-          <p className="text-base text-[var(--text-secondary)] mb-8">
-            {hasActiveFilters
-              ? 'Попробуйте изменить параметры фильтрации'
-              : search
-                ? 'На текущей странице ничего не найдено'
-                : 'Создайте первую заявку'}
-          </p>
-          {!hasActiveFilters && !search && (
-            <button onClick={() => navigate('/tickets/new')} className="btn-primary py-4 px-8 text-base">
-              <Plus className="w-6 h-6" /> Создать заявку
-            </button>
+          {search && (
+            <FilterTag
+              label={`«${search}»`}
+              icon={<Search size={12} />}
+              onRemove={() => setSearch('')}
+            />
           )}
+
+          {statusFilter && (
+            <FilterTag
+              label={statusFilter}
+              colorClass={`${getStatusColor(statusFilter)} border`}
+              onRemove={() => {
+                setStatusFilter('');
+                setPage(1);
+              }}
+            />
+          )}
+
+          {priorityFilter && (
+            <FilterTag
+              label={priorityFilter}
+              colorClass={`${getPriorityColor(priorityFilter)} border`}
+              onRemove={() => {
+                setPriorityFilter('');
+                setPage(1);
+              }}
+            />
+          )}
+
+          {counterpartyFilter && (isAdmin || isSupport) && (
+            <FilterTag
+              label={counterparties.find(c => c.id === counterpartyFilter)?.name || ''}
+              icon={<Building2 size={12} />}
+              colorClass="bg-purple-500/15 text-purple-400 border border-purple-500/20"
+              onRemove={() => {
+                setCounterpartyFilter('');
+                setPage(1);
+              }}
+            />
+          )}
+
+          {projectFilter && (
+            <FilterTag
+              label={projects.find(p => p.id === projectFilter)?.name || ''}
+              icon={<FolderOpen size={12} />}
+              colorClass="bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+              onRemove={() => {
+                setProjectFilter('');
+                setPage(1);
+              }}
+            />
+          )}
+
+          {reporterFilter && (
+            <FilterTag
+              label={getUserDisplayName(reporterFilter)}
+              icon={<User size={12} />}
+              colorClass="bg-cyan-500/15 text-cyan-400 border border-cyan-500/20"
+              onRemove={() => {
+                setReporterFilter('');
+                setPage(1);
+              }}
+            />
+          )}
+
+          <button
+            onClick={resetFilters}
+            className="text-base text-red-400/60 hover:text-red-400 transition-colors ml-1"
+          >
+            Сбросить
+          </button>
         </div>
+      )}
+
+      {/* ── Content ────────────────────────────────────────────────────── */}
+      {filteredTickets.length === 0 ? (
+        <EmptyState
+          hasFilters={hasServerFilters}
+          hasSearch={!!search}
+          onCreateClick={() => navigate('/tickets/new')}
+        />
       ) : (
         <>
-          <div className="space-y-4">
-            {loading && (
-              <div className="flex justify-center py-4">
-                <Loader2 className="w-6 h-6 text-[var(--text-muted)] animate-spin" />
-              </div>
-            )}
+          {loading && tickets.length > 0 && (
+            <div className="flex justify-center py-3">
+              <Loader2 className="w-5 h-5 text-red-500/50 animate-spin" />
+            </div>
+          )}
 
+          {/* ── Desktop products-like list header ──────────────────────── */}
+          <div
+            className="hidden lg:flex items-center gap-4 px-5 py-2.5 text-xs uppercase
+                       tracking-wider text-[var(--text-primary)]/30 border-b border-[var(--border-color)] font-semibold"
+          >
+            <div className="w-10" />
+
+            <div className="flex-1">
+              Заявка
+            </div>
+
+            <div className="w-[165px]">
+              Статус
+            </div>
+
+            <div className="w-[135px]">
+              Приоритет
+            </div>
+
+            <div className="w-[155px]">
+              <span className="flex items-center gap-1.5">
+                <Calendar size={11} />
+                Создана
+              </span>
+            </div>
+
+            <div className="w-4" />
+          </div>
+
+          {/* ── Desktop products-like list ─────────────────────────────── */}
+          <div className="hidden lg:block divide-y divide-[var(--border-color)]">
             {filteredTickets.map(ticket => (
-              <Link
+              <TicketRow
                 key={ticket.id}
-                to={`/tickets/${ticket.number}`}
-                className="glass-card p-6 block hover:bg-[var(--hover-2)] hover:border-red-500/30 transition-all group"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Hash className="w-4 h-4 text-red-400" />
-                      <span className="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-0.5 rounded">
-                        {ticket.number}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 group-hover:text-red-400 transition-colors line-clamp-2">
-                      {ticket.title}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${getStatusColor(ticket.status)}`}>
-                        {ticket.status}
-                      </span>
-                      <span className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${getPriorityColor(ticket.priority)}`}>
-                        {ticket.priority}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                    <div className="flex items-center gap-3 text-base text-[var(--text-primary)]">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-4 h-4 text-[var(--text-muted)]" />
-                        {formatDate(ticket.created_at)}
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-red-400 group-hover:translate-x-0.5 transition-all" />
-                    </div>
-                    {isClosed(ticket.status) && ticket.closed_at ? (
-                      <div className="flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
-                        <XCircle className="w-3.5 h-3.5" />
-                        Закрыта {formatDate(ticket.closed_at)}
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-sm text-yellow-500/60">
-                        <Clock className="w-3.5 h-3.5" />
-                        Активна
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                ticket={ticket}
+                formatDate={formatDate}
+                getStatusColor={getStatusColor}
+                getPriorityColor={getPriorityColor}
+                isTicketClosed={isTicketClosed}
+              />
             ))}
           </div>
 
-          {/* ── Пагинация ──────────────────────────────────────────────── */}
+          {/* ── Mobile Cards ───────────────────────────────────────────── */}
+          <div className="lg:hidden space-y-2">
+            {filteredTickets.map(ticket => {
+              const closed = isTicketClosed(ticket.status);
+
+              return (
+                <Link
+                  key={ticket.id}
+                  to={`/tickets/${ticket.number}`}
+                  className="glass-card rounded-xl border border-[var(--border-color)] p-4 block
+                             hover:bg-[var(--hover-1)] hover:border-[var(--border-hover)]
+                             transition-all group"
+                >
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span
+                        className="text-xs font-mono text-[var(--accent-light)] bg-[var(--accent-soft)]/50
+                                   px-1.5 py-0.5 rounded-md border border-[var(--accent)]/10 whitespace-nowrap"
+                      >
+                        #{ticket.number}
+                      </span>
+
+                      {!closed ? (
+                        <span className="flex items-center gap-1 text-[10px] text-green-400 font-medium whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                          Активна
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-[10px] text-[var(--text-muted)] whitespace-nowrap">
+                          <XCircle size={10} />
+                          Закрыта
+                        </span>
+                      )}
+                    </div>
+
+                    <ChevronRight
+                      size={14}
+                      className="text-[var(--text-muted)] group-hover:text-[var(--accent-light)]
+                                 group-hover:translate-x-0.5 transition-all flex-shrink-0"
+                    />
+                  </div>
+
+                  <h3
+                    className="text-[15px] font-semibold text-[var(--text-primary)] mb-3 leading-snug
+                               group-hover:text-[var(--accent-light)] transition-colors line-clamp-2"
+                  >
+                    {ticket.title}
+                  </h3>
+
+                  <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium border ${getStatusColor(ticket.status)}`}
+                    >
+                      {STATUS_ICON[ticket.status]}
+                      {ticket.status}
+                    </span>
+
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-medium border ${getPriorityColor(ticket.priority)}`}
+                    >
+                      {ticket.priority === 'Критический' && <Flame size={10} />}
+                      {ticket.priority}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                    <Calendar size={11} />
+                    {formatDate(ticket.created_at)}
+
+                    {closed && ticket.closed_at && (
+                      <>
+                        <span className="mx-1 text-[var(--text-muted)]/40">•</span>
+                        <XCircle size={11} />
+                        {formatDate(ticket.closed_at)}
+                      </>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* ── Pagination ─────────────────────────────────────────────── */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 pt-4 border-t border-[var(--border-color)]">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                           hover:bg-[var(--hover-1)] disabled:opacity-40 disabled:cursor-not-allowed
+                           hover:bg-[var(--hover-2)] disabled:opacity-40 disabled:cursor-not-allowed
                            text-[var(--text-primary)] text-base transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -770,14 +1242,18 @@ export default function TicketsPage() {
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   const pageNum = Math.max(1, Math.min(page - 2, totalPages - 4)) + i;
                   if (pageNum > totalPages) return null;
+
                   return (
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === page
-                          ? 'bg-red-700 text-[var(--text-primary)]'
-                          : 'glass-card text-[var(--text-secondary)] border border-[var(--border-color)] hover:bg-[var(--hover-2)]'
-                        }`}
+                      className={`
+                        w-10 h-10 rounded-xl text-base font-medium transition-colors
+                        ${pageNum === page
+                          ? 'bg-red-700 text-white'
+                          : 'glass-card text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-[var(--hover-2)]'
+                        }
+                      `}
                     >
                       {pageNum}
                     </button>
@@ -789,7 +1265,7 @@ export default function TicketsPage() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-card border border-[var(--border-color)]
-                           hover:bg-[var(--hover-1)] disabled:opacity-40 disabled:cursor-not-allowed
+                           hover:bg-[var(--hover-2)] disabled:opacity-40 disabled:cursor-not-allowed
                            text-[var(--text-primary)] text-base transition-colors"
               >
                 Вперёд

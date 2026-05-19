@@ -1,4 +1,4 @@
-﻿// components/helpers/SpellCheckDiff.tsx
+// components/helpers/SpellCheckDiff.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { Check, X, WandSparkles, ChevronDown, ChevronUp } from 'lucide-react';
 

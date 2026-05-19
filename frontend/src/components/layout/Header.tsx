@@ -57,12 +57,12 @@ export default function Header({ onMenuClick }: HeaderProps) {
             alt="ДИО-Консалт"
             className="w-10 h-10 object-contain"
           />
-          <span className="font-bold text-[var(--text-primary)] text-lg">ДИО-Консалт</span>
+          <span className="font-bold text-[var(--text-primary)] text-lg">ДИО-Деск</span>
         </div>
 
         <div className="hidden lg:block" />
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <Link 
             to="/notifications"
             className="relative p-2 rounded-xl hover:bg-[var(--hover-1)] transition-colors"
@@ -86,7 +86,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           <div ref={dropdownRef} className="relative">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--hover-1)] transition-colors"
+              className="flex items-center gap-2 md:gap-3 p-2 rounded-xl hover:bg-[var(--hover-1)] transition-colors"
             >
               {user?.avatar_url ? (
                 <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-[var(--accent)]/20" />

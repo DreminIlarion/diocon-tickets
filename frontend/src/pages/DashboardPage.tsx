@@ -5,11 +5,12 @@ import {
   Building2, Loader2, FolderOpen, Package, Ticket, ChevronRight,
   Search, Calendar, Shield, Sparkles, Sun, Moon, CloudSun,
   Flame, Timer, TrendingUp, TrendingDown, Activity, Zap,
-  BarChart3, Users, ArrowUpRight,
+  BarChart3, Users,
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { ticketsApi, counterpartiesApi, projectsApi, productsApi } from '../api/client';
 import type { TicketListItem, Counterparty, Project } from '../types';
+import GridBackground from '../components/ui/GridBackground';
 
 /* ════════════════════════════════════════════════════════════════
    HELPERS
@@ -21,43 +22,6 @@ const getGreeting = () => {
   if (h < 12) return { text: 'Доброе утро', icon: Sun };
   if (h < 18) return { text: 'Добрый день', icon: CloudSun };
   return { text: 'Добрый вечер', icon: Moon };
-};
-
-/* ════════════════════════════════════════════════════════════════
-   GRID BACKGROUND COMPONENT
-   ════════════════════════════════════════════════════════════════ */
-
-const GridBackground = ({ variant = 'dots' }: { variant?: 'dots' | 'grid' | 'lines' }) => {
-  if (variant === 'dots') {
-    return (
-      <div
-        className="absolute inset-0 opacity-[0.15] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(circle, var(--dot-color) 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%)',
-        }}
-      />
-    );
-  }
-  if (variant === 'grid') {
-    return (
-      <div
-        className="absolute inset-0 opacity-[0.08] pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-            linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px)
-          `,
-          backgroundSize: '32px 32px',
-          maskImage: 'radial-gradient(ellipse 70% 50% at 50% 50%, black 40%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 70% 50% at 50% 50%, black 40%, transparent 100%)',
-        }}
-      />
-    );
-  }
-  return null;
 };
 
 /* ════════════════════════════════════════════════════════════════
@@ -179,7 +143,7 @@ const BarChart = ({ data }: { data: { label: string; value: number; isToday?: bo
               />
             </div>
             <span className={`text-[13px] font-medium ${
-              d.isToday ? 'text-red-400' : 'text-[var(--text-primary)]/40'
+              d.isToday ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/40'
             }`}>
               {d.label}
             </span>
@@ -290,10 +254,10 @@ export default function DashboardPage() {
 
   // Сегменты для donut
   const donutSegments = [
-    { value: stats.new, color: '#3b82f6', label: 'Новые' },
+    { value: stats.new, color: '#00b10f', label: 'Новые' },
     { value: stats.inProgress, color: '#eab308', label: 'В работе' },
     { value: stats.waiting, color: '#f97316', label: 'Ожидают' },
-    { value: stats.resolved, color: '#10b981', label: 'Решены' },
+    { value: stats.resolved, color: '#10b948', label: 'Решены' },
     { value: stats.critical, color: '#ef4444', label: 'Критичные' },
   ].filter(s => s.value > 0);
 
@@ -305,35 +269,44 @@ export default function DashboardPage() {
   const fmtTime = (d: string) =>
     new Date(d).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 
-  const statusClr = (s: string) => ({
-    'Новый': 'bg-blue-500/15 text-blue-300 ring-blue-500/20',
-    'Открыт': 'bg-cyan-500/15 text-cyan-300 ring-cyan-500/20',
-    'В работе': 'bg-yellow-500/15 text-yellow-300 ring-yellow-500/20',
-    'Ожидает ответа': 'bg-orange-500/15 text-orange-300 ring-orange-500/20',
-    'Решён': 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20',
-    'Закрыт': 'bg-neutral-500/15 text-neutral-300 ring-neutral-500/20',
-    'Переоткрыт': 'bg-red-500/15 text-red-300 ring-red-500/20',
-  }[s] ?? 'bg-white/5 text-[var(--text-primary)]/50');
+  const statusClr = (s: string) => {
+    const map: Record<string, string> = {
+      'Новый': 'status-new',
+      'Открыт': 'status-open',
+      'В работе': 'status-progress',
+      'Ожидает ответа': 'status-waiting',
+      'Решён': 'status-resolved',
+      'Закрыт': 'status-closed',
+      'Переоткрыт': 'status-reopened',
+    };
+    return map[s] || 'status-closed';
+  };
 
-  const priorityClr = (p: string) => ({
-    'Критический': 'bg-red-500/15 text-red-300',
-    'Высокий': 'bg-orange-500/15 text-orange-300',
-    'Средний': 'bg-yellow-500/15 text-yellow-300',
-    'Низкий': 'bg-emerald-500/15 text-emerald-300',
-  }[p] ?? 'bg-white/5 text-[var(--text-primary)]/50');
+  const priorityClr = (p: string) => {
+    const map: Record<string, string> = {
+      'Критический': 'priority-critical',
+      'Высокий': 'priority-high',
+      'Средний': 'priority-medium',
+      'Низкий': 'priority-low',
+    };
+    return map[p] || 'priority-medium';
+  };
 
-  const priorityBar = (p: string) => ({
-    'Критический': 'bg-red-500',
-    'Высокий': 'bg-orange-500',
-    'Средний': 'bg-yellow-500',
-    'Низкий': 'bg-emerald-500',
-  }[p] ?? 'bg-white/20');
+  const priorityBar = (p: string) => {
+    const map: Record<string, string> = {
+      'Критический': 'status-bar-reopened',
+      'Высокий': 'status-bar-waiting',
+      'Средний': 'status-bar-progress',
+      'Низкий': 'status-bar-resolved',
+    };
+    return map[p] || '';
+  };
 
   /* ── LOADING ── */
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-      <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+      <Loader2 className="w-10 h-10 text-[var(--accent)] animate-spin" />
       <p className="text-[var(--text-primary)]/40 text-[15px]">Загружаем данные…</p>
     </div>
   );
@@ -346,7 +319,7 @@ export default function DashboardPage() {
       {/* ╔════════════════════════════════════════════════════════════
           HEADER с сеткой-фоном
           ════════════════════════════════════════════════════════════╗ */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/[0.06]
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border-color)]
                       p-8">
         <GridBackground variant="dots" />
         {/* Decorative blur */}
@@ -354,7 +327,7 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 text-[var(--text-primary)]/50 text-[15px] font-medium
-                            px-3 py-1.5 rounded-full bg-[var(--hover-1)] border border-white/[0.06]">
+                            px-3 py-1.5 rounded-full bg-[var(--hover-1)] border border-[var(--border-color)]">
               <greeting.icon className="w-4 h-4" />
               {greeting.text}
             </div>
@@ -371,7 +344,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <div className="relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30
-                                 group-focus-within:text-red-400 transition-colors" />
+                                 group-focus-within:text-[var(--accent)] transition-colors" />
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -381,9 +354,9 @@ export default function DashboardPage() {
                   }
                 }}
                 placeholder="Поиск заявок…"
-                className="pl-11 pr-4 py-3.5 w-72 rounded-2xl bg-[var(--hover-1)] border border-white/[0.08]
-                           text-[var(--text-primary)] text-[15px] placeholder:text-[var(--text-primary)]/25
-                           focus:outline-none focus:border-red-500/40 focus:bg-[var(--hover-1)]
+                className="pl-11 pr-4 py-3.5 w-72 rounded-2xl bg-[var(--hover-1)] border border-[var(--border-color)]
+                           text-[var(--text-primary)] text-[15px] placeholder:text-[var(--text-muted)]
+                           focus:outline-none focus:border-[var(--accent)] focus:bg-[var(--hover-1)]
                            transition-all"
               />
             </div>
@@ -405,34 +378,34 @@ export default function DashboardPage() {
         {[
           {
             label: 'Всего заявок', value: stats.total, icon: FileText,
-            iconBg: 'bg-violet-500/10', iconColor: 'text-violet-400',
+            iconBg: 'bg-[var(--info)]/8', iconColor: 'text-[var(--info)]',
             color: '#8b5cf6', sub: `${stats.new} новых на этой неделе`,
             trend: stats.new > 0 ? { val: stats.new, up: true } : null,
           },
           {
             label: 'В работе', value: stats.inProgress, icon: Timer,
-            iconBg: 'bg-blue-500/10', iconColor: 'text-blue-400',
+            iconBg: 'bg-[var(--info)]/8', iconColor: 'text-[var(--info)]',
             color: '#3b82f6', sub: 'активных задач',
             trend: stats.new > 0 ? { val: stats.new, up: true } : null,
           },
           {
             label: 'Критических', value: stats.critical, icon: Flame,
-            iconBg: 'bg-red-500/10', iconColor: 'text-red-400',
+            iconBg: 'bg-[var(--accent-soft)]', iconColor: 'text-[var(--accent)]',
             color: '#ef4444', sub: stats.waiting > 0 ? `${stats.waiting} ждут ответа` : 'нет критичных',
             trend: stats.critical > 0 ? { val: stats.critical, up: false } : null,
           },
           {
             label: 'Решено', value: stats.resolved, icon: CheckCircle2,
-            iconBg: 'bg-emerald-500/10', iconColor: 'text-emerald-400',
-            color: '#10b981', sub: `${resolvePct}% выполнения`,
+            iconBg: 'bg-[var(--success)]/8', iconColor: 'text-[var(--success)]',
+            color: '#10b926', sub: `${resolvePct}% выполнения`,
             trend: resolvePct > 50 ? { val: resolvePct, up: true } : null,
           },
         ].map((card, idx) => (
           <div
             key={card.label}
-            className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06]
-                       p-5 hover:border-white/[0.12] transition-all duration-300
-                       hover:-translate-y-0.5 group"
+            className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]
+                       p-5 hover:border-[var(--border-hover)] transition-all duration-300
+                        group"
             style={{ animationDelay: `${idx * 80}ms` }}
           >
             <GridBackground variant="grid" />
@@ -440,15 +413,15 @@ export default function DashboardPage() {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className={`w-11 h-11 rounded-xl ${card.iconBg} flex items-center justify-center
-                                ring-1 ring-white/[0.05]`}>
+                                ring-1 ring-[var(--border-color)]`}>
                   <card.icon className={`w-5 h-5 ${card.iconColor}`} />
                 </div>
                 {card.trend && (
                   <span className={`flex items-center gap-1 text-[13px] font-semibold tabular-nums
                                     px-2 py-1 rounded-lg ${
                     card.trend.up
-                      ? 'text-emerald-400 bg-emerald-500/10'
-                      : 'text-red-400 bg-red-500/10'
+                      ? 'text-[var(--success)] bg-[var(--success)]/8'
+                      : 'text-[var(--accent)] bg-[var(--accent-soft)]'
                   }`}>
                     {card.trend.up
                       ? <TrendingUp className="w-3 h-3" />
@@ -479,7 +452,7 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-3 gap-6">
 
         {/* DONUT — распределение по статусам */}
-        <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-6">
+        <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-6">
           <GridBackground variant="dots" />
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
@@ -520,7 +493,7 @@ export default function DashboardPage() {
         </div>
 
         {/* BAR CHART — активность за неделю */}
-        <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-6 lg:col-span-2">
+        <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-6 lg:col-span-2">
           <GridBackground variant="grid" />
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
@@ -551,14 +524,14 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Последние заявки */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06]">
+          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]">
             <GridBackground variant="dots" />
             <div className="relative z-10">
-              <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between">
                 <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center
-                                  ring-1 ring-red-500/10">
-                    <Ticket className="w-4 h-4 text-red-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[var(--accent-soft)] flex items-center justify-center
+                                  ring-1 ring-[var(--accent)]/10">
+                    <Ticket className="w-4 h-4 text-[var(--accent)]" />
                   </div>
                   Последние заявки
                   {tickets.length > 0 && (
@@ -568,7 +541,7 @@ export default function DashboardPage() {
                   )}
                 </h2>
                 <Link to="/tickets"
-                  className="text-red-400 hover:text-red-300 flex items-center gap-1.5 text-[15px] font-medium
+                  className="text-[var(--accent)] hover:text-[var(--accent)] flex items-center gap-1.5 text-[15px] font-medium
                              transition-colors group/link">
                   Все заявки
                   <ArrowRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />
@@ -586,16 +559,15 @@ export default function DashboardPage() {
                   </p>
                   <button
                     onClick={() => navigate('/tickets/new')}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl
-                               bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500
-                               text-[var(--text-primary)] text-[15px] font-medium transition-all shadow-lg shadow-red-900/25
-                               hover:shadow-red-900/40 hover:-translate-y-0.5"
+                    className="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl
+                               text-white text-[15px] font-medium transition-all shadow-lg shadow-[var(--shadow-lg)]
+                               hover:shadow-[var(--shadow-lg)] "
                   >
                     <Sparkles className="w-4 h-4" /> Создать первую заявку
                   </button>
                 </div>
               ) : (
-                <div className="divide-y divide-white/[0.04]">
+                <div className="divide-y divide-[var(--border-color)]">
                   {tickets.slice(0, 6).map(ticket => (
                     <Link
                       key={ticket.id}
@@ -610,17 +582,16 @@ export default function DashboardPage() {
                       <div className="flex-1 min-w-0 pl-2">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-[15px] font-medium text-[var(--text-primary)] truncate
-                                          group-hover:text-red-400 transition-colors">
+                                          group-hover:text-[var(--accent)] transition-colors">
                             {ticket.title}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-red-400/60 font-mono text-[13px]">#{ticket.number}</span>
-                          <span className={`px-2 py-0.5 rounded-md text-[13px] font-medium ring-1 ring-inset
-                                          ${statusClr(ticket.status)}`}>
+                          <span className="text-[var(--accent)]/60 font-mono text-[13px]">#{ticket.number}</span>
+                          <span className={`px-2 py-0.5 rounded-md text-[13px] font-medium border ${statusClr(ticket.status)}`}>
                             {ticket.status}
                           </span>
-                          <span className={`px-2 py-0.5 rounded-md text-[13px] font-medium ${priorityClr(ticket.priority)}`}>
+                          <span className={`px-2 py-0.5 rounded-md text-[13px] font-medium border ${priorityClr(ticket.priority)}`}>
                             {ticket.priority}
                           </span>
                         </div>
@@ -631,7 +602,7 @@ export default function DashboardPage() {
                           <p className="text-[13px] text-[var(--text-primary)]/40">{fmtDate(ticket.created_at)}</p>
                           <p className="text-[13px] text-[var(--text-primary)]/25">{fmtTime(ticket.created_at)}</p>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/15 group-hover:text-red-400
+                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/15 group-hover:text-[var(--accent)]
                                                 group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </Link>
@@ -642,14 +613,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Проекты */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06]">
+          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]">
             <GridBackground variant="grid" />
             <div className="relative z-10">
-              <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between">
                 <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/1f0 flex items-center justify-center
-                                  ring-1 ring-blue-500/10">
-                    <FolderOpen className="w-4 h-4 text-blue-400" />
+                  <div className="w-8 h-8 rounded-lg bg-[var(--status-open-bg)] flex items-center justify-center
+                                  ring-1 ring-[var(--status-open-border)]">
+                    <FolderOpen className="w-4 h-4 text-[var(--status-open-text)]" />
                   </div>
                   Проекты
                   {projects.length > 0 && (
@@ -659,7 +630,7 @@ export default function DashboardPage() {
                   )}
                 </h2>
                 <Link to="/projects"
-                  className="text-red-400 hover:text-red-300 flex items-center gap-1.5 text-[15px] font-medium
+                  className="text-[var(--accent)] hover:text-[var(--accent)] flex items-center gap-1.5 text-[15px] font-medium
                              transition-colors group/link">
                   Все проекты
                   <ArrowRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />
@@ -679,26 +650,26 @@ export default function DashboardPage() {
                     <Link
                       key={proj.id}
                       to={`/projects/${proj.id}`}
-                      className="bg-blue-500/1 p-5 hover:bg-[var(--hover-1)] transition-all group"
+                      className=" p-5 hover:bg-[var(--hover-1)] transition-all group"
                     >
                       <div className="flex items-start gap-3.5">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600/20 to-violet-600/20
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]
                                         flex items-center justify-center flex-shrink-0
-                                        ring-1 ring-blue-500/10
-                                        group-hover:ring-blue-500/20 transition-all">
-                          <FolderOpen className="w-5 h-5 text-blue-400/70 group-hover:text-blue-400 transition-colors" />
+                                        ring-1 ring-[var(--status-open-border)]
+                                        group-hover:ring-[var(--status-open-text)]/30 transition-all">
+                          <FolderOpen className="w-5 h-5 text-[var(--status-open-text)]/70 group-hover:text-[var(--status-open-text)] transition-colors" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[15px] font-semibold text-[var(--text-primary)] truncate mb-1
-                                       group-hover:text-red-400 transition-colors">
+                                       group-hover:text-[var(--accent)] transition-colors">
                             {proj.name}
                           </p>
                           <div className="flex items-center gap-2 mb-2">
                             <span className="font-mono text-[13px] text-[var(--text-primary)]/30">{proj.key}</span>
-                            <span className={`text-[13px] px-1.5 py-0.5 rounded font-medium ${
+                            <span className={`text-[13px] px-1.5 py-0.5 rounded font-medium border ${
                               proj.status === 'active'
-                                ? 'bg-emerald-500/15 text-emerald-300'
-                                : 'bg-[var(--hover-1)] text-[var(--text-primary)]/40'
+                                ? 'status-resolved'
+                                : 'status-closed'
                             }`}>
                               {proj.status === 'active' ? 'Активен' : 'Архив'}
                             </span>
@@ -718,39 +689,39 @@ export default function DashboardPage() {
 
           {/* Контрагенты (support) */}
           {isSupport && counterparties.length > 0 && (
-            <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06]">
+            <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]">
               <GridBackground variant="dots" />
               <div className="relative z-10">
-                <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between">
+                <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between">
                   <h2 className="text-[17px] font-bold text-[var(--text-primary)] flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center
-                                    ring-1 ring-amber-500/10">
-                      <Building2 className="w-4 h-4 text-amber-400" />
+                    <div className="w-8 h-8 rounded-lg bg-[var(--status-waiting-bg)] flex items-center justify-center
+                                    ring-1 ring-[var(--status-waiting-border)]">
+                      <Building2 className="w-4 h-4 text-[var(--status-waiting-text)]" />
                     </div>
                     Контрагенты
                   </h2>
                   <Link to="/counterparties"
-                    className="text-red-400 hover:text-red-300 flex items-center gap-1.5 text-[15px] font-medium
+                    className="text-[var(--accent)] hover:text-[var(--accent)] flex items-center gap-1.5 text-[15px] font-medium
                                transition-colors group/link">
                     Все
                     <ArrowRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>
-                <div className="divide-y divide-white/[0.04]">
+                <div className="divide-y divide-[var(--border-color)]">
                   {counterparties.slice(0, 4).map(cp => (
                     <Link
                       key={cp.id}
                       to={`/counterparties/${cp.id}`}
                       className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--hover-1)] transition-all group"
                     >
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600/15 to-orange-600/15
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--status-waiting-bg)] to-[var(--status-progress-bg)]
                                       flex items-center justify-center flex-shrink-0
-                                      ring-1 ring-amber-500/10">
-                        <Building2 className="w-5 h-5 text-amber-400/70" />
+                                      ring-1 ring-[var(--status-waiting-border)]">
+                        <Building2 className="w-5 h-5 text-[var(--status-waiting-text)]/70" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[15px] font-medium text-[var(--text-primary)] truncate
-                                      group-hover:text-red-400 transition-colors">
+                                      group-hover:text-[var(--accent)] transition-colors">
                           {cp.name}
                         </p>
                         <p className="text-[13px] text-[var(--text-primary)]/35 truncate">
@@ -758,10 +729,10 @@ export default function DashboardPage() {
                           {cp.inn && <span className="ml-2 font-mono">ИНН {cp.inn}</span>}
                         </p>
                       </div>
-                      <span className={`text-[13px] px-2.5 py-1 rounded-lg font-medium flex-shrink-0 ${
+                      <span className={`text-[13px] px-2.5 py-1 rounded-lg font-medium flex-shrink-0 border ${
                         cp.is_active
-                          ? 'bg-emerald-500/15 text-emerald-300'
-                          : 'bg-[var(--hover-1)] text-[var(--text-primary)]/40'
+                          ? 'status-resolved'
+                          : 'status-closed'
                       }`}>
                         {cp.is_active ? 'Активен' : 'Неактивен'}
                       </span>
@@ -777,7 +748,7 @@ export default function DashboardPage() {
         <div className="space-y-5">
 
           {/* KPI / Производительность */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-5">
+          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-5">
             <GridBackground variant="dots" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-5">
@@ -785,9 +756,9 @@ export default function DashboardPage() {
                   <p className="text-[17px] font-bold text-[var(--text-primary)]">Производительность</p>
                   <p className="text-[13px] text-[var(--text-primary)]/40 mt-0.5">за всё время</p>
                 </div>
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center
-                                ring-1 ring-emerald-500/10">
-                  <Zap className="w-4 h-4 text-emerald-400" />
+                <div className="w-9 h-9 rounded-lg bg-[var(--status-resolved-bg)] flex items-center justify-center
+                                ring-1 ring-[var(--status-resolved-border)]">
+                  <Zap className="w-4 h-4 text-[var(--status-resolved-text)]" />
                 </div>
               </div>
 
@@ -801,7 +772,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="h-2 bg-[var(--hover-1)] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full
+                    className="h-full bg-gradient-to-r from-[var(--status-resolved-text)] to-[var(--priority-low-text)] rounded-full
                                transition-all duration-700 ease-out"
                     style={{ width: `${resolvePct}%` }}
                   />
@@ -812,7 +783,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Мини-метрики */}
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/[0.05]">
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--border-color)]">
                 <div>
                   <p className="text-[13px] text-[var(--text-primary)]/40 mb-1">Открытых</p>
                   <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">
@@ -829,15 +800,15 @@ export default function DashboardPage() {
 
           {/* Карточка контрагента (клиент) */}
           {isCustomer && counterparty && (
-            <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06]">
-              <div className="h-24 bg-gradient-to-br from-red-900/40 via-red-800/20 to-transparent
+            <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]">
+              <div className="h-24 bg-gradient-to-br from-[var(--accent)]/20 via-[var(--accent)]/10 to-transparent
                               relative overflow-hidden">
                 <GridBackground variant="grid" />
                 <div className="absolute bottom-0 left-5 translate-y-1/2 z-10">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-700 to-red-600
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)]
                                   flex items-center justify-center shadow-xl shadow-red-900/30
-                                  ring-4 ring-[#0d0d0f]">
-                    <Building2 className="w-7 h-7 text-[var(--text-primary)]" />
+                                  ring-4 ring-[var(--bg-primary)]">
+                    <Building2 className="w-7 h-7 text-white" />
                   </div>
                 </div>
               </div>
@@ -874,7 +845,7 @@ export default function DashboardPage() {
           )}
 
           {/* Быстрые действия */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-5">
+          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-5">
             <GridBackground variant="dots" />
             <div className="relative z-10">
               <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
@@ -898,18 +869,18 @@ export default function DashboardPage() {
                     to={action.to}
                     className={`flex items-center gap-3.5 p-3 rounded-xl transition-all group/action ${
                       (action as any).accent
-                        ? 'bg-gradient-to-r from-red-900/25 to-red-800/15 hover:from-red-900/35 hover:to-red-800/25 ring-1 ring-red-500/15'
-                        : 'bg-[var(--hover-1)] hover:bg-[var(--hover-1)]'
+                        ? 'bg-[var(--accent-soft)]  '
+                        : 'bg-[var(--hover-1)] hover:bg-[var(--hover-2)]'
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all
                                     group-hover/action:scale-105 ${
                       (action as any).accent
-                        ? 'bg-red-600/20 ring-1 ring-red-500/20'
-                        : 'bg-[var(--hover-1)] group-hover/action:bg-[var(--hover-1)]'
+                        ? 'bg-[var(--accent-soft)] ring-1 ring-[var(--accent)]/20'
+                        : 'bg-[var(--hover-2)] group-hover/action:bg-[var(--hover-3)]'
                     }`}>
                       <action.icon className={`w-5 h-5 ${
-                        (action as any).accent ? 'text-red-400' : 'text-[var(--text-primary)]/50 group-hover/action:text-[var(--text-primary)]/80'
+                        (action as any).accent ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/50 group-hover/action:text-[var(--text-primary)]/80'
                       }`} />
                     </div>
                     <div className="flex-1">
@@ -926,7 +897,7 @@ export default function DashboardPage() {
 
           {/* Сводка (support) */}
           {isSupport && (
-            <div className="relative overflow-hidden glass-card rounded-2xl border border-white/[0.06] p-5">
+            <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-5">
               <GridBackground variant="grid" />
               <div className="relative z-10">
                 <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
@@ -935,11 +906,11 @@ export default function DashboardPage() {
                 <div className="space-y-1">
                   {[
                     { label: 'Контрагентов', value: counterparties.length, icon: Building2,
-                      color: 'text-amber-400', bg: 'bg-amber-500/10', ring: 'ring-amber-500/10' },
+                      color: 'text-[var(--status-waiting-text)]', bg: 'bg-[var(--status-waiting-bg)]', ring: 'ring-[var(--status-waiting-border)]' },
                     { label: 'Проектов', value: projects.length, icon: FolderOpen,
-                      color: 'text-blue-400', bg: 'bg-blue-500/10', ring: 'ring-blue-500/10' },
+                      color: 'text-[var(--status-open-text)]', bg: 'bg-[var(--status-open-bg)]', ring: 'ring-[var(--status-open-border)]' },
                     { label: 'Продуктов', value: productsCount, icon: Package,
-                      color: 'text-violet-400', bg: 'bg-violet-500/10', ring: 'ring-violet-500/10' },
+                      color: 'text-[var(--status-agreement-text)]', bg: 'bg-[var(--status-agreement-bg)]', ring: 'ring-[var(--status-agreement-border)]' },
                   ].map(row => (
                     <div key={row.label}
                       className="flex items-center justify-between py-3 px-1 rounded-lg hover:bg-[var(--hover-1)] transition-colors">

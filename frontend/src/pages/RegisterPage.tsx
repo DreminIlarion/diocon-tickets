@@ -55,7 +55,7 @@ export default function RegisterPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-primary)]">
         <div className="glass-card-static p-8 max-w-md w-full text-center">
           <h2 className="text-[16px] font-semibold text-[var(--text-primary)] mb-4">Недействительная ссылка</h2>
           <p className="text-[var(--text-primary)]/50 mb-6">Ссылка приглашения недействительна или истекла.</p>
@@ -69,10 +69,10 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-primary)]">
         <div className="glass-card-static p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-400" />
+          <div className="w-16 h-16 rounded-full bg-[var(--success)]/8 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-[var(--success)]" />
           </div>
           <h2 className="text-[16px] font-semibold text-[var(--text-primary)] mb-2">Регистрация завершена!</h2>
           <p className="text-[var(--text-primary)]/50">Переход на страницу входа...</p>
@@ -82,18 +82,18 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0a0a]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-primary)]">
       {/* Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-red-900/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-red-800/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-[var(--accent)]/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-[var(--accent)]/10 rounded-full blur-[100px]" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-800 to-red-900 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-bold text-[var(--text-primary)]">ДК</span>
+            <span className="text-2xl font-bold text-white">ДК</span>
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">ДИО-Консалт</h1>
           <p className="text-[var(--text-primary)]/50 mt-1">Создание аккаунта</p>

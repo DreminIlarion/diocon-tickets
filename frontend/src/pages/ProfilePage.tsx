@@ -119,12 +119,12 @@ export default function ProfilePage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-red-800 hover:bg-red-700 flex items-center justify-center transition-colors"
+                  className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] flex items-center justify-center transition-colors"
                 >
                   {uploading ? (
-                    <Loader2 className="w-5 h-5 text-[var(--text-primary)] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-white animate-spin" />
                   ) : (
-                    <Camera className="w-5 h-5 text-[var(--text-primary)]" />
+                    <Camera className="w-5 h-5 text-white" />
                   )}
                 </button>
                 <input
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                 {user?.full_name || user?.username || 'Пользователь'}
               </h2>
               <p className="text-sm text-[var(--text-primary)]/50">{user?.email}</p>
-              <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-red-800/20 text-red-400 border border-red-800/30">
+              <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium bg-[var(--accent)]/20 text-[var(--accent)] border border-red-800/30">
                 {getRoleLabel(user?.role || '')}
               </span>
             </div>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === tab.id
-                      ? 'bg-red-800/20 text-red-400'
+                      ? 'bg-[var(--accent)]/20 text-[var(--accent)]'
                       : 'text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:bg-[var(--hover-1)]'
                     }`}
                 >
@@ -281,8 +281,8 @@ export default function ProfilePage() {
                 <div className="p-4 rounded-xl bg-[var(--hover-1)] border border-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                        <Check className="w-5 h-5 text-green-400" />
+                      <div className="w-10 h-10 rounded-xl bg-[var(--success)]/8 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-[var(--success)]" />
                       </div>
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">Пароль</p>
@@ -296,8 +296,8 @@ export default function ProfilePage() {
                 <div className="p-4 rounded-xl bg-[var(--hover-1)] border border-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-yellow-400" />
+                      <div className="w-10 h-10 rounded-xl bg-[var(--warning)]/8 flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-[var(--warning)]" />
                       </div>
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">Двухфакторная аутентификация</p>
@@ -330,7 +330,7 @@ export default function ProfilePage() {
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-[var(--hover-1)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-800"></div>
+                      <div className="w-11 h-6 bg-[var(--hover-1)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
                     </label>
                   </div>
                 ))}

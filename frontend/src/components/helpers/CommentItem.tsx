@@ -47,8 +47,8 @@ const getReactionChipClass = (isActive: boolean) =>
     'backdrop-blur-sm transition-all duration-150 active:scale-[0.98]',
     'shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_1px_2px_rgba(0,0,0,0.18)]',
     isActive
-      ? 'bg-blue-900/40 border-[#5b79ad]/35 text-[var(--text-primary)] hover:bg-[#2b3950]'
-      : 'bg-white/[0.04] border-white/[0.08] text-[var(--text-primary)]/70 hover:bg-white/[0.065] hover:border-white/[0.12] hover:text-[var(--text-primary)]/85 hover:-translate-y-[1px]',
+      ? 'bg-blue-900/40 border-blue-500/35 text-[var(--text-primary)] hover:bg-blue-800/40'
+      : 'bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)] hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]/85 hover:-translate-y-[1px]',
   ].join(' ');
 
 const getReactionPickerItemClass = (isActive: boolean) =>
@@ -56,8 +56,8 @@ const getReactionPickerItemClass = (isActive: boolean) =>
     'h-10 w-10 rounded-full flex items-center justify-center',
     'transition-all duration-150 active:scale-95',
     isActive
-      ? 'bg-white/[0.10] scale-110 shadow-[0_4px_14px_rgba(0,0,0,.22)]'
-      : 'hover:bg-white/[0.08] hover:scale-110',
+      ? 'bg-[var(--hover-3)] scale-110 shadow-[0_4px_14px_rgba(0,0,0,.22)]'
+      : 'hover:bg-[var(--hover-3)] hover:scale-110',
   ].join(' ');
 
 // ─── Компонент превью файла в ответе ─────────────────────────────────────────
@@ -85,11 +85,11 @@ function ReplyFilePreview({ file, onRemove }: ReplyFilePreviewProps) {
   };
 
   return (
-    <div className="relative group flex items-center gap-2 px-2.5 py-1.5 bg-white/[0.05] border border-white/[0.08] rounded-lg">
+    <div className="relative group flex items-center gap-2 px-2.5 py-1.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-lg">
       {isImage && preview ? (
         <img src={preview} alt={file.name} className="w-8 h-8 rounded object-cover flex-shrink-0" />
       ) : (
-        <div className="w-8 h-8 rounded bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
           <File size={14} className="text-[var(--text-primary)]/40" />
         </div>
       )}
@@ -99,7 +99,7 @@ function ReplyFilePreview({ file, onRemove }: ReplyFilePreviewProps) {
       </div>
       <button
         onClick={onRemove}
-        className="ml-1 p-0.5 rounded text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-white/[0.05] transition-colors flex-shrink-0"
+        className="ml-1 p-0.5 rounded text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-[var(--hover-2)] transition-colors flex-shrink-0"
       >
         <X size={12} />
       </button>
@@ -441,10 +441,10 @@ export const CommentItem = React.memo(({
     return createPortal(
       <div
         ref={contextMenuRef}
-        className="fixed z-[9999] bg-[var(--bg-secondary)]/95 backdrop-blur-xl rounded-2xl shadow-[0_18px_44px_rgba(0,0,0,.45)] border border-white/[0.08] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+        className="fixed z-[9999] bg-[var(--bg-secondary)]/95 backdrop-blur-xl rounded-2xl shadow-[0_18px_44px_rgba(0,0,0,.45)] border border-[var(--border-color)] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
         style={{ top: contextMenu.y, left: contextMenu.x, minWidth: 220 }}
       >
-        <div className="flex items-center gap-1 p-2.5 border-b border-white/[0.06]">
+        <div className="flex items-center gap-1 p-2.5 border-b border-[var(--border-color)]">
           {REACTIONS_CONFIG.map(r => (
             <button key={r.type} onClick={() => handleReaction(r.type)} className={getReactionPickerItemClass(userReactions.includes(r.type))} title={r.label}>
               {r.isImage ? <img src={r.emoji} alt={r.label} className="w-8 h-8" /> : <span className="text-l">{r.emoji}</span>}
@@ -452,15 +452,15 @@ export const CommentItem = React.memo(({
           ))}
         </div>
         <div className="py-1.5">
-          <button onClick={() => { onReply(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
+          <button onClick={() => { onReply(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-[var(--hover-2)] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
             <Reply size={16} /> Ответить
           </button>
           {canEdit && (
             <>
-              <button onClick={() => { setIsEditing(true); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
+              <button onClick={() => { setIsEditing(true); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-[var(--hover-2)] flex items-center gap-3 text-l text-[var(--text-primary)]/90 transition-colors">
                 <Edit2 size={16} /> Редактировать
               </button>
-              <button onClick={() => { onDeleteComment(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-white/[0.06] flex items-center gap-3 text-l text-red-400 transition-colors">
+              <button onClick={() => { onDeleteComment(comment.id); setContextMenu(null); }} className="w-full text-left px-4 py-2.5 hover:bg-[var(--hover-2)] flex items-center gap-3 text-l text-red-400 transition-colors">
                 <Trash2 size={16} /> Удалить
               </button>
             </>
@@ -476,7 +476,7 @@ export const CommentItem = React.memo(({
     return createPortal(
       <div
         ref={reactionPickerRef}
-        className="fixed z-[9999] rounded-2xl border border-white/[0.08] bg-[var(--bg-secondary)]/95 backdrop-blur-xl p-1.5 flex items-center gap-0.5 shadow-[0_12px_30px_rgba(0,0,0,.35)] animate-in fade-in zoom-in-95 duration-100"
+        className="fixed z-[9999] rounded-2xl border border-[var(--border-color)] bg-[var(--bg-secondary)]/95 backdrop-blur-xl p-1.5 flex items-center gap-0.5 shadow-[0_12px_30px_rgba(0,0,0,.35)] animate-in fade-in zoom-in-95 duration-100"
         style={{ top: reactionPickerPosition.y, left: reactionPickerPosition.x }}
       >
         {REACTIONS_CONFIG.map(r => (
@@ -493,7 +493,7 @@ export const CommentItem = React.memo(({
   return (
     <>
       <div
-        className={`relative group transition-all duration-150 ${contextMenu !== null ? 'bg-white/[0.03] rounded-xl' : ''}`}
+        className={`relative group transition-all duration-150 ${contextMenu !== null ? 'bg-[var(--hover-1)] rounded-xl' : ''}`}
         style={{ marginLeft: level > 0 ? 24 : 0 }}
         onContextMenu={handleContextMenu}
         onMouseEnter={() => setIsHovered(true)}
@@ -535,7 +535,7 @@ export const CommentItem = React.memo(({
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveEdit} className="px-3 py-1.5 text-l bg-red-800 hover:bg-red-700 rounded-lg text-[var(--text-primary)] transition-colors">
+                  <button onClick={handleSaveEdit} className="px-3 py-1.5 text-l bg-red-800 hover:bg-red-700 rounded-lg text-white transition-colors">
                     Сохранить
                   </button>
                   <button onClick={() => { setIsEditing(false); setEditText(comment.text); }} className="px-3 py-1.5 text-l bg-[var(--hover-1)] hover:bg-[var(--hover-1)] rounded-lg text-[var(--text-primary)] transition-colors">
@@ -569,12 +569,12 @@ export const CommentItem = React.memo(({
                 );
               })}
 
-              <button onClick={() => onReply(comment.id)} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors">
+              <button onClick={() => onReply(comment.id)} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)] transition-colors">
                 <Reply size={12} /><span>Ответить</span>
               </button>
 
               {localReplyCount > 0 && (
-                <button onClick={() => loadReplies()} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors">
+                <button onClick={() => loadReplies()} className="flex items-center gap-1 px-2 py-1 rounded-full text-l text-[var(--text-primary)]/45 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)] transition-colors">
                   {loadingReplies ? <Loader2 size={12} className="animate-spin" /> : showReplies ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   <span>{localReplyCount}</span>
                 </button>
@@ -591,7 +591,7 @@ export const CommentItem = React.memo(({
                       if (y + 220 > window.innerHeight) y = y - 220;
                       setContextMenu({ x, y });
                     }}
-                    className="p-1 rounded-full text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/65 hover:bg-white/[0.06] transition-colors"
+                    className="p-1 rounded-full text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/65 hover:bg-[var(--hover-2)] transition-colors"
                   >
                     <MoreVertical size={16} />
                   </button>
@@ -630,7 +630,7 @@ export const CommentItem = React.memo(({
                   <button
                     type="button"
                     onClick={() => replyFileInputRef.current?.click()}
-                    className="p-2 rounded-xl text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-white/[0.06] transition-colors flex-shrink-0 self-end mb-0.5"
+                    className="p-2 rounded-xl text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)] transition-colors flex-shrink-0 self-end mb-0.5"
                     title="Прикрепить файл"
                   >
                     <Paperclip size={16} />
@@ -643,7 +643,7 @@ export const CommentItem = React.memo(({
                     onChange={(e) => setReplyText(e.target.value)}
                     onKeyDown={localHandleKeyDown}
                     placeholder={`Ответить ${getAuthorName(comment)}...`}
-                    className="flex-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-xl text-[var(--text-primary)] placeholder-white/35 focus:outline-none focus:border-red-500/40 text-l resize-none overflow-hidden"
+                    className="flex-1 px-3 py-2 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-red-500/40 text-l resize-none overflow-hidden"
                     rows={1}
                     style={{ minHeight: '38px', maxHeight: '150px' }}
                     autoFocus
@@ -654,7 +654,7 @@ export const CommentItem = React.memo(({
                     <button
                       onClick={() => handleLocalSendReply(comment.id, replyText)}
                       disabled={(!replyText.trim() && replyFiles.length === 0) || uploadingReply}
-                      className="px-3 py-2 bg-red-800 hover:bg-red-700 rounded-lg text-[var(--text-primary)] text-l disabled:opacity-50 transition-colors flex items-center gap-1.5"
+                      className="px-3 py-2 bg-red-800 hover:bg-red-700 rounded-lg text-white text-l disabled:opacity-50 transition-colors flex items-center gap-1.5"
                     >
                       {uploadingReply
                         ? <><Loader2 size={12} className="animate-spin" /> Отправка...</>
@@ -663,7 +663,7 @@ export const CommentItem = React.memo(({
                     </button>
                     <button
                       onClick={() => { setReplyingTo(null); setReplyFiles([]); }}
-                      className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] rounded-lg text-[var(--text-primary)]/60 text-l transition-colors"
+                      className="px-3 py-2 bg-[var(--hover-2)] hover:bg-[var(--hover-3)] rounded-lg text-[var(--text-primary)]/60 text-l transition-colors"
                     >
                       Отмена
                     </button>
