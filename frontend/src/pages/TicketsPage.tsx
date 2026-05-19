@@ -793,11 +793,11 @@ export default function TicketsPage() {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-[var(--text-primary)] text-3xl md:text-4xl font-bold tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">
             {isCustomer ? 'Мои заявки' : 'Заявки'}
           </h1>
 
-          <p className="text-base text-[var(--text-primary)]/40 mt-1">
+          <p className="text-base text-[var(--text-primary)]/50">
             Управление обращениями
             {totalItems > 0 && (
               <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-1)] text-[var(--text-secondary)] text-sm">

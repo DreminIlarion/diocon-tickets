@@ -534,16 +534,16 @@ export default function TicketDetailPage() {
       // 3. Собираем финальное описание
       let finalDesc = serializeBlocks(editDescBlocks);
 
-      // Заменяем local-image → image для успешно загруженных
+      // Заменяем local → attachment для успешно загруженных
       for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
         finalDesc = finalDesc.replaceAll(
-          `[[local-image:${blockId}]]`,
-          `[[image:${attachmentId}]]`
+          `![image](local:${blockId})`,
+          `![image](attachment:${attachmentId})`
         );
       }
 
-      // 4. Финальная проверка — не должно остаться local-image
-      if (/\[\[local-image:[^\]]+\]\]/.test(finalDesc)) {
+      // 4. Финальная проверка — не должно остаться local-изображений
+      if (/!\[image\]\(local:[^)]+\)/.test(finalDesc)) {
         toast({
           title: 'Ошибка',
           description:
@@ -817,7 +817,7 @@ export default function TicketDetailPage() {
                                   : <div className="text-6xl text-[var(--text-primary)]/30">{getFileIcon(file.mime_type)}</div>
                               }
                               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                                <p className="text-[var(--text-primary)] text-base line-clamp-2 font-medium">{file.original_filename}</p>
+                                <p className="text-white text-base line-clamp-2 font-medium">{file.original_filename}</p>
                               </div>
                             </div>
                             <div className="p-3 flex justify-between items-center">
@@ -1143,8 +1143,8 @@ export default function TicketDetailPage() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--bg-primary)]/95 p-4" onClick={closePreview}>
           <div className="bg-zinc-900 rounded-3xl w-full max-w-5xl max-h-[95vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center px-6 py-4 border-b border-[var(--border-color)]">
-              <h3 className="text-lg font-medium text-[var(--text-primary)] truncate pr-8">{previewFile.original_filename}</h3>
-              <button onClick={closePreview} className="text-[var(--text-primary)]/70 hover:text-[var(--text-primary)] text-3xl">×</button>
+              <div className="text-lg font-medium text-white truncate pr-8">{previewFile.original_filename}</div>
+              <button onClick={closePreview} className="text-white/50 hover:text-white/90    text-3xl">×</button>
             </div>
             <div className="flex-1 flex items-center justify-center bg-[var(--bg-primary)] p-6 overflow-auto">
               {previewFile.mime_type.startsWith('image/')

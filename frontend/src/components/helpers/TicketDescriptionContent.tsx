@@ -57,24 +57,44 @@ type Segment =
   | { type: 'image'; attachmentId: string }
   | { type: 'local-image'; localId: string };
 
-const TOKEN_REGEX = /\[\[(image|local-image):([^[\]]+)\]\]/g;
+// Новый markdown-формат: ![image](attachment:UUID) и ![image](local:blockId)
+// Legacy формат: [[image:UUID]] и [[local-image:blockId]] (для обратной совместимости)
+const MD_IMAGE_RE = /!\[image\]\((attachment|local):([^)]+)\)/g;
+const LEGACY_IMAGE_RE = /\[\[(image|local-image):([^[\]]+)\]\]/g;
 
 function parseContent(text: string): Segment[] {
   const segments: Segment[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
-  const regex = new RegExp(TOKEN_REGEX);
 
-  while ((match = regex.exec(text)) !== null) {
+  // Сначала пробуем новый markdown-формат
+  const mdRegex = new RegExp(MD_IMAGE_RE);
+  while ((match = mdRegex.exec(text)) !== null) {
     if (match.index > lastIndex) {
       segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
     }
-    if (match[1] === 'image') {
+    if (match[1] === 'attachment') {
       segments.push({ type: 'image', attachmentId: match[2] });
-    } else {
+    } else if (match[1] === 'local') {
       segments.push({ type: 'local-image', localId: match[2] });
     }
-    lastIndex = regex.lastIndex;
+    lastIndex = mdRegex.lastIndex;
+  }
+
+  // Если markdown-формат не найден — пробуем legacy
+  if (segments.length === 0 && lastIndex === 0) {
+    const legacyRegex = new RegExp(LEGACY_IMAGE_RE);
+    while ((match = legacyRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
+      }
+      if (match[1] === 'image') {
+        segments.push({ type: 'image', attachmentId: match[2] });
+      } else {
+        segments.push({ type: 'local-image', localId: match[2] });
+      }
+      lastIndex = legacyRegex.lastIndex;
+    }
   }
 
   if (lastIndex < text.length) {

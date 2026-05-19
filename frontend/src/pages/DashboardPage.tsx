@@ -587,7 +587,7 @@ export default function DashboardPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[var(--accent)]/60 font-mono text-[13px]">#{ticket.number}</span>
+                          <span className="text-[var(--text-primary)]/50 font-mono text-[13px]">#{ticket.number}</span>
                           <span className={`px-2 py-0.5 rounded-md text-[13px] font-medium border ${statusClr(ticket.status)}`}>
                             {ticket.status}
                           </span>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
                             {proj.name}
                           </p>
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="font-mono text-[13px] text-[var(--text-primary)]/30">{proj.key}</span>
+                            <span className="font-mono text-[13px] text-[var(--text-primary)]/50">{proj.key}</span>
                             <span className={`text-[13px] px-1.5 py-0.5 rounded font-medium border ${
                               proj.status === 'active'
                                 ? 'status-resolved'
@@ -724,7 +724,7 @@ export default function DashboardPage() {
                                       group-hover:text-[var(--accent)] transition-colors">
                           {cp.name}
                         </p>
-                        <p className="text-[13px] text-[var(--text-primary)]/35 truncate">
+                        <p className="text-[13px] text-[var(--text-primary)]/50 truncate">
                           {cp.legal_name}
                           {cp.inn && <span className="ml-2 font-mono">ИНН {cp.inn}</span>}
                         </p>

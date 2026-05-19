@@ -66,8 +66,8 @@ export function serializeBlocks(blocks: DescriptionBlock[]): string {
       if (b.type === 'text') return b.value.trim();
       if (b.type === 'image') {
         return b.attachmentId
-          ? `[[image:${b.attachmentId}]]`
-          : `[[local-image:${b.id}]]`;
+          ? `![image](attachment:${b.attachmentId})`
+          : `![image](local:${b.id})`;
       }
       return '';
     })
@@ -75,26 +75,46 @@ export function serializeBlocks(blocks: DescriptionBlock[]): string {
     .join('\n\n');
 }
 
+// Новый markdown-формат: ![image](attachment:UUID) и ![image](local:blockId)
+// Legacy формат: [[image:UUID]] и [[local-image:blockId]] (для обратной совместимости)
+const MD_IMAGE_RE = /!\[image\]\((attachment|local):([^)]+)\)/g;
+const LEGACY_IMAGE_RE = /\[\[(image|local-image):([^\]]+)\]\]/g;
+
 export function deserializeToBlocks(text: string): DescriptionBlock[] {
-  const RE = /\[\[(image|local-image):([^\]]+)\]\]/g;
   const blocks: DescriptionBlock[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
 
-  while ((m = RE.exec(text)) !== null) {
+  // Сначала пробуем новый markdown-формат
+  while ((m = MD_IMAGE_RE.exec(text)) !== null) {
     const before = text.slice(last, m.index).trim();
     if (before) blocks.push({ id: makeId(), type: 'text', value: before });
 
-    if (m[1] === 'image') {
+    if (m[1] === 'attachment') {
       blocks.push({ id: makeId(), type: 'image', attachmentId: m[2] });
-    }
-    // local-image в сохранённых данных — это мусор от предыдущих багов.
-    // Показываем как битый блок, но не теряем молча.
-    if (m[1] === 'local-image') {
+    } else if (m[1] === 'local') {
       blocks.push({ id: m[2], type: 'image' });
     }
 
-    last = RE.lastIndex;
+    last = MD_IMAGE_RE.lastIndex;
+  }
+
+  // Если markdown-формат не найден — пробуем legacy
+  if (blocks.length === 0 && last === 0) {
+    while ((m = LEGACY_IMAGE_RE.exec(text)) !== null) {
+      const before = text.slice(last, m.index).trim();
+      if (before) blocks.push({ id: makeId(), type: 'text', value: before });
+
+      if (m[1] === 'image') {
+        blocks.push({ id: makeId(), type: 'image', attachmentId: m[2] });
+      }
+      // local-image в сохранённых данных — мусор от предыдущих багов
+      if (m[1] === 'local-image') {
+        blocks.push({ id: m[2], type: 'image' });
+      }
+
+      last = LEGACY_IMAGE_RE.lastIndex;
+    }
   }
 
   const rest = text.slice(last).trim();

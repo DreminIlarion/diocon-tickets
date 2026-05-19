@@ -410,8 +410,8 @@ export default function ProductsPage() {
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="text-[var(--text-primary)] text-3xl md:text-4xl font-bold tracking-tight">Продукты</h2>
-          <p className="text-base text-[var(--text-primary)]/40 mt-1">Справочник ПО и оборудования</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">Продукты</h2>
+          <p className="text-base text-[var(--text-primary)]/50">Справочник ПО и оборудования</p>
         </div>
         <div className="flex items-center gap-2.5">
           <button

@@ -327,13 +327,13 @@ export default function ProjectsPage() {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-4xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">
             {isCustomer ? 'Мои проекты' : 'Проекты'}
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-base text-[var(--text-primary)]/50">
             {isCustomer ? 'Проекты, в которых вы участвуете' : 'Управление проектами'}
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-2)] text-xs font-medium">{totalItems}</span>
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-1)] text-[var(--text-secondary)] text-sm">{totalItems}</span>
             )}
           </p>
         </div>

@@ -11,12 +11,15 @@ interface HistoryEntryProps {
 
 // ─── Хелперы ──────────────────────────────────────────────────────────────────
 
-const MEDIA_RE = /\[\[(local-image|image):([^\]]+)\]\]/g;
+// Новый markdown-формат и legacy для обратной совместимости
+const MD_MEDIA_RE = /!\[image\]\((attachment|local):([^)]+)\)/g;
+const LEGACY_MEDIA_RE = /\[\[(local-image|image):([^\]]+)\]\]/g;
 
 /** Убрать все токены картинок из текста */
 function stripMedia(value = ''): string {
   return value
-    .replace(MEDIA_RE, '')
+    .replace(MD_MEDIA_RE, '')
+    .replace(LEGACY_MEDIA_RE, '')
     .replace(/\*\*\*([^*]+)\*\*\*/g, '$1')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/\*([^*]+)\*/g, '$1')
@@ -25,11 +28,24 @@ function stripMedia(value = ''): string {
 }
 
 /** Посчитать токены определённого типа */
-function countTokens(value = '', type?: 'image' | 'local-image'): number {
-  const re = type
-    ? new RegExp(`\\[\\[${type}:[^\\]]+\\]\\]`, 'g')
-    : MEDIA_RE;
-  return (value.match(re) || []).length;
+function countTokens(value = '', type?: 'image' | 'local-image' | 'attachment' | 'local'): number {
+  // Новый markdown-формат
+  const mdRe = type
+    ? type === 'attachment' || type === 'image'
+      ? /!\[image\]\(attachment:[^)]+\)/g
+      : /!\[image\]\(local:[^)]+\)/g
+    : MD_MEDIA_RE;
+  
+  // Legacy формат
+  const legacyRe = type
+    ? type === 'attachment' || type === 'image'
+      ? /\[\[image:[^\]]+\]\]/g
+      : /\[\[local-image:[^\]]+\]\]/g
+    : LEGACY_MEDIA_RE;
+  
+  const mdMatches = (value.match(mdRe) || []).length;
+  const legacyMatches = (value.match(legacyRe) || []).length;
+  return mdMatches + legacyMatches;
 }
 
 /** Обрезать длинный текст */
@@ -66,15 +82,15 @@ function analyzeEntry(entry: any): EntryAnalysis {
 
   const oldTotal = countTokens(oldVal);
   const newTotal = countTokens(newVal);
-  const oldLocal = countTokens(oldVal, 'local-image');
-  const newLocal = countTokens(newVal, 'local-image');
-  const oldServer = countTokens(oldVal, 'image');
-  const newServer = countTokens(newVal, 'image');
-
+  
+  // Подсчитываем local-изображения (новый формат 'local:' и legacy 'local-image:')
+  const oldLocal = countTokens(oldVal, 'local') + countTokens(oldVal, 'local-image');
+  const newLocal = countTokens(newVal, 'local') + countTokens(newVal, 'local-image');
+  
   const imagesAdded = Math.max(0, newTotal - oldTotal);
   const imagesRemoved = Math.max(0, oldTotal - newTotal);
 
-  // Техническая запись: текст не менялся, просто local-image → image
+  // Техническая запись: текст не менялся, просто local/attachment → attachment
   const technicalMediaOnly =
     !textChanged &&
     oldTotal === newTotal &&
@@ -82,7 +98,7 @@ function analyzeEntry(entry: any): EntryAnalysis {
 
   // Полностью скрыть:
   // 1. Технический upload (local→server, текст тот же)
-  // 2. Промежуточные состояния (только local-image ↔ local-image)
+  // 2. Промежуточные состояния (только local ↔ local)
   const onlyLocalOld = oldTotal > 0 && oldLocal === oldTotal;
   const onlyLocalNew = newTotal > 0 && newLocal === newTotal;
   const hidden =

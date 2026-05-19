@@ -389,7 +389,7 @@ export default function CounterpartiesPage() {
           <p className="text-base text-[var(--text-primary)]/50">
             Управление компаниями и подразделениями
             {totalItems > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-[var(--text-primary)]/50 text-sm">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-[var(--hover-1)] text-[var(--text-secondary)] text-sm">
                 {totalItems}
               </span>
             )}
@@ -403,6 +403,29 @@ export default function CounterpartiesPage() {
           <Plus className="w-5 h-5" />
           Добавить контрагента
         </button>
+      </div>
+
+      {/* ── Stats ────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'На странице', value: counterparties.length, icon: Building2 },
+          { label: 'Головные', value: headCompanies.length, icon: Users },
+          { label: 'Подразделения', value: visibleBranchesCount, icon: GitBranch },
+          { label: 'Активные', value: visibleActiveCount, icon: Check },
+        ].map(stat => (
+          <div
+            key={stat.label}
+            className="glass-card rounded-2xl border border-[var(--border-color)] p-4 flex items-center gap-3.5"
+          >
+            <div className="w-11 h-11 rounded-xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
+              <stat.icon className="w-5 h-5 text-[var(--text-primary)]/35" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>
+              <p className="text-sm text-[var(--text-primary)]/40">{stat.label}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* ── Filters ──────────────────────────────────────────────────────── */}
@@ -490,28 +513,7 @@ export default function CounterpartiesPage() {
         )}
       </div>
 
-      {/* ── Stats ────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'На странице', value: counterparties.length, icon: Building2 },
-          { label: 'Головные', value: headCompanies.length, icon: Users },
-          { label: 'Подразделения', value: visibleBranchesCount, icon: GitBranch },
-          { label: 'Активные', value: visibleActiveCount, icon: Check },
-        ].map(stat => (
-          <div
-            key={stat.label}
-            className="glass-card rounded-2xl border border-[var(--border-color)] p-4 flex items-center gap-3.5"
-          >
-            <div className="w-11 h-11 rounded-xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
-              <stat.icon className="w-5 h-5 text-[var(--text-primary)]/35" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>
-              <p className="text-sm text-[var(--text-primary)]/40">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      
 
       {/* ── List ─────────────────────────────────────────────────────────── */}
       {filteredCompanies.length === 0 ? (
