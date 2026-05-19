@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import {
   Plus, FolderOpen, Search, Loader2, Users,
   X, Check, ChevronDown, Filter, ChevronRight, ChevronLeft,
-  Calendar, Sparkles, Archive, Crown, UserCheck, Zap, ArrowRight,
+  Calendar, Sparkles, Archive, Crown, UserCheck,
 } from 'lucide-react';
 import { projectsApi } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import type { Project } from '../types';
-import GridBackground from '../components/ui/GridBackground';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ROLE DROPDOWN

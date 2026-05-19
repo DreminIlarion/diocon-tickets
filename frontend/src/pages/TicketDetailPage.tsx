@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, Clock, User, FileText, History,
-  Loader2, Paperclip, Download, Image, File, ChevronDown, ChevronUp,
-  Hash, Calendar, UserPlus, UserCheck, CheckCircle2, X, Plus,
+  Loader2, Download, Image, File, ChevronDown, ChevronUp,
+  Calendar, UserPlus, UserCheck, CheckCircle2, X, Plus,
   Search, Settings, AlertCircle, RefreshCw, Tag, Edit,
   Paperclip as PaperclipIcon, MessageCircle, Building2, Phone, Mail,
-  Archive, Bold, Italic,
+  Archive,
 } from 'lucide-react';
 import { ticketsApi, usersApi } from '../api/client';
 import { attachmentsApi } from '../api/attachments';
@@ -200,7 +200,6 @@ export default function TicketDetailPage() {
 
   useEffect(() => { if (canAssign) loadSupportUsers(); }, [canAssign, loadSupportUsers]);
 
-  const getUserName = useCallback((uid: string) => userNamesCache?.get(uid) || null, []);
 
   const getAssigneeName = useCallback(() => {
     if (!ticket?.assigned_to) return null;
@@ -538,7 +537,7 @@ export default function TicketDetailPage() {
       for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
         finalDesc = finalDesc.replaceAll(
           `![image](local:${blockId})`,
-          `![image](attachment:${attachmentId})`
+          `![image](media://${attachmentId})`
         );
       }
 

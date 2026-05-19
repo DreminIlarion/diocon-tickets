@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Loader2, Building2, CheckCircle2, User, Search, Crown, 
+  ArrowLeft, Loader2, Building2, CheckCircle2, User, Crown, 
   Sparkles, AlertCircle, CheckCircle, XCircle, ChevronDown
 } from 'lucide-react';
 import { projectsApi, counterpartiesApi, usersApi } from '../api/client';

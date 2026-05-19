@@ -12,8 +12,8 @@ interface RichDescriptionProps {
 // Новый:   ![любой alt](attachment:UUID)
 // Legacy:  [[image:UUID]]
 const ATTACHMENT_REGEX =
-  /!\[[^\]]*\]\(attachment:([a-f0-9-]{36})\)|\[\[image:([a-f0-9-]{36})\]\]/g;
-
+  /!\[[^\]]*\]\(media:\/\/([a-f0-9-]{36})\)|!\[[^\]]*\]\(attachment:([a-f0-9-]{36})\)|\[\[image:([a-f0-9-]{36})\]\]/g;
+  
 interface Segment {
   type: 'text' | 'image';
   value: string; // текст или attachment ID
@@ -31,7 +31,7 @@ function parseDescription(text: string): Segment[] {
       segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
     }
     // Берём ID из первой или второй группы (новый / legacy)
-    const attachmentId = match[1] || match[2];
+    const attachmentId = match[1] || match[2] || match[3];
     segments.push({ type: 'image', value: attachmentId });
     lastIndex = regex.lastIndex;
   }

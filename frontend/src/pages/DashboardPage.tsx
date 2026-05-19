@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  FileText, Clock, AlertTriangle, CheckCircle2, Plus, ArrowRight,
+  FileText, CheckCircle2, Plus, ArrowRight,
   Building2, Loader2, FolderOpen, Package, Ticket, ChevronRight,
-  Search, Calendar, Shield, Sparkles, Sun, Moon, CloudSun,
+  Search, Sparkles, Sun, Moon, CloudSun,
   Flame, Timer, TrendingUp, TrendingDown, Activity, Zap,
   BarChart3, Users,
 } from 'lucide-react';

@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   User, Reply, Paperclip, MoreVertical, Edit2, Trash2,
-  ChevronDown, ChevronUp, Loader2, Smile, X, File, Image,
+  ChevronDown, ChevronUp, Loader2, X, File, 
 } from 'lucide-react';
 import { ticketsApi } from '../../api/client';
 import { attachmentsApi } from '../../api/attachments';
@@ -264,18 +264,7 @@ export const CommentItem = React.memo(({
     setContextMenu({ x, y });
   }, []);
 
-  const openReactionPicker = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (showReactionPicker) { setShowReactionPicker(false); setReactionPickerPosition(null); return; }
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pickerWidth = 260, pickerHeight = 60;
-    let x = rect.left, y = rect.bottom + 8;
-    if (x + pickerWidth > window.innerWidth - 8) x = window.innerWidth - pickerWidth - 8;
-    if (x < 8) x = 8;
-    if (y + pickerHeight > window.innerHeight - 8) y = rect.top - pickerHeight - 8;
-    setReactionPickerPosition({ x, y });
-    setShowReactionPicker(true);
-  }, [showReactionPicker]);
+
 
   // ── Добавление ответа ─────────────────────────────────────────────────────
   const handleReplyAdded = useCallback(async (newReply: any) => {

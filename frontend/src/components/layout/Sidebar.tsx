@@ -7,32 +7,21 @@ import {
   Mail, 
   Bell, 
   User,
-  LogOut,
   X,
   Building,
   FolderOpen,
   FileAxis3d,
   ChevronLeft,
 } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
 
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-const ROLE_LABEL: Record<string, string> = {
-  admin: 'Администратор',
-  support_manager: 'Менеджер поддержки',
-  support_agent: 'Агент поддержки',
-  executor: 'Исполнитель',
-  customer_admin: 'Админ клиента',
-  customer: 'Клиент',
-};
+
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
   
   const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
   const canInvite = ['support_agent', 'support_manager', 'executor', 'admin'].includes(user?.role || '');
@@ -45,10 +34,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
   }, [isCollapsed]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   const mainNavItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Главная' },

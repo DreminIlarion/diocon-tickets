@@ -59,31 +59,39 @@ type Segment =
 
 // Новый markdown-формат: ![image](attachment:UUID) и ![image](local:blockId)
 // Legacy формат: [[image:UUID]] и [[local-image:blockId]] (для обратной совместимости)
-const MD_IMAGE_RE = /!\[image\]\((attachment|local):([^)]+)\)/g;
 const LEGACY_IMAGE_RE = /\[\[(image|local-image):([^[\]]+)\]\]/g;
+
+const MD_IMAGE_RE = /!\[image\]\((media):\/\/([^)]+)|!\[image\]\((attachment|local):([^)]+)\)/g;
 
 function parseContent(text: string): Segment[] {
   const segments: Segment[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  // Сначала пробуем новый markdown-формат
-  const mdRegex = new RegExp(MD_IMAGE_RE);
+  const mdRegex = new RegExp(MD_IMAGE_RE.source, 'g');
+
   while ((match = mdRegex.exec(text)) !== null) {
     if (match.index > lastIndex) {
       segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
     }
-    if (match[1] === 'attachment') {
+
+    if (match[1] === 'media') {
+      // ![image](media://UUID) — группы: [1]='media', [2]=UUID
       segments.push({ type: 'image', attachmentId: match[2] });
-    } else if (match[1] === 'local') {
-      segments.push({ type: 'local-image', localId: match[2] });
+    } else if (match[3] === 'attachment') {
+      // ![image](attachment:UUID) — группы: [3]='attachment', [4]=UUID
+      segments.push({ type: 'image', attachmentId: match[4] });
+    } else if (match[3] === 'local') {
+      // ![image](local:blockId) — группы: [3]='local', [4]=blockId
+      segments.push({ type: 'local-image', localId: match[4] });
     }
+
     lastIndex = mdRegex.lastIndex;
   }
 
-  // Если markdown-формат не найден — пробуем legacy
+  // Legacy формат [[image:UUID]]
   if (segments.length === 0 && lastIndex === 0) {
-    const legacyRegex = new RegExp(LEGACY_IMAGE_RE);
+    const legacyRegex = new RegExp(LEGACY_IMAGE_RE.source, 'g');
     while ((match = legacyRegex.exec(text)) !== null) {
       if (match.index > lastIndex) {
         segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });

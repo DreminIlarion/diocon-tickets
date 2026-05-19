@@ -66,7 +66,7 @@ export function serializeBlocks(blocks: DescriptionBlock[]): string {
       if (b.type === 'text') return b.value.trim();
       if (b.type === 'image') {
         return b.attachmentId
-          ? `![image](attachment:${b.attachmentId})`
+          ? `![image](media://${b.attachmentId})`  // ← новый формат
           : `![image](local:${b.id})`;
       }
       return '';
@@ -75,50 +75,76 @@ export function serializeBlocks(blocks: DescriptionBlock[]): string {
     .join('\n\n');
 }
 
-// Новый markdown-формат: ![image](attachment:UUID) и ![image](local:blockId)
-// Legacy формат: [[image:UUID]] и [[local-image:blockId]] (для обратной совместимости)
-const MD_IMAGE_RE = /!\[image\]\((attachment|local):([^)]+)\)/g;
-const LEGACY_IMAGE_RE = /\[\[(image|local-image):([^\]]+)\]\]/g;
+
 
 export function deserializeToBlocks(text: string): DescriptionBlock[] {
   const blocks: DescriptionBlock[] = [];
   let last = 0;
   let m: RegExpExecArray | null;
 
-  // Сначала пробуем новый markdown-формат
-  while ((m = MD_IMAGE_RE.exec(text)) !== null) {
-    const before = text.slice(last, m.index).trim();
-    if (before) blocks.push({ id: makeId(), type: 'text', value: before });
+  // Два отдельных простых regex — намного надёжнее одного сложного
+  const mediaRegex = /!\[image\]\(media:\/\/([^)]+)\)/g;
+  const attachmentRegex = /!\[image\]\((attachment|local):([^)]+)\)/g;
+  const legacyRegex = /\[\[(image|local-image):([^\]]+)\]\]/g;
 
-    if (m[1] === 'attachment') {
-      blocks.push({ id: makeId(), type: 'image', attachmentId: m[2] });
-    } else if (m[1] === 'local') {
-      blocks.push({ id: m[2], type: 'image' });
-    }
+  // Собираем все совпадения в единый массив и сортируем по позиции
+  type RawMatch = { index: number; end: number; block: DescriptionBlock };
+  const matches: RawMatch[] = [];
 
-    last = MD_IMAGE_RE.lastIndex;
+  let ma: RegExpExecArray | null;
+
+  // media://UUID
+  while ((ma = mediaRegex.exec(text)) !== null) {
+    matches.push({
+      index: ma.index,
+      end: mediaRegex.lastIndex,
+      block: { id: makeId(), type: 'image', attachmentId: ma[1] },
+    });
   }
 
-  // Если markdown-формат не найден — пробуем legacy
-  if (blocks.length === 0 && last === 0) {
-    while ((m = LEGACY_IMAGE_RE.exec(text)) !== null) {
-      const before = text.slice(last, m.index).trim();
+  // attachment:UUID и local:blockId
+  while ((ma = attachmentRegex.exec(text)) !== null) {
+    matches.push({
+      index: ma.index,
+      end: attachmentRegex.lastIndex,
+      block: ma[1] === 'attachment'
+        ? { id: makeId(), type: 'image', attachmentId: ma[2] }
+        : { id: ma[2], type: 'image' },
+    });
+  }
+
+  // legacy [[image:UUID]]
+  while ((ma = legacyRegex.exec(text)) !== null) {
+    matches.push({
+      index: ma.index,
+      end: legacyRegex.lastIndex,
+      block: ma[1] === 'image'
+        ? { id: makeId(), type: 'image', attachmentId: ma[2] }
+        : { id: ma[2], type: 'image' },
+    });
+  }
+
+  // Сортируем по позиции в тексте
+  matches.sort((a, b) => a.index - b.index);
+
+  if (matches.length === 0) {
+    // Нет картинок — весь текст
+    const trimmed = text.trim();
+    if (trimmed) blocks.push({ id: makeId(), type: 'text', value: trimmed });
+  } else {
+    for (const match of matches) {
+      // Текст до картинки
+      const before = text.slice(last, match.index).trim();
       if (before) blocks.push({ id: makeId(), type: 'text', value: before });
-
-      if (m[1] === 'image') {
-        blocks.push({ id: makeId(), type: 'image', attachmentId: m[2] });
-      }
-      // local-image в сохранённых данных — мусор от предыдущих багов
-      if (m[1] === 'local-image') {
-        blocks.push({ id: m[2], type: 'image' });
-      }
-
-      last = LEGACY_IMAGE_RE.lastIndex;
+      // Картинка
+      blocks.push(match.block);
+      last = match.end;
     }
+    // Текст после последней картинки
+    const after = text.slice(last).trim();
+    if (after) blocks.push({ id: makeId(), type: 'text', value: after });
   }
 
-  const rest = text.slice(last).trim();
-  if (rest) blocks.push({ id: makeId(), type: 'text', value: rest });
   if (!blocks.length) blocks.push({ id: makeId(), type: 'text', value: '' });
 
   return blocks;
@@ -306,13 +332,14 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
 
   // ── HTML для инициализации ────────────────────────────────────────────────
 
-  function markdownToHtml(text: string): string {
-    return text
-      .replace(/\*\*\*([^*\n]+)\*\*\*/g, '<strong><em>$1</em></strong>')
-      .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
-      .replace(/\n/g, '<br>');
-  }
+// ── Исправленный markdownToHtml ──────────────────────────────────────────────
+function markdownToHtml(text: string): string {
+  return text
+    .replace(/\*\*\*([^*\n]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
 
   const initialHtml = useMemo(() => {
     return blocks

@@ -98,7 +98,6 @@ export default function NewTicketPage() {
   const [newTagInput, setNewTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showCustomTagInput, setShowCustomTagInput] = useState(false);
-  const [aiAutoEnabled, setAiAutoEnabled] = useState(true);
 
   const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
   const canSelectCounterparty = !isCustomer && CAN_SELECT_COUNTERPARTY_ROLES.includes(user?.role || '');
@@ -398,7 +397,7 @@ export default function NewTicketPage() {
         for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
           finalDesc = finalDesc.replaceAll(
             `![image](local:${blockId})`,
-            `![image](attachment:${attachmentId})`
+            `![image](media://${attachmentId})`
           );
         }
 
