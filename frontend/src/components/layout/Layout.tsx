@@ -13,17 +13,17 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-0 w-full">
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+    <div className="min-h-screen bg-[var(--bg-primary)]">
+      <div className="flex">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         
-        <main className="flex-1 p-3 md:p-6 lg:p-8 bg-[var(--bg-primary)] w-full">
-          <div className="mx-auto w-full">
+        <div className="flex-1 flex flex-col min-h-screen min-w-0">
+          <Header onMenuClick={() => setSidebarOpen(true)} />
+          
+          <main className="flex-1 p-3 md:p-6 lg:p-8 bg-[var(--bg-primary)] min-w-0">
             <Outlet />
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );

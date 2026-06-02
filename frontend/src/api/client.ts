@@ -28,6 +28,17 @@ import type {
   ProductAttributesSchemaResponse,
   KeySuggestionResponse,
   KeyAvailabilityResponse,
+  TaskKanbanFilters,
+  TaskKanbanResponse,
+  TaskKanbanContext,
+  TaskCreateInput,
+  TaskResponse,
+  TaskUpdateInput,
+  TaskStatus,
+  TaskAssignInput,
+  TaskRequestReviewInput,
+  TaskReviewInput,
+  SimpleUser,
 } from '@/types';
 import apiClient from './apiClient';
 
@@ -300,6 +311,17 @@ export const counterpartiesApi = {
     return response.data;
   },
 
+  // В counterpartiesApi добавить:
+deleteContactPerson: async (id: string, params: { phone?: string; email?: string }): Promise<Counterparty> => {
+  const response = await api.delete<Counterparty>(`/api/v1/counterparties/${id}/contact-persons`, {
+    params: {
+      phone: params.phone || undefined,
+      email: params.email || undefined,
+    },
+  });
+  return response.data;
+},
+
   // Получить подразделения
   getBranches: async (id: string): Promise<Counterparty[]> => {
     const response = await api.get<PaginatedResponse<Counterparty>>('/api/v1/counterparties', {
@@ -510,17 +532,52 @@ export const ticketsApi = {
   },
 
   // Получить все заявки (для support и выше)
-  getAll: async (
-    page: number = 1,
-    size: number = 10,
-    status?: TicketStatus,
-    priority?: TicketPriority
-  ): Promise<PaginatedResponse<TicketListItem>> => {
-    const response = await api.get<PaginatedResponse<TicketListItem>>('/api/v1/tickets', {
-      params: { page, size, status, priority },
-    });
-    return response.data;
-  },
+// Получить все заявки с фильтрацией (единый метод)
+getAll: async (
+  page: number = 1,
+  size: number = 10,
+  filters?: {
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    ticket_type?: string;
+    tags?: string[];
+    query?: string;
+    created_after?: string;
+    created_before?: string;
+  }
+): Promise<PaginatedResponse<TicketListItem>> => {
+  const params: Record<string, any> = { page, size };
+
+  if (filters?.status)        params.status      = filters.status;
+  if (filters?.priority)      params.priority    = filters.priority;
+  if (filters?.ticket_type)   params.ticket_type = filters.ticket_type;
+  if (filters?.query)         params.query       = filters.query;
+  if (filters?.created_after) params.created_after  = filters.created_after;
+  if (filters?.created_before) params.created_before = filters.created_before;
+  if (filters?.tags && filters.tags.length > 0) params.tags = filters.tags;
+
+  const response = await api.get<PaginatedResponse<TicketListItem>>(
+    '/api/v1/tickets',
+    { params }
+  );
+  return response.data;
+},
+
+// Оставляем getAllWithFilters как алиас для обратной совместимости
+// (можно удалить после рефакторинга TicketsPage)
+getAllWithFilters: async (
+  page: number = 1,
+  size: number = 10,
+  filters?: {
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    ticket_type?: string;
+    query?: string;
+    tags?: string[];
+  }
+): Promise<PaginatedResponse<TicketListItem>> => {
+  return ticketsApi.getAll(page, size, filters);
+},
 
   // Получить заявку по ID
   getById: async (id: string): Promise<Ticket> => {
@@ -590,36 +647,7 @@ export const ticketsApi = {
 
 
 
-  getAllWithFilters: async (
-    page: number = 1,
-    size: number = 10,
-    filters?: {
-      status?: TicketStatus;
-      priority?: TicketPriority;
-      counterparty_id?: string;
-      project_id?: string;
-      created_by?: string;
-      reporter_id?: string;
-      assigned_to?: string;
-      search?: string;
-      tags?: string[];
-    }
-  ): Promise<PaginatedResponse<TicketListItem>> => {
-    const params: any = { page, size };
 
-    if (filters?.status) params.status = filters.status;
-    if (filters?.priority) params.priority = filters.priority;
-    if (filters?.counterparty_id) params.counterparty_id = filters.counterparty_id;
-    if (filters?.project_id) params.project_id = filters.project_id;
-    if (filters?.created_by) params.created_by = filters.created_by;
-    if (filters?.reporter_id) params.reporter_id = filters.reporter_id;
-    if (filters?.assigned_to) params.assigned_to = filters.assigned_to;
-    if (filters?.search) params.search = filters.search;
-    if (filters?.tags && filters.tags.length > 0) params.tags = filters.tags.join(',');
-
-    const response = await api.get<PaginatedResponse<TicketListItem>>('/api/v1/tickets', { params });
-    return response.data;
-  },
 
   // Найти тикет по номеру (если бэкенд поддерживает)
   getByNumber: async (number: string): Promise<Ticket | null> => {
@@ -814,6 +842,97 @@ export const productsApi = {
     const response = await api.get(
       `/api/v1/products/categories/${encodeURIComponent(category)}/attributes-schema`
     );
+    return response.data;
+  },
+};
+
+// ==== Tasks API ====
+export const tasksApi = {
+  // Получить Kanban-доску
+  getKanban: async (
+    context: TaskKanbanContext,
+    filters?: TaskKanbanFilters
+  ): Promise<TaskKanbanResponse> => {
+    const params: any = {
+      page: filters?.page ?? 1,
+      size: filters?.size ?? 20,
+      overdue_only: filters?.overdue_only ?? false,
+    };
+
+    if (filters?.priorities && filters.priorities.length > 0) {
+      params.priorities = filters.priorities;
+    }
+
+    const response = await api.post<TaskKanbanResponse>(
+      '/api/v1/tasks/kanban',
+      context,
+      { params }
+    );
+
+    return response.data;
+  },
+
+  // Создать задачу
+  create: async (data: TaskCreateInput): Promise<TaskResponse> => {
+    const response = await api.post<TaskResponse>('/api/v1/tasks', data);
+    return response.data;
+  },
+
+  // Редактировать задачу
+  update: async (
+    taskId: string,
+    data: TaskUpdateInput
+  ): Promise<TaskResponse> => {
+    const response = await api.patch<TaskResponse>(`/api/v1/tasks/${taskId}`, data);
+    return response.data;
+  },
+
+  // Архивировать задачу
+  archive: async (taskId: string): Promise<TaskResponse> => {
+    const response = await api.delete<TaskResponse>(`/api/v1/tasks/${taskId}`);
+    return response.data;
+  },
+
+  // Сменить статус
+  changeStatus: async (
+    taskId: string,
+    newStatus: TaskStatus
+  ): Promise<TaskResponse> => {
+    const response = await api.post<TaskResponse>(`/api/v1/tasks/${taskId}/status`, {
+      new_status: newStatus,
+    });
+
+    return response.data;
+  },
+
+  // Назначить исполнителя
+  assign: async (
+    taskId: string,
+    data: TaskAssignInput
+  ): Promise<TaskResponse> => {
+    const response = await api.post<TaskResponse>(`/api/v1/tasks/${taskId}/assign`, data);
+    return response.data;
+  },
+
+  // Запросить ревью
+  requestReview: async (
+    taskId: string,
+    data: TaskRequestReviewInput
+  ): Promise<TaskResponse> => {
+    const response = await api.post<TaskResponse>(
+      `/api/v1/tasks/${taskId}/request-review`,
+      data
+    );
+
+    return response.data;
+  },
+
+  // Провести ревью
+  review: async (
+    taskId: string,
+    data: TaskReviewInput
+  ): Promise<TaskResponse> => {
+    const response = await api.post<TaskResponse>(`/api/v1/tasks/${taskId}/review`, data);
     return response.data;
   },
 };

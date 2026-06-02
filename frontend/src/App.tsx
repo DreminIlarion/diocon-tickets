@@ -33,6 +33,7 @@ const NewProjectPage = lazy(() => import('./pages/NewProjectPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const ProductsTab = lazy(() => import('./pages/ProductsPage'));
 const CreateProductPage = lazy(() => import('./pages/CreateProductPage'));
+const TasksPage = lazy(() => import('./pages/TasksPage'));
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/auth/invite/accept" element={<LazyRoute><RegisterPage /></LazyRoute>} />
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<LazyRoute><DashboardPage /></LazyRoute>} />
+            <Route path="/tasks" element={<LazyRoute><TasksPage /></LazyRoute>} />
             <Route path="/tickets" element={<LazyRoute><TicketsPage /></LazyRoute>} />
             <Route path="/tickets/new" element={<LazyRoute><NewTicketPage /></LazyRoute>} />
             <Route path="/tickets/:ticketNumber" element={<LazyRoute><TicketDetailPage /></LazyRoute>} />

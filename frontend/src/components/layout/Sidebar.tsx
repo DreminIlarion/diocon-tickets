@@ -13,15 +13,25 @@ import {
   FileAxis3d,
   ChevronLeft,
 } from 'lucide-react';
+import { useAuthStore } from '../../stores/authStore';
 
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-
+const ROLE_LABEL: Record<string, string> = {
+  admin: 'Администратор',
+  support_manager: 'Менеджер поддержки',
+  support_agent: 'Агент поддержки',
+  executor: 'Исполнитель',
+  customer_admin: 'Админ клиента',
+  customer: 'Клиент',
+};
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
   
   const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
   const canInvite = ['support_agent', 'support_manager', 'executor', 'admin'].includes(user?.role || '');
@@ -62,7 +72,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       title={isCollapsed ? label : undefined}
       className={({ isActive }) =>
         `group relative flex items-center gap-3 rounded-xl text-l font-medium
-         transition-all duration-200 ${isCollapsed ? 'justify-center px-0 py-2.5 mx-auto w-11 h-11' : 'px-3 py-2.5'}
+         transition-all duration-200 ${isCollapsed ? 'justify-center px-2 py-4.5 mx-auto w-11 h-11' : 'px-4 py-3.5'}
          ${isActive
           ? 'bg-[var(--hover-1)] '
           : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)] hover:text-[var(--text-primary)]'
@@ -134,7 +144,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
           {(!isCollapsed || isMobile) && (
             <div className="min-w-0">
-              <h1 className=" text-[var(--text-primary)] text-2xl ">Дио-Деск</h1>
+              <h1 className=" text-[var(--text-primary)] text-2xl ">ДИО Деск</h1>
             </div>
           )}
         </NavLink>

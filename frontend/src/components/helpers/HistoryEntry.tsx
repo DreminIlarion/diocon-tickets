@@ -82,6 +82,16 @@ function shorten(value: string, max = 160): string {
   return value.length <= max ? value : value.slice(0, max) + '…';
 }
 
+/** Получить отображаемое имя для ID */
+function getDisplayName(id: string | null | undefined, actorNames: Map<string, string>): string {
+  if (!id) return '';
+  // Сначала ищем в actorNames
+  const fromActor = actorNames.get(id);
+  if (fromActor) return fromActor;
+  // Иначе показываем ID в усечённом виде
+  return id.slice(0, 8);
+}
+
 // ─── Классификация записи истории ─────────────────────────────────────────────
 
 interface EntryAnalysis {
@@ -145,6 +155,7 @@ const ACTION_CONFIG: Record<
     label: string;
     icon: ReactNode;
     color: string;
+    formatValue?: (oldVal: string | null, newVal: string | null, actorNames: Map<string, string>) => string;
   }
 > = {
   ticket_created: {
@@ -171,11 +182,21 @@ const ACTION_CONFIG: Record<
     label: 'Назначил исполнителя',
     icon: <UserPlus className="w-4.5 h-4.5" />,
     color: 'bg-cyan-500/15 text-cyan-400',
+    formatValue: (oldVal, newVal, actorNames) => {
+      if (newVal && !oldVal) return ` → ${getDisplayName(newVal, actorNames)}`;
+      if (oldVal && !newVal) return `${getDisplayName(oldVal, actorNames)} → Не назначен`;
+      if (oldVal && newVal) return `${getDisplayName(oldVal, actorNames)} → ${getDisplayName(newVal, actorNames)}`;
+      return '';
+    },
   },
   unassigned: {
     label: 'Снял исполнителя',
     icon: <UserMinus className="w-4.5 h-4.5" />,
     color: 'bg-red-500/15 text-red-400',
+    formatValue: (oldVal, newVal, actorNames) => {
+      if (oldVal) return `${getDisplayName(oldVal, actorNames)} → Не назначен`;
+      return '';
+    },
   },
   title_edited: {
     label: 'Изменил тему',
@@ -211,6 +232,12 @@ const ACTION_CONFIG: Record<
     label: 'Изменил исполнителя',
     icon: <UserCheck className="w-4.5 h-4.5" />,
     color: 'bg-cyan-500/15 text-cyan-400',
+    formatValue: (oldVal, newVal, actorNames) => {
+      if (oldVal && newVal) return `${getDisplayName(oldVal, actorNames)} → ${getDisplayName(newVal, actorNames)}`;
+      if (newVal) return ` → ${getDisplayName(newVal, actorNames)}`;
+      if (oldVal) return `${getDisplayName(oldVal, actorNames)} → Не назначен`;
+      return '';
+    },
   },
   counterparty_changed: {
     label: 'Изменил контрагента',
@@ -277,6 +304,50 @@ export const HistoryEntry = ({
     !isDescEdit &&
     entry.old_value &&
     entry.new_value;
+
+  // Форматированное значение для diff (с маппингом ID в имя)
+  let formattedOldValue = entry.old_value;
+  let formattedNewValue = entry.new_value;
+
+  if (config.formatValue) {
+    // Если есть кастомный форматтер — используем его для полной строки
+    const formatted = config.formatValue(entry.old_value, entry.new_value, actorNames);
+    if (formatted) {
+      return (
+        <div className="flex gap-4">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${config.color}`}>
+            {config.icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[var(--text-primary)] text-base font-medium">
+              {actorName}{' '}
+              <span className="text-[var(--text-primary)]/40 font-normal">
+                • {actionLabel}
+              </span>
+            </p>
+            <p className="text-[var(--text-primary)]/35 text-sm mt-0.5">
+              {formatDate(entry.created_at)}
+            </p>
+            <div className="mt-2 text-sm">
+              <span className="text-[var(--text-primary)]/60">
+                {formatted}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // Для assigned/unassigned без кастомного форматтера — маппим ID в имя
+  if (entry.action === 'assigned' || entry.action === 'unassigned' || entry.action === 'assigned_to_updated') {
+    if (entry.old_value) {
+      formattedOldValue = getDisplayName(entry.old_value, actorNames);
+    }
+    if (entry.new_value) {
+      formattedNewValue = getDisplayName(entry.new_value, actorNames);
+    }
+  }
 
   return (
     <div className="flex gap-4">
@@ -354,11 +425,11 @@ export const HistoryEntry = ({
         {showSimpleDiff && (
           <div className="mt-2 text-sm">
             <span className="text-[var(--text-primary)]/30 line-through">
-              {entry.old_value}
+              {formattedOldValue}
             </span>
             <span className="text-[var(--text-primary)]/30 mx-2">→</span>
             <span className="text-[var(--text-primary)]/60">
-              {entry.new_value}
+              {formattedNewValue}
             </span>
           </div>
         )}

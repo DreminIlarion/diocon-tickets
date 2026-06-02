@@ -254,7 +254,7 @@ export default function DashboardPage() {
 
   // Сегменты для donut
   const donutSegments = [
-    { value: stats.new, color: '#00b10f', label: 'Новые' },
+    { value: stats.new, color: '#3f56be', label: 'Новые' },
     { value: stats.inProgress, color: '#eab308', label: 'В работе' },
     { value: stats.waiting, color: '#f97316', label: 'Ожидают' },
     { value: stats.resolved, color: '#10b948', label: 'Решены' },
@@ -477,7 +477,7 @@ export default function DashboardPage() {
                           className="w-3 h-3 rounded-sm flex-shrink-0"
                           style={{ backgroundColor: seg.color }}
                         />
-                        <span className="text-[15px] text-[var(--text-primary)]/70 flex-1 truncate">{seg.label}</span>
+                        <span className="text-[15px] text-[var(--00b10ftext-primary)]/70 flex-1 truncate">{seg.label}</span>
                         <span className="text-[15px] font-semibold text-[var(--text-primary)] tabular-nums">{seg.value}</span>
                       </div>
                     );

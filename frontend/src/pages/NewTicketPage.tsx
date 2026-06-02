@@ -6,11 +6,12 @@ import {
   Search, FolderOpen, User, AlertCircle,
 } from 'lucide-react';
 import { SignalLow, SignalMedium, SignalHigh, Flame } from 'lucide-react';
+import { MessageSquare, HelpCircle, AlertTriangle, CheckCircle, Edit3 } from 'lucide-react';
 
 import { useAuthStore } from '../stores/authStore';
 import { ticketsApi, counterpartiesApi, projectsApi, usersApi } from '../api/client';
 import { attachmentsApi } from '../api/attachments';
-import type { Counterparty, TicketTag, TicketPriority, Project } from '../types';
+import type { Counterparty, TicketTag, TicketPriority, TicketType, Project } from '../types';
 import { SpellCheckField } from '../components/helpers/SpellCheckField';
 import { TicketDescriptionContent } from '../components/helpers/TicketDescriptionContent';
 import {
@@ -24,6 +25,18 @@ const PRIORITIES = [
   { value: 'Средний', label: 'Средний', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', activeColor: 'bg-amber-500/30 text-amber-300 border-amber-400 ring-2 ring-amber-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
   { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
   { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
+];
+
+const TICKET_TYPES = [
+  { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', desc: 'Сбой, ошибка' },
+  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-blue-300 border-blue-400 ring-2 ring-blue-500/50', desc: 'Стандартная услуга' },
+  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle className="w-5 h-5" />, color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40', activeColor: 'bg-cyan-500/30 text-cyan-300 border-cyan-400 ring-2 ring-cyan-500/50', desc: 'Вопрос, консультация' },
+  { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', desc: 'Жалоба клиента' },
+  { value: 'Задача', label: 'Задача', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-purple-500/20 text-purple-400 border-purple-500/40', activeColor: 'bg-purple-500/30 text-purple-300 border-purple-400 ring-2 ring-purple-500/50', desc: 'Планируемая работа' },
+  { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-yellow-300 border-yellow-400 ring-2 ring-yellow-500/50', desc: 'Корневая причина' },
+  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 className="w-5 h-5" />, color: 'bg-green-500/20 text-green-400 border-green-500/40', activeColor: 'bg-green-500/30 text-green-300 border-green-400 ring-2 ring-green-500/50', desc: 'Изменение системы' },
+  { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Предложение по улучшению' },
+  { value: 'Прочее', label: 'Прочее', icon: <MessageSquare className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-gray-300 border-gray-400 ring-2 ring-gray-500/50', desc: 'Другое' },
 ];
 
 const PRESET_TAGS = [
@@ -67,6 +80,7 @@ export default function NewTicketPage() {
   const description = serializeBlocks(descriptionBlocks);
 
   const [priority, setPriority] = useState<TicketPriority>('Средний');
+  const [type, setType] = useState<TicketType>('Инцидент');
   const [tags, setTags] = useState<TicketTag[]>([]);
   const [aiSuggestedTags, setAiSuggestedTags] = useState<TicketTag[]>([]);
 
@@ -356,6 +370,7 @@ export default function NewTicketPage() {
         title,
         description: textOnlyDesc || '(описание с изображениями)',
         priority,
+        type,
         tags: tags.map((t) => ({ name: t.name, color: t.color || '#64748b' })),
       };
 
@@ -434,7 +449,7 @@ export default function NewTicketPage() {
   return (
     <div ref={pageRef} className="max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex items-center gap-6 mb-8">
+        <div className="flex items-center gap-6 mb-8">
         <button onClick={() => navigate(-1)} className="p-3 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] transition-colors">
           <ArrowLeft className="w-6 h-6 text-[var(--text-primary)]" />
         </button>
@@ -449,7 +464,7 @@ export default function NewTicketPage() {
         <div className="flex justify-center">
           {[
             { num: 1, label: 'Название и описание', icon: <FileText className="w-5 h-5" /> },
-            { num: 2, label: 'Приоритет и теги', icon: <Tag className="w-5 h-5" /> },
+            { num: 2, label: 'Тип, приоритет и теги', icon: <Tag className="w-5 h-5" /> },
             { num: 3, label: 'Проверка и отправка', icon: <CheckCircle2 className="w-5 h-5" /> },
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
@@ -713,6 +728,33 @@ export default function NewTicketPage() {
 
             <div className={aiLoading ? 'opacity-40 pointer-events-none transition-opacity' : 'transition-opacity'}>
               <div>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Тип заявки</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {TICKET_TYPES.map(t => {
+                    const isSelected = type === t.value;
+                    return (
+                      <button key={t.value} onClick={() => setType(t.value as TicketType)}
+                        className={`px-6 py-4 rounded-2xl text-left border transition-all ${isSelected
+                            ? `${t.activeColor} scale-[1.02] shadow-lg`
+                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                          }`}>
+                        <div className="flex items-start gap-3">
+                          <div className={`flex-shrink-0 mt-0.5 ${isSelected ? '' : 'opacity-50'}`}>{t.icon}</div>
+                          <div className="flex-1">
+                            <div className="font-semibold text-lg">{t.label}</div>
+                            <div className="text-sm opacity-70 mt-1">{t.desc}</div>
+                          </div>
+                          {isSelected && (
+                            <CheckCircle2 className="w-6 h-6 flex-shrink-0 mt-0.5" />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-12">
                 <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет</label>
                 <div className="flex flex-wrap gap-3">
                   {PRIORITIES.map(p => {
@@ -902,25 +944,32 @@ export default function NewTicketPage() {
               {/* Приоритет + теги */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Тип</p>
+                  <div className={`inline-flex items-center gap-2 text-lg px-5 py-2.5 rounded-2xl ${TICKET_TYPES.find(t => t.value === type)?.color || ''}`}>
+                    {TICKET_TYPES.find(t => t.value === type)?.icon} {type}
+                  </div>
+                </div>
+                <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                   <p className="text-[var(--text-primary)]/50 mb-3">Приоритет</p>
                   <div className={`inline-flex items-center gap-3 text-lg px-5 py-2.5 rounded-2xl ${PRIORITIES.find(p => p.value === priority)?.color || ''}`}>
                     {PRIORITIES.find(p => p.value === priority)?.icon} {priority}
                   </div>
                 </div>
-                {tags.length > 0 && (
-                  <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
-                    <p className="text-[var(--text-primary)]/50 mb-3">Теги</p>
-                    <div className="flex flex-wrap gap-2">
-                      {tags.map(t => (
-                        <span key={t.name} className="px-4 py-2 rounded-xl text-base font-medium"
-                          style={{ backgroundColor: (t.color || '#71717a') + '30', color: t.color || '#d1d5db' }}>
-                          {t.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {tags.length > 0 && (
+                <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
+                  <p className="text-[var(--text-primary)]/50 mb-3">Теги</p>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map(t => (
+                      <span key={t.name} className="px-4 py-2 rounded-xl text-base font-medium"
+                        style={{ backgroundColor: (t.color || '#71717a') + '30', color: t.color || '#d1d5db' }}>
+                        {t.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Обычные вложения */}
               {generalFiles.length > 0 && (

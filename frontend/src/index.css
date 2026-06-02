@@ -114,6 +114,43 @@
   --priority-critical-bg: rgba(248, 113, 113, 0.12);
   --priority-critical-text: #f87171;
   --priority-critical-border: rgba(248, 113, 113, 0.20);
+
+  /* Типы тикетов */
+  --type-incident-bg: rgba(239, 68, 68, 0.12);
+  --type-incident-text: #f87171;
+  --type-incident-border: rgba(239, 68, 68, 0.20);
+
+  --type-service-bg: rgba(59, 130, 246, 0.12);
+  --type-service-text: #60a5fa;
+  --type-service-border: rgba(59, 130, 246, 0.20);
+
+  --type-consultation-bg: rgba(6, 182, 212, 0.12);
+  --type-consultation-text: #22d3ee;
+  --type-consultation-border: rgba(6, 182, 212, 0.20);
+
+  --type-complaint-bg: rgba(251, 146, 60, 0.12);
+  --type-complaint-text: #fb923c;
+  --type-complaint-border: rgba(251, 146, 60, 0.20);
+
+  --type-task-bg: rgba(168, 85, 247, 0.12);
+  --type-task-text: #c084fc;
+  --type-task-border: rgba(168, 85, 247, 0.20);
+
+  --type-problem-bg: rgba(234, 179, 8, 0.12);
+  --type-problem-text: #facc15;
+  --type-problem-border: rgba(234, 179, 8, 0.20);
+
+  --type-change-bg: rgba(34, 197, 94, 0.12);
+  --type-change-text: #4ade80;
+  --type-change-border: rgba(34, 197, 94, 0.20);
+
+  --type-improvement-bg: rgba(16, 185, 129, 0.12);
+  --type-improvement-text: #34d399;
+  --type-improvement-border: rgba(16, 185, 129, 0.20);
+
+  --type-other-bg: rgba(161, 161, 170, 0.12);
+  --type-other-text: #a1a1aa;
+  --type-other-border: rgba(161, 161, 170, 0.20);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -124,21 +161,21 @@
 
   /* Фоны — более выраженные различия с глубиной */
   --bg-primary:    #ffffff;
-  --bg-secondary:  #f8fafc;
-  --bg-tertiary:   #f1f5f9;
+  --bg-secondary:  #f1f5f9;
+  --bg-tertiary:   #e2e8f0;
   --bg-card:       #ffffff;
   --bg-card-hover: #f8fafc;
-  --bg-sidebar:    #fafbfc;
-  --bg-sidebar-inner: #f5f7fa;
+  --bg-sidebar:    #f8fafc;
+  --bg-sidebar-inner: #f1f5f9;
 
-  /* Границы — контрастные, чёткие */
-  --border-color:  rgba(15, 23, 42, 0.12);
-  --border-hover:  rgba(15, 23, 42, 0.25);
-  --border-strong: rgba(15, 23, 42, 0.35);
+  /* Границы — ЧЁТКИЕ, контрастные */
+  --border-color:  rgba(148, 163, 184, 0.6);
+  --border-hover:  rgba(148, 163, 184, 0.8);
+  --border-strong: rgba(148, 163, 184, 1);
 
   /* Текст — максимальная читаемость */
-  --text-primary:   #0f172a;
-  --text-secondary: #334155;
+  --text-primary:   #020617;
+  --text-secondary: #475569;
   --text-muted:     #64748b;
   --text-disabled:  #94a3b8;
 
@@ -147,7 +184,7 @@
   --accent-light: #ef4444;
   --accent-dark:  #b91c1c;
   --accent-glow:  rgba(220, 38, 38, 0.20);
-  --accent-soft:  rgba(220, 38, 38, 0.08);
+  --accent-soft:  rgba(220, 38, 38, 0.10);
 
   /* Состояния */
   --success: #059669;
@@ -156,22 +193,22 @@
   --info:    #2563eb;
 
   /* Hover слои — заметные */
-  --hover-1: rgba(15, 23, 42, 0.04);
-  --hover-2: rgba(15, 23, 42, 0.08);
-  --hover-3: rgba(15, 23, 42, 0.12);
+  --hover-1: rgba(148, 163, 184, 0.08);
+  --hover-2: rgba(148, 163, 184, 0.14);
+  --hover-3: rgba(148, 163, 184, 0.20);
 
   /* Сетка-фон — ВИДИМАЯ на светлой теме */
   --grid-color: rgba(100, 116, 139, 0.542);
   --dot-color:  rgb(100, 116, 139);
 
   /* Тени — глубокие, объёмные, многослойные */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.10), 0 6px 12px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.10);
 
   /* Скроллбар — контрастный */
-  --scroll-thumb:       rgba(15, 23, 42, 0.30);
-  --scroll-thumb-hover: rgba(15, 23, 42, 0.50);
+  --scroll-thumb:       rgba(148, 163, 184, 0.50);
+  --scroll-thumb-hover: rgba(148, 163, 184, 0.75);
 
   /* Статусы — яркие, насыщенные */
   --status-new-bg: #dbeafe;
@@ -226,6 +263,43 @@
   --priority-critical-bg: #fee2e2;
   --priority-critical-text: #b91c1c;
   --priority-critical-border: #fca5a5;
+
+  /* Типы тикетов */
+  --type-incident-bg: #fee2e2;
+  --type-incident-text: #b91c1c;
+  --type-incident-border: #fca5a5;
+
+  --type-service-bg: #dbeafe;
+  --type-service-text: #1e40af;
+  --type-service-border: #93c5fd;
+
+  --type-consultation-bg: #cffafe;
+  --type-consultation-text: #155e75;
+  --type-consultation-border: #67e8f9;
+
+  --type-complaint-bg: #ffedd5;
+  --type-complaint-text: #9a3412;
+  --type-complaint-border: #fdba74;
+
+  --type-task-bg: #f3e8ff;
+  --type-task-text: #6b21a8;
+  --type-task-border: #d8b4fe;
+
+  --type-problem-bg: #fef9c3;
+  --type-problem-text: #854d0e;
+  --type-problem-border: #fde047;
+
+  --type-change-bg: #dcfce7;
+  --type-change-text: #166534;
+  --type-change-border: #86efac;
+
+  --type-improvement-bg: #d1fae5;
+  --type-improvement-text: #047857;
+  --type-improvement-border: #6ee7b7;
+
+  --type-other-bg: #e5e7eb;
+  --type-other-text: #374151;
+  --type-other-border: #9ca3af;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -396,6 +470,17 @@ a {
 .priority-medium    { background: var(--priority-medium-bg);    color: var(--priority-medium-text);    border-color: var(--priority-medium-border); }
 .priority-high      { background: var(--priority-high-bg);      color: var(--priority-high-text);      border-color: var(--priority-high-border); }
 .priority-critical  { background: var(--priority-critical-bg);  color: var(--priority-critical-text);  border-color: var(--priority-critical-border); }
+
+/* Типы тикетов */
+.type-incident     { background: var(--type-incident-bg);     color: var(--type-incident-text);     border-color: var(--type-incident-border); }
+.type-service      { background: var(--type-service-bg);      color: var(--type-service-text);      border-color: var(--type-service-border); }
+.type-consultation { background: var(--type-consultation-bg); color: var(--type-consultation-text); border-color: var(--type-consultation-border); }
+.type-complaint    { background: var(--type-complaint-bg);    color: var(--type-complaint-text);    border-color: var(--type-complaint-border); }
+.type-task         { background: var(--type-task-bg);         color: var(--type-task-text);         border-color: var(--type-task-border); }
+.type-problem      { background: var(--type-problem-bg);      color: var(--type-problem-text);      border-color: var(--type-problem-border); }
+.type-change       { background: var(--type-change-bg);       color: var(--type-change-text);       border-color: var(--type-change-border); }
+.type-improvement  { background: var(--type-improvement-bg);  color: var(--type-improvement-text);  border-color: var(--type-improvement-border); }
+.type-other        { background: var(--type-other-bg);        color: var(--type-other-text);        border-color: var(--type-other-border); }
 
 /* Status bar (left border accent) */
 .status-bar { position: relative; }
@@ -1115,3 +1200,5 @@ a {
   .max-w-5xl { max-width: 100% !important; }
   .p-6 { padding: var(--space-3) !important; }
 }
+
+
