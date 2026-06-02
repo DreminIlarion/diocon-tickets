@@ -257,9 +257,19 @@ export const authApi = {
 // ==== Counterparties API ====
 export const counterpartiesApi = {
   // Получить список контрагентов (с пагинацией)
-  getAll: async (page: number = 1, size: number = 10): Promise<PaginatedResponse<Counterparty>> => {
+  getAll: async (
+    page: number = 1,
+    size: number = 10,
+    params?: {
+      parent_id?: string;
+    }
+  ): Promise<PaginatedResponse<Counterparty>> => {
     const response = await api.get<PaginatedResponse<Counterparty>>('/api/v1/counterparties', {
-      params: { page, size },
+      params: {
+        page,
+        size,
+        parent_id: params?.parent_id,
+      },
     });
     return response.data;
   },
@@ -311,24 +321,35 @@ export const counterpartiesApi = {
     return response.data;
   },
 
-  // В counterpartiesApi добавить:
-deleteContactPerson: async (id: string, params: { phone?: string; email?: string }): Promise<Counterparty> => {
-  const response = await api.delete<Counterparty>(`/api/v1/counterparties/${id}/contact-persons`, {
-    params: {
-      phone: params.phone || undefined,
-      email: params.email || undefined,
-    },
-  });
-  return response.data;
-},
-
-  // Получить подразделения
-  getBranches: async (id: string): Promise<Counterparty[]> => {
-    const response = await api.get<PaginatedResponse<Counterparty>>('/api/v1/counterparties', {
-      params: { parent_id: id, page: 1, size: 10 },
+  deleteContactPerson: async (
+    id: string,
+    params: { phone?: string; email?: string }
+  ): Promise<Counterparty> => {
+    const response = await api.delete<Counterparty>(`/api/v1/counterparties/${id}/contact-persons`, {
+      params: {
+        phone: params.phone || undefined,
+        email: params.email || undefined,
+      },
     });
-    return response.data.items.filter(c => c.parent_id === id);
+    return response.data;
   },
+
+  // Получить подразделения — теперь грузим все страницы
+  getBranches: async (id: string): Promise<Counterparty[]> => {
+    let page = 1;
+    let totalPages = 1;
+    const items: Counterparty[] = [];
+
+    do {
+      const response = await counterpartiesApi.getAll(page, 100, { parent_id: id });
+      items.push(...response.items.filter(c => c.parent_id === id));
+      totalPages = response.total_pages;
+      page += 1;
+    } while (page <= totalPages);
+
+    return items;
+  },
+
   // Получить привязанные продукты контрагента
   getProducts: async (counterpartyId: string, page = 1, size = 10) => {
     const res = await api.get(`/api/v1/counterparties/${counterpartyId}/products`, {
