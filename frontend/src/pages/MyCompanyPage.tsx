@@ -14,7 +14,7 @@ import type { Counterparty, CounterpartyCustomer, TicketListItem } from '@/types
 
 type TabType = 'info' | 'contacts' | 'branches' | 'employees' | 'tickets';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ──────
 
 function getInitials(name?: string | null): string {
   if (!name) return '?';
@@ -81,7 +81,7 @@ const getEmployeeRoleInfo = (role: string) => {
   };
 };
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 export default function MyCompanyPage() {
   const { user } = useAuthStore();
@@ -157,7 +157,7 @@ export default function MyCompanyPage() {
     load();
   }, [canViewEmployees, company?.id, activeTab]);
 
-  // ── Загрузка заявок ───────────────────────────────────────────────────────
+  // ── Загрузка заявок 
 
   const TICKETS_PER_PAGE = 10;
 
@@ -191,7 +191,7 @@ export default function MyCompanyPage() {
     if (activeTab === 'tickets') loadTickets(ticketsPage);
   }, [ticketsPage]);
 
-  // ── Tabs ──────────────────────────────────────────────────────────────────
+  // ── Tabs ──────
 
   const hasBranches = branches.length > 0;
 
@@ -212,11 +212,11 @@ export default function MyCompanyPage() {
     tabs.push({ id: 'tickets', label: 'Заявки', icon: Ticket, count: ticketsTotalItems });
   }
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
+  // ── Stats ─────
 
   const activeTickets = tickets.filter(t => t.status !== 'Закрыт' && t.status !== 'Решён').length;
 
-  // ── Loading / Error ───────────────────────────────────────────────────────
+  // ── Loading / Error 
 
   if (loading) {
     return (
@@ -238,12 +238,12 @@ export default function MyCompanyPage() {
     );
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render ────
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
+      {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex items-center gap-5">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-800 to-red-700
@@ -282,7 +282,7 @@ export default function MyCompanyPage() {
         </Link>
       </div>
 
-      {/* ── Tabs ─────────────────────────────────────────────────────────── */}
+      {/* ── Tabs ──── */}
       <div className="flex gap-1.5 border-b border-[var(--border-color)] overflow-x-auto">
         {tabs.map(tab => (
           <button key={tab.id}
@@ -302,7 +302,7 @@ export default function MyCompanyPage() {
         ))}
       </div>
 
-      {/* ── Content ──────────────────────────────────────────────────────── */}
+      {/* ── Content ─ */}
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
 

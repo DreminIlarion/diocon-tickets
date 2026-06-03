@@ -165,7 +165,7 @@ export const DynamicAttributesFields: React.FC<DynamicAttributesFieldsProps> = (
   );
 };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components ────
 
 const Field = ({
   label,

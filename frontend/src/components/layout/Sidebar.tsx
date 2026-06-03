@@ -1,12 +1,12 @@
 ﻿import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Ticket, 
+import {
+  LayoutDashboard,
+  Ticket,
   CheckSquare,
-  Building2, 
-  UserPlus, 
-  Bell, 
+  Building2,
+  UserPlus,
+  Bell,
   User,
   X,
   Building,
@@ -15,6 +15,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import { useUnreadNotifications } from '../../hooks/useUnreadNotifications';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -33,7 +34,8 @@ const ROLE_LABEL: Record<string, string> = {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  
+  const { count: unreadNotifications } = useUnreadNotifications();
+
   const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
   const canInvite = ['support_agent', 'support_manager', 'executor', 'admin'].includes(user?.role || '');
 
@@ -45,29 +47,28 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
   }, [isCollapsed]);
 
-
   const mainNavItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Главная' },
     { to: '/tickets', icon: Ticket, label: 'Заявки' },
-    ...(isCustomer 
+    ...(isCustomer
       ? [{ to: '/my-company', icon: Building, label: 'Моя компания' }]
       : [{ to: '/counterparties', icon: Building2, label: 'Контрагенты' }]
     ),
     { to: '/projects', icon: FolderOpen, label: 'Проекты' },
     ...(canInvite ? [{ to: '/products', icon: Package, label: 'Продукты' }] : []),
-    ...(canInvite ? [{ to: '/tasks', icon: CheckSquare, label: 'Задачи' }] : []),
+    ...(canInvite ? [{ to: '/tasks', icon: CheckSquare, label: 'Задачи сотрудников' }] : []),
     ...(canInvite ? [{ to: '/invitations', icon: UserPlus, label: 'Приглашения' }] : []),
   ];
 
   const accountItems = [
-    { to: '/notifications', icon: Bell, label: 'Уведомления' },
+    { to: '/notifications', icon: Bell, label: 'Уведомления', badge: unreadNotifications },
     { to: '/profile', icon: User, label: 'Профиль' },
   ];
 
-
-
-  // ─── Nav item ────────────────────────────────────────────────────────────
-  const NavItem = ({ to, icon: Icon, label }: { to: string; icon: any; label: string }) => (
+  // ─── Nav item ───
+  const NavItem = ({ to, icon: Icon, label, badge }: {
+    to: string; icon: any; label: string; badge?: number;
+  }) => (
     <NavLink
       to={to}
       onClick={onClose}
@@ -91,11 +92,38 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               style={{ boxShadow: '0 0 8px var(--accent-glow)' }}
             />
           )}
-          <Icon
-            className={`w-6 h-6 flex-shrink-0 transition-transform group-hover:scale-110
-                       ${isActive ? 'text-[var(--accent-light)]' : ''}`}
-          />
-          {!isCollapsed && <span className="truncate">{label}</span>}
+
+          {/* Иконка с бейджем */}
+          <div className="relative flex-shrink-0">
+            <Icon
+              className={`w-6 h-6 transition-transform group-hover:scale-110
+                         ${isActive ? 'text-[var(--accent-light)]' : ''}`}
+            />
+            {/* Бейдж на иконке (для свёрнутого режима) */}
+            {badge != null && badge > 0 && isCollapsed && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1
+                               flex items-center justify-center rounded-full
+                               bg-[var(--accent)] text-white text-[10px] font-bold
+                               ring-2 ring-[var(--bg-primary)] animate-pulse">
+                {badge > 99 ? '99+' : badge}
+              </span>
+            )}
+          </div>
+
+          {!isCollapsed && (
+            <>
+              <span className="truncate flex-1">{label}</span>
+
+              {/* Бейдж рядом с текстом (для развёрнутого режима) */}
+              {badge != null && badge > 0 && (
+                <span className="ml-auto px-2 py-0.5 min-w-[22px] text-center
+                                 rounded-full bg-[var(--accent)] text-white
+                                 text-xs font-bold animate-pulse">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
+            </>
+          )}
 
           {/* Tooltip для свёрнутого режима */}
           {isCollapsed && (
@@ -103,8 +131,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                              bg-[var(--bg-card)] border border-[var(--border-color)]
                              text-xs font-medium text-[var(--text-primary)] whitespace-nowrap
                              opacity-0 group-hover:opacity-100 transition-opacity duration-150
-                             shadow-lg z-50">
+                             shadow-lg z-50 flex items-center gap-2">
               {label}
+              {badge != null && badge > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold">
+                  {badge}
+                </span>
+              )}
             </span>
           )}
         </>
@@ -112,7 +145,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     </NavLink>
   );
 
-  // ─── Section label ───────────────────────────────────────────────────────
+  // ─── Section label ───
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     !isCollapsed ? (
       <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
@@ -125,9 +158,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="sidebar-bg flex flex-col h-full relative">
-      {/* ═════════════════════════════════════════════════
-          HEADER: лого + бренд
-          ═════════════════════════════════════════════════ */}
+      {/* Header */}
       <div className={`flex items-center border-b border-[var(--border-color)]
                       ${isCollapsed && !isMobile ? 'p-4 justify-center' : 'p-4 justify-between gap-2'}`}>
         <NavLink
@@ -146,12 +177,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
           {(!isCollapsed || isMobile) && (
             <div className="min-w-0">
-              <h1 className=" text-[var(--text-primary)] text-2xl ">ДИО Деск</h1>
+              <h1 className="text-[var(--text-primary)] text-2xl">ДИО Деск</h1>
             </div>
           )}
         </NavLink>
 
-        {/* Mobile close */}
         {onClose && (
           <button
             onClick={onClose}
@@ -162,9 +192,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
       </div>
 
-      {/* ═════════════════════════════════════════════════
-          NAVIGATION
-          ═════════════════════════════════════════════════ */}
+      {/* Navigation */}
       <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-4
                       ${isCollapsed && !isMobile ? 'px-2' : 'px-3'}`}>
         <SectionLabel>Меню</SectionLabel>
@@ -181,16 +209,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           ))}
         </div>
       </nav>
-
-
     </div>
   );
 
   return (
     <>
-      {/* ═════════════════════════════════════════════════
-          DESKTOP SIDEBAR
-          ═════════════════════════════════════════════════ */}
+      {/* Desktop */}
       <aside
         className={`hidden lg:flex z-40 flex-col h-screen sticky top-0 border-r border-[var(--border-color)]
                    transition-all duration-300 sidebar-bg relative
@@ -198,11 +222,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         <SidebarContent />
 
-        {/* Плавающая кнопка сворачивания на границе */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           aria-label={isCollapsed ? 'Развернуть' : 'Свернуть'}
-          className=" absolute top-7 -right-3 w-6 h-6 rounded-full
+          className="absolute top-7 -right-3 w-6 h-6 rounded-full
                      bg-[var(--bg-card)] border border-[var(--border-color)]
                      flex items-center justify-center
                      text-[var(--text-muted)] hover:text-[var(--accent-light)]
@@ -215,9 +238,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </button>
       </aside>
 
-      {/* ═════════════════════════════════════════════════
-          MOBILE SIDEBAR
-          ═════════════════════════════════════════════════ */}
+      {/* Mobile */}
       {isOpen && (
         <>
           <div

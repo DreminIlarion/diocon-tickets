@@ -364,7 +364,8 @@ const checkKeyAvailability = async () => {
                 }}
                 onFocus={() => setShowDropdown(true)}
                 placeholder="Поиск контрагента..."
-                className="input-field pl-12 py-4 text-lg w-full"
+                style={{ paddingLeft: '3.5rem' }}
+                className="input-field py-4 text-lg w-full"
               />
             </div>
             

@@ -25,7 +25,7 @@ interface HistoryEntryProps {
   actorNames: Map<string, string>;
 }
 
-// ─── Хелперы ──────────────────────────────────────────────────────────────────
+// ─── Хелперы ──────
 
 // Новый формат
 const MD_MEDIA_RE = /!\[[^\]]*\]\(media:\/\/[^)]+\)/g;
@@ -267,7 +267,7 @@ const DEFAULT_ACTION_CONFIG = {
   color: 'bg-[var(--hover-1)] text-[var(--text-primary)]/50',
 };
 
-// ─── Компонент ────────────────────────────────────────────────────────────────
+// ─── Компонент ────
 
 export const HistoryEntry = ({
   entry,

@@ -19,7 +19,7 @@ import { productsApi } from '../api/client';
 import { DynamicAttributesFields } from '../components/helpers/DynamicAttributesFields';
 import { useToast } from '../components/ui/use-toast';
 
-// ─── Reuse constants ──────────────────────────────────────────────────────────
+// ─── Reuse constants ───
 
 const PRODUCT_CATEGORIES = [
   { value: 'ERP', label: 'ERP-система', icon: Server },
@@ -102,7 +102,7 @@ const EMPTY_FORM = {
 
 const STEPS = ['Основное', 'Атрибуты', 'Проверка'];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Page ─────────
 
 export default function CreateProductPage() {
   const navigate = useNavigate();
@@ -417,7 +417,7 @@ export default function CreateProductPage() {
   );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components ────
 
 const FormField = ({
   label,

@@ -466,21 +466,25 @@ export const projectsApi = {
 
 
 
-  // Добавить одного участника
-  addMember: async (projectId: string, data: AddMemberRequest): Promise<Project> => {
-    const response = await api.post<Project>(`/api/v1/projects/${projectId}/memberships`, {
-      members: [data]
-    });
-    return response.data;
-  },
+addMember: async (projectId: string, data: AddMemberRequest): Promise<Project> => {
+  const response = await api.post<Project>(`/api/v1/projects/${projectId}/memberships`, {
+    user_id: data.user_id,
+    project_role: data.project_role,
+  });
+  return response.data;
+},
 
-  // Добавить нескольких участников
-  addMembers: async (projectId: string, members: AddMemberRequest[]): Promise<Project> => {
-    const response = await api.post<Project>(`/api/v1/projects/${projectId}/memberships`, {
-      members
-    });
-    return response.data;
-  },
+// Добавить нескольких участников — последовательно, т.к. API принимает один объект
+addMembers: async (projectId: string, members: AddMemberRequest[]): Promise<void> => {
+  await Promise.all(
+    members.map(member =>
+      api.post(`/api/v1/projects/${projectId}/memberships`, {
+        user_id: member.user_id,
+        project_role: member.project_role,
+      })
+    )
+  );
+},
 
   // Получить мои проекты (для customer)
   getMyProjects: async (
@@ -826,7 +830,7 @@ export default api;
 // API для Коррекции текста
 export const proofreadingApi = {
   spellCheck: async (text: string) => {
-    const response = await api.post('/api/v1/proofreading/spell-check', { text });
+    const response = await api.post('/api/v1/spellchecking', { text });
     return response.data;
   }
 };
@@ -954,6 +958,50 @@ export const tasksApi = {
     data: TaskReviewInput
   ): Promise<TaskResponse> => {
     const response = await api.post<TaskResponse>(`/api/v1/tasks/${taskId}/review`, data);
+    return response.data;
+  },
+};
+
+// ═══ Notifications API ═══
+
+export interface Notification {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  data: Record<string, any> | null;
+}
+
+export interface UnreadCountResponse {
+  unread_count: number;
+}
+
+export const notificationsApi = {
+  // Получить уведомления
+  getAll: async (
+    page: number = 1,
+    size: number = 20,
+    unreadOnly: boolean = false
+  ): Promise<PaginatedResponse<Notification>> => {
+    const response = await api.get<PaginatedResponse<Notification>>('/notifications', {
+      params: { page, size, unread_only: unreadOnly },
+    });
+    return response.data;
+  },
+
+  // Количество непрочитанных
+  getUnreadCount: async (): Promise<number> => {
+    const response = await api.get<UnreadCountResponse>('/notifications/unread-count');
+    return response.data.unread_count;
+  },
+
+  // Пометить как прочитанное
+  markAsRead: async (notificationId: string): Promise<Notification> => {
+    const response = await api.patch<Notification>(`/notifications/${notificationId}/read`);
     return response.data;
   },
 };

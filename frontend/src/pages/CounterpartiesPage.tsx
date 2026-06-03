@@ -31,9 +31,9 @@ import {
 import { counterpartiesApi } from '../api/client';
 import type { Counterparty } from '../types';
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* ──────────────
    CONSTANTS
-   ────────────────────────────────────────────────────────────────────────── */
+   ────────────── */
 
 const TYPE_OPTIONS = [
   {
@@ -60,9 +60,9 @@ interface DropdownOption {
   sublabel?: string;
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* ──────────────
    HELPERS
-   ────────────────────────────────────────────────────────────────────────── */
+   ────────────── */
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -101,9 +101,9 @@ function HighlightText({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* ──────────────
    FILTER DROPDOWN
-   ────────────────────────────────────────────────────────────────────────── */
+   ────────────── */
 
 function FilterDropdown({
   label,
@@ -301,9 +301,9 @@ function FilterDropdown({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
+/* ──────────────
    MAIN COMPONENT
-   ────────────────────────────────────────────────────────────────────────── */
+   ────────────── */
 
 export default function CounterpartiesPage() {
   const navigate = useNavigate();
@@ -327,7 +327,7 @@ export default function CounterpartiesPage() {
 
   const isSearchMode = !!debouncedSearch.trim() || !!typeFilter;
 
-  /* ── Debounce ──────────────────────────────────────────────────────── */
+  /* ── Debounce ─ */
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 400);
@@ -338,7 +338,7 @@ export default function CounterpartiesPage() {
     setPage(1);
   }, [debouncedSearch, typeFilter]);
 
-  /* ── Load data ─────────────────────────────────────────────────────── */
+  /* ── Load data  */
 
   const loadCounterparties = useCallback(async () => {
     const requestId = ++requestIdRef.current;
@@ -399,7 +399,7 @@ export default function CounterpartiesPage() {
     loadCounterparties();
   }, [loadCounterparties]);
 
-  /* ── Grouping ──────────────────────────────────────────────────────── */
+  /* ── Grouping ─ */
 
   const headCompanies = useMemo(
     () => counterparties.filter(cp => !cp.parent_id && !cp.is_branch),
@@ -486,7 +486,7 @@ export default function CounterpartiesPage() {
     });
   }, [hasSearch, filteredCompanies, branchesByParent, branchMatchesSearch]);
 
-  /* ── Stats ─────────────────────────────────────────────────────────── */
+  /* ── Stats ──── */
 
   const visibleBranchesCount = useMemo(
     () => counterparties.filter(cp => cp.is_branch).length,
@@ -548,7 +548,7 @@ export default function CounterpartiesPage() {
     );
   }
 
-  /* ── Render ───────────────────────────────────────────────────────── */
+  /* ── Render ── */
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -617,7 +617,7 @@ export default function CounterpartiesPage() {
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-12 pr-10 py-3 glass-card border border-[var(--border-color)]
                          rounded-xl text-base text-[var(--text-primary)] placeholder-white/30
-                         focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)]
+                         focus:outline-none focus:border-[var(--accent)]/30  focus:ring-[var(--accent-ring)]
                          transition-all"
             />
 

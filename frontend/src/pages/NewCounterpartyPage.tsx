@@ -11,7 +11,7 @@ import type {
   CounterpartyType, CreateCounterpartyInput, ContactPersonInput, CreateBranchInput,
 } from '../types';
 
-// ─── Маска телефона ───────────────────────────────────────────────────────────
+// ─── Маска телефона ────
 
 function formatPhoneInput(raw: string): string {
   let digits = raw.replace(/\D/g, '');
@@ -65,7 +65,7 @@ function usePhoneMask(initial = '') {
   };
 }
 
-// ─── Валидация email ──────────────────────────────────────────────────────────
+// ─── Валидация email ───
 
 function isEmailValid(email: string): boolean {
   if (!email) return true; // пустое — ок если необязательное
@@ -161,7 +161,7 @@ function DuplicateEmailWarning({ duplicates }: {
   );
 }
 
-// ─── Валидация ИНН ────────────────────────────────────────────────────────────
+// ─── Валидация ИНН 
 
 function validateInn(inn: string, type: CounterpartyType): { valid: boolean; message: string } {
   if (!inn) return { valid: false, message: '' };
@@ -172,33 +172,12 @@ function validateInn(inn: string, type: CounterpartyType): { valid: boolean; mes
     return { valid: false, message: `ИНН: ${inn.length}/${expectedLen} цифр` };
   }
 
-  // Контрольная сумма ИНН 10 цифр
-  if (inn.length === 10) {
-    const k = [2, 4, 10, 3, 5, 9, 4, 6, 8];
-    const sum = k.reduce((acc, w, i) => acc + w * parseInt(inn[i]), 0);
-    if ((sum % 11) % 10 !== parseInt(inn[9])) {
-      return { valid: false, message: 'Неверная контрольная сумма ИНН' };
-    }
-  }
 
-  // Контрольная сумма ИНН 12 цифр
-  if (inn.length === 12) {
-    const k1 = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8];
-    const k2 = [3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8];
-    const s1 = k1.reduce((acc, w, i) => acc + w * parseInt(inn[i]), 0);
-    const s2 = k2.reduce((acc, w, i) => acc + w * parseInt(inn[i]), 0);
-    if (
-      (s1 % 11) % 10 !== parseInt(inn[10]) ||
-      (s2 % 11) % 10 !== parseInt(inn[11])
-    ) {
-      return { valid: false, message: 'Неверная контрольная сумма ИНН' };
-    }
-  }
 
   return { valid: true, message: '' };
 }
 
-// ─── Валидация КПП ────────────────────────────────────────────────────────────
+// ─── Валидация КПП 
 
 function validateKpp(kpp: string): { valid: boolean; message: string } {
   if (!kpp) return { valid: false, message: '' };
@@ -210,7 +189,7 @@ function validateKpp(kpp: string): { valid: boolean; message: string } {
   return { valid: true, message: '' };
 }
 
-// ─── Валидация ОКПО ───────────────────────────────────────────────────────────
+// ─── Валидация ОКПО ────
 
 function validateOkpo(okpo: string): { valid: boolean; message: string } {
   if (!okpo) return { valid: true, message: '' }; // необязательное
@@ -276,7 +255,7 @@ function hasFieldError(fieldErrors: FieldError[], fieldName: string): boolean {
   );
 }
 
-// ─── Inline hint ─────────────────────────────────────────────────────────────
+// ─── Inline hint ─
 
 function Hint({ children }: { children: React.ReactNode }) {
   return (
@@ -296,7 +275,7 @@ function SuccessHint({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── Константы ────────────────────────────────────────────────────────────────
+// ─── Константы ────
 
 const COUNTERPARTY_TYPES: { value: CounterpartyType; label: string; desc: string; icon: React.ReactNode }[] = [
   { value: 'Юридическое лицо', label: 'Юридическое лицо', desc: 'ИНН 10 цифр, КПП обязателен', icon: <Building2 className="w-7 h-7" /> },
@@ -486,7 +465,7 @@ function EmailInput({ value, onChange, placeholder, required, hasBackendError }:
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 export default function NewCounterpartyPage() {
   const navigate = useNavigate();
@@ -964,7 +943,7 @@ const handleSubmit = async () => {
               onClick={() => setStep(2)}
               disabled={!isStep1Valid}
               className="px-6 py-3 text-base font-semibold text-white bg-[var(--accent)]
-                         hover:bg-[var(--accent-hover)] rounded-xl transition-all
+                         hover:bg-[var(--accent-light)] rounded-xl transition-all
                          disabled:opacity-40 disabled:cursor-not-allowed shadow-[var(--shadow-md)]"
             >
               Далее
@@ -1046,7 +1025,7 @@ const handleSubmit = async () => {
               onClick={() => setStep(3)}
               disabled={!isStep2Valid}
               className="px-6 py-3 text-base font-semibold text-white bg-[var(--accent)]
-                         hover:bg-[var(--accent-hover)] rounded-xl transition-all
+                         hover:bg-[var(--accent-light)] rounded-xl transition-all
                          disabled:opacity-40 disabled:cursor-not-allowed shadow-[var(--shadow-md)]"
             >
               Далее
@@ -1187,7 +1166,7 @@ const handleSubmit = async () => {
             </button>
             <button onClick={() => setStep(4)}
               className="px-6 py-3 text-base font-semibold text-white bg-[var(--accent)]
-                         hover:bg-[var(--accent-hover)] rounded-xl transition-all shadow-[var(--shadow-md)]">
+                         hover:bg-[var(--accent-light)] rounded-xl transition-all shadow-[var(--shadow-md)]">
               Далее
             </button>
           </div>
@@ -1360,7 +1339,7 @@ const handleSubmit = async () => {
             </button>
             <button onClick={() => setStep(5)}
               className="px-6 py-3 text-base font-semibold text-white bg-[var(--accent)]
-                         hover:bg-[var(--accent-hover)] rounded-xl transition-all shadow-[var(--shadow-md)]">
+                         hover:bg-[var(--accent-light)] rounded-xl transition-all shadow-[var(--shadow-md)]">
               Далее
             </button>
           </div>
@@ -1527,7 +1506,7 @@ const handleSubmit = async () => {
               ).length > 0
             }
             className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white
-                      bg-[var(--accent)] hover:bg-[var(--accent-hover)] rounded-xl transition-all
+                      bg-[var(--accent)] hover:bg-[var(--accent-light)] rounded-xl transition-all
                       disabled:opacity-40 disabled:cursor-not-allowed shadow-[var(--shadow-md)]"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}

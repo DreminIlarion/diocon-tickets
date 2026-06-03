@@ -2,7 +2,7 @@
 import { Loader2, ImageOff } from 'lucide-react';
 import { attachmentsApi } from '../../api/attachments';
 
-// ─── Inline formatting ───────────────────────────────────────────────────────
+// ─── Inline formatting 
 
 function renderInlineFormatting(text: string): React.ReactNode[] {
   const result: React.ReactNode[] = [];
@@ -50,7 +50,7 @@ function renderInlineFormatting(text: string): React.ReactNode[] {
   return result;
 }
 
-// ─── Сегменты ────────────────────────────────────────────────────────────────
+// ─── Сегменты ────
 
 type Segment =
   | { type: 'text'; value: string }
@@ -112,7 +112,7 @@ function parseContent(text: string): Segment[] {
   return segments;
 }
 
-// ─── Remote Image ────────────────────────────────────────────────────────────
+// ─── Remote Image 
 
 function RemoteImage({ attachmentId }: { attachmentId: string }) {
   const [src, setSrc] = useState<string | null>(null);

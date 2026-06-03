@@ -32,26 +32,26 @@ const PRIORITIES: { value: TicketPriority; label: string; color: string }[] = [
 ];
 
 const TICKET_TYPES: { value: string; label: string; icon: ReactNode; color: string }[] = [
-  { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle size={18} />, color: 'type-incident' },
-  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle2 size={18} />, color: 'type-service' },
-  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle size={18} />, color: 'type-consultation' },
-  { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle size={18} />, color: 'type-complaint' },
-  { value: 'Задача', label: 'Задача', icon: <MessageSquare size={18} />, color: 'type-task' },
-  { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle size={18} />, color: 'type-problem' },
-  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 size={18} />, color: 'type-change' },
-  { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles size={18} />, color: 'type-improvement' },
-  { value: 'Прочее', label: 'Прочее', icon: <MessageSquare size={18} />, color: 'type-other' },
+  { value: 'Инцидент', label: 'Инцидент', icon: null, color: 'type-incident' },
+  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: null, color: 'type-service' },
+  { value: 'Консультация', label: 'Консультация', icon: null, color: 'type-consultation' },
+  { value: 'Жалоба', label: 'Жалоба', icon: null, color: 'type-complaint' },
+  { value: 'Задача', label: 'Задача', icon: null, color: 'type-task' },
+  { value: 'Проблема', label: 'Проблема', icon: null, color: 'type-problem' },
+  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: null, color: 'type-change' },
+  { value: 'Улучшение', label: 'Улучшение', icon: null, color: 'type-improvement' },
+  { value: 'Прочее', label: 'Прочее', icon: null, color: 'type-other' },
 ];
 
 const STATUS_ICON: Record<string, ReactNode> = {
-  'Новый': <Sparkles size={18} />,
-  'На согласовании': <Clock size={18} />,
-  'Открыт': <CheckCircle2 size={18} />,
-  'В работе': <Loader2 size={18} />,
-  'Ожидает ответа': <Clock size={18} />,
-  'Решён': <CheckCircle2 size={18} />,
-  'Закрыт': <XCircle size={18} />,
-  'Переоткрыт': <AlertTriangle size={18} />,
+  'Новый': null,
+  'На согласовании': null,
+  'Открыт': null,
+  'В работе': null,
+  'Ожидает ответа': null,
+  'Решён': null,
+  'Закрыт': null,
+  'Переоткрыт': null,
 };
 
 
@@ -143,7 +143,7 @@ function FilterDropdown({
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onChange(''); setOpen(false); } }}
             className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30
                        hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
-            <X size={14} />
+            <X size={18} />
           </span>
         ) : (
           <ChevronDown size={18}
@@ -243,23 +243,21 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
   getPriorityColor: (p: string) => string;
   getTypeColor: (t: string) => string;
 }) {
-  const typeInfo = TICKET_TYPES.find(t => t.value === ticket.type);
-
   return (
     <Link
       to={`/tickets/${ticket.number}`}
-      className="grid items-start px-3 py-3 rounded-xl
+      className="grid items-start px-4 py-3.5 rounded-xl
                  hover:bg-[var(--hover-1)] active:bg-[var(--hover-2)]
                  transition-colors duration-100 group"
-      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 100px 110px 100px 110px 20px' }}
+      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 110px 120px 110px 20px' }}
     >
       {/* ── Название + номер ── */}
       <div className="min-w-0 pr-3">
-        <span className="text-[16px] font-semibold text-[var(--text-primary)] block leading-snug
+        <span className="text-[17px] font-semibold text-[var(--text-primary)] block leading-snug
                          group-hover:text-[var(--accent-light)] transition-colors line-clamp-1">
           {ticket.title}
         </span>
-        <span className="text-[15px] font-mono text-[var(--text-primary)]/35 mt-0.5 block">
+        <span className="text-[15px] font-mono text-[var(--text-primary)]/65 mt-0.5 block">
           {ticket.number}
         </span>
       </div>
@@ -267,16 +265,15 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       {/* ── Контрагент ── */}
       <div className="min-w-0 pr-2 self-center">
         {ticket.counterparty_name ? (
-          <span className="flex items-center gap-1 text-base text-[var(--text-primary)]/55 truncate">
+          <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/60 truncate">
             <Building2 size={18} className="shrink-0 text-[var(--text-primary)]/30" />
             <span className="truncate">{ticket.counterparty_name}</span>
           </span>
         ) : (
-          <span className="text-base text-[var(--text-primary)]/20">—</span>
+          <span className="text-[16px] text-[var(--text-primary)]/20">—</span>
         )}
-        {/* Проект под контрагентом */}
         {ticket.project_key && (
-          <span className="flex items-center gap-1 text-[15px] text-[var(--text-primary)]/30 mt-0.5 truncate">
+          <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/35 mt-0.5 truncate">
             <FolderOpen size={18} className="shrink-0" />
             <span className="font-mono truncate">{ticket.project_key}</span>
           </span>
@@ -286,53 +283,47 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       {/* ── Исполнитель ── */}
       <div className="min-w-0 pr-2 self-center">
         {ticket.assignee_full_name ? (
-          <span className="flex items-center gap-1 text-base text-[var(--text-primary)]/55 truncate">
+          <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/60 truncate">
             <UserCheck size={18} className="shrink-0 text-[var(--text-primary)]/30" />
             <span className="truncate">{toShortName(ticket.assignee_full_name)}</span>
           </span>
         ) : (
-          <span className="text-base text-[var(--text-primary)]/20">—</span>
+          <span className="text-[16px] text-[var(--text-primary)]/20">—</span>
         )}
-        {/* Автор под исполнителем */}
         {ticket.reporter_full_name && (
-          <span className="flex items-center gap-1 text-[15px] text-[var(--text-primary)]/30 mt-0.5 truncate">
+          <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/35 mt-0.5 truncate">
             <User size={18} className="shrink-0" />
             <span className="truncate">{toShortName(ticket.reporter_full_name)}</span>
           </span>
         )}
       </div>
 
-
-
-
       {/* ── Статус ── */}
       <div className="self-center">
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[13px] font-medium
+        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[16px] font-semibold
                          border whitespace-nowrap ${getStatusColor(ticket.status)}`}>
-          {STATUS_ICON[ticket.status]}
           {ticket.status}
         </span>
       </div>
 
       {/* ── Приоритет ── */}
       <div className="self-center">
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[13px] font-medium
+        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[16px] font-semibold
                          border whitespace-nowrap ${getPriorityColor(ticket.priority)}`}>
-          {ticket.priority === 'Критический' && <Flame size={18} />}
           {ticket.priority}
         </span>
       </div>
 
       {/* ── Дата ── */}
       <div className="self-center text-right">
-        <span className="text-[15px] text-[var(--text-primary)]/40 whitespace-nowrap">
+        <span className="text-[15px] text-[var(--text-primary)]/45 whitespace-nowrap">
           {formatDate(ticket.created_at)}
         </span>
       </div>
 
       {/* ── Стрелка ── */}
       <div className="self-center flex justify-end">
-        <ChevronRight size={13}
+        <ChevronRight size={18}
           className="text-[var(--text-primary)]/20 group-hover:text-[var(--accent-light)]
                      group-hover:translate-x-0.5 transition-all shrink-0" />
       </div>
@@ -342,25 +333,25 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
 
 
 function TableHeader() {
-  const cols: { label: string; extra?: string }[] = [
+  const cols: { label: string; align?: string }[] = [
     { label: 'Заявка' },
     { label: 'Контрагент / Проект' },
     { label: 'Исполнитель / Автор' },
     { label: 'Статус' },
     { label: 'Приоритет' },
-    { label: 'Дата' },
+    { label: 'Дата', align: 'text-right' },
     { label: '' },
   ];
 
   return (
     <div
-      className="hidden lg:grid px-3 py-2 text-[13px] uppercase tracking-widest
+      className="hidden lg:grid px-4 py-2 text-[13px] uppercase tracking-widest
                  font-semibold text-[var(--text-primary)]/25
                  border-b border-[var(--border-color)]"
-      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 100px 110px 100px 110px 20px' }}
+      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 110px 120px 110px 20px' }}
     >
       {cols.map((c, i) => (
-        <div key={i} className={i === cols.length - 2 ? 'text-right' : ''}>
+        <div key={i} className={c.align || ''}>
           {c.label}
         </div>
       ))}
@@ -551,11 +542,11 @@ export default function TicketsPage() {
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
                          text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60
                          hover:bg-[var(--hover-2)] transition-colors">
-              <X size={14} />
+              <X size={18} />
             </button>
           )}
           {loading && search !== debouncedSearch && (
-            <Loader2 size={14}
+            <Loader2 size={18}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-red-500/50 animate-spin" />
           )}
         </div>
@@ -612,7 +603,7 @@ export default function TicketsPage() {
       {hasActiveFilters && (
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="text-base text-[var(--text-primary)]/40 flex items-center gap-1.5">
-            <SlidersHorizontal size={14} /> Фильтры:
+            <SlidersHorizontal size={18} /> Фильтры:
           </span>
           {debouncedSearch && (
             <FilterTag label={`«${debouncedSearch}»`} icon={<Search size={12} />} onRemove={() => setSearch('')} />
@@ -640,7 +631,7 @@ export default function TicketsPage() {
       {loading && !initialLoad && (
         <div className="flex justify-center py-2">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--hover-1)] border border-[var(--border-color)]">
-            <Loader2 size={14} className="text-red-500 animate-spin" />
+            <Loader2 size={18} className="text-red-500 animate-spin" />
             <span className="text-base text-[var(--text-muted)]">Загрузка...</span>
           </div>
         </div>
@@ -697,13 +688,13 @@ export default function TicketsPage() {
                         </span>
                       )}
                     </div>
-                    <ChevronRight size={14}
+                    <ChevronRight size={18}
                       className="text-[var(--text-muted)] group-hover:text-[var(--accent-light)]
                                  group-hover:translate-x-0.5 transition-all shrink-0" />
                   </div>
 
                   {/* Заголовок */}
-                  <h3 className="text-[15px] font-semibold text-[var(--text-primary)] mb-3 leading-snug
+                  <h3 className="text-[18px] font-semibold text-[var(--text-primary)] mb-3 leading-snug
                                  group-hover:text-[var(--accent-light)] transition-colors line-clamp-2">
                     {ticket.title}
                   </h3>

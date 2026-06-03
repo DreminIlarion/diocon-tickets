@@ -12,9 +12,9 @@ import { ticketsApi, counterpartiesApi, projectsApi, productsApi } from '../api/
 import type { TicketListItem, Counterparty, Project } from '../types';
 import GridBackground from '../components/ui/GridBackground';
 
-/* ════════════════════════════════════════════════════════════════
+/* 
    HELPERS
-   ════════════════════════════════════════════════════════════════ */
+    */
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -24,9 +24,9 @@ const getGreeting = () => {
   return { text: 'Добрый вечер', icon: Moon };
 };
 
-/* ════════════════════════════════════════════════════════════════
+/* 
    SPARKLINE — мини-график
-   ════════════════════════════════════════════════════════════════ */
+    */
 
 const Sparkline = ({ data, color = '#ef4444' }: { data: number[]; color?: string }) => {
   if (data.length < 2) return null;
@@ -64,9 +64,9 @@ const Sparkline = ({ data, color = '#ef4444' }: { data: number[]; color?: string
   );
 };
 
-/* ════════════════════════════════════════════════════════════════
+/* 
    DONUT CHART — кольцевая диаграмма
-   ════════════════════════════════════════════════════════════════ */
+    */
 
 const DonutChart = ({
   segments,
@@ -113,9 +113,9 @@ const DonutChart = ({
   );
 };
 
-/* ════════════════════════════════════════════════════════════════
+/* 
    BAR CHART — столбчатая диаграмма по дням
-   ════════════════════════════════════════════════════════════════ */
+    */
 
 const BarChart = ({ data }: { data: { label: string; value: number; isToday?: boolean }[] }) => {
   const max = Math.max(...data.map(d => d.value), 1);
@@ -154,9 +154,9 @@ const BarChart = ({ data }: { data: { label: string; value: number; isToday?: bo
   );
 };
 
-/* ════════════════════════════════════════════════════════════════
+/* 
    MAIN COMPONENT
-   ════════════════════════════════════════════════════════════════ */
+    */
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -311,14 +311,14 @@ export default function DashboardPage() {
     </div>
   );
 
-  /* ════════════════════════════════════════════════════════════════ */
+  /*  */
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
 
-      {/* ╔════════════════════════════════════════════════════════════
+      {/* 
           HEADER с сеткой-фоном
-          ════════════════════════════════════════════════════════════╗ */}
+           */}
       <div className="relative overflow-hidden rounded-3xl border border-[var(--border-color)]
                       p-8">
         <GridBackground variant="dots" />
@@ -371,9 +371,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ╔════════════════════════════════════════════════════════════
+      {/* 
           STAT CARDS со спарклайнами
-          ════════════════════════════════════════════════════════════╗ */}
+           */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
@@ -446,9 +446,9 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* ╔════════════════════════════════════════════════════════════
+      {/* 
           АНАЛИТИЧЕСКИЙ БЛОК — донат + бар-чарт
-          ════════════════════════════════════════════════════════════╗ */}
+           */}
       <div className="grid lg:grid-cols-3 gap-6">
 
         {/* DONUT — распределение по статусам */}
@@ -515,9 +515,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ╔════════════════════════════════════════════════════════════
+      {/* 
           ОСНОВНОЙ КОНТЕНТ
-          ════════════════════════════════════════════════════════════╗ */}
+           */}
       <div className="grid lg:grid-cols-3 gap-6">
 
         {/* ── ЛЕВАЯ КОЛОНКА ── */}

@@ -18,11 +18,11 @@ import {
   TicketEditor, serializeBlocks, type DescriptionBlock,
 } from '../components/helpers/TicketEditor';
 
-// ─── Константы ────────────────────────────────────────────────────────────────
+// ─── Константы ────
 
 const PRIORITIES = [
   { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
-  { value: 'Средний', label: 'Средний', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40', activeColor: 'bg-amber-500/30 text-amber-300 border-amber-400 ring-2 ring-amber-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
+  { value: 'Средний', label: 'Средний', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-yellow-300 border-yellow-400 ring-2 ring-yellow-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
   { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
   { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
 ];
@@ -30,19 +30,19 @@ const PRIORITIES = [
 const TICKET_TYPES = [
   { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', desc: 'Сбой, ошибка' },
   { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-blue-300 border-blue-400 ring-2 ring-blue-500/50', desc: 'Стандартная услуга' },
-  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle className="w-5 h-5" />, color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40', activeColor: 'bg-cyan-500/30 text-cyan-300 border-cyan-400 ring-2 ring-cyan-500/50', desc: 'Вопрос, консультация' },
+  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-gray-300 border-gray-400 ring-2 ring-gray-500/50', desc: 'Вопрос, консультация' },
   { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', desc: 'Жалоба клиента' },
-  { value: 'Задача', label: 'Задача', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-purple-500/20 text-purple-400 border-purple-500/40', activeColor: 'bg-purple-500/30 text-purple-300 border-purple-400 ring-2 ring-purple-500/50', desc: 'Планируемая работа' },
+  { value: 'Задача', label: 'Задача', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Планируемая работа' },
   { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-yellow-300 border-yellow-400 ring-2 ring-yellow-500/50', desc: 'Корневая причина' },
-  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 className="w-5 h-5" />, color: 'bg-green-500/20 text-green-400 border-green-500/40', activeColor: 'bg-green-500/30 text-green-300 border-green-400 ring-2 ring-green-500/50', desc: 'Изменение системы' },
+  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-blue-300 border-blue-400 ring-2 ring-blue-500/50', desc: 'Изменение системы' },
   { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Предложение по улучшению' },
   { value: 'Прочее', label: 'Прочее', icon: <MessageSquare className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-gray-300 border-gray-400 ring-2 ring-gray-500/50', desc: 'Другое' },
 ];
 
 const PRESET_TAGS = [
-  { name: 'Инцидент', color: '#ef4444' }, { name: 'Консультация', color: '#3b82f6' },
-  { name: 'Доработка', color: '#8b5cf6' }, { name: 'Ошибка', color: '#f97316' },
-  { name: 'Интеграция', color: '#06b6d4' }, { name: 'Обучение', color: '#10b981' },
+  { name: 'Инцидент', color: '#dc2626' }, { name: 'Консультация', color: '#2563eb' },
+  { name: 'Доработка', color: '#059669' }, { name: 'Ошибка', color: '#ea580c' },
+  { name: 'Интеграция', color: '#2563eb' }, { name: 'Обучение', color: '#059669' },
   { name: 'Срочное', color: '#dc2626' },
 ];
 
@@ -59,7 +59,7 @@ interface SimpleUser {
 const CAN_SELECT_COUNTERPARTY_ROLES = ['admin', 'support_agent', 'support_manager', 'executor'];
 type SelectionType = 'project' | 'counterparty' | null;
 
-// ─── Компонент ────────────────────────────────────────────────────────────────
+// ─── Компонент ────
 
 export default function NewTicketPage() {
   const navigate = useNavigate();
@@ -73,7 +73,6 @@ export default function NewTicketPage() {
   const [title, setTitle] = useState('');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // Описание — блоковая модель
   const [descriptionBlocks, setDescriptionBlocks] = useState<DescriptionBlock[]>([
     { id: 'init', type: 'text', value: '' },
   ]);
@@ -82,11 +81,8 @@ export default function NewTicketPage() {
   const [priority, setPriority] = useState<TicketPriority>('Средний');
   const [type, setType] = useState<TicketType>('Инцидент');
   const [tags, setTags] = useState<TicketTag[]>([]);
-
-  // Обычные вложения (не картинки в тексте)
   const [generalFiles, setGeneralFiles] = useState<GeneralFile[]>([]);
 
-  // Привязки
   const [customerCounterparty, setCustomerCounterparty] = useState<Counterparty | null>(null);
   const [selectionType, setSelectionType] = useState<SelectionType>(null);
   const [selectedCounterparty, setSelectedCounterparty] = useState<Counterparty | null>(null);
@@ -108,10 +104,17 @@ export default function NewTicketPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<any>(null);
   const [aiSuggestedTags, setAiSuggestedTags] = useState<TicketTag[]>([]);
-  const aiRunRef = useRef(false);
-  const lastDataHashRef = useRef<string>('');
 
-  const [aiTriggered, setAiTriggered] = useState(false);
+  /* ── Ключевое исправление: храним данные в ref, не в зависимостях ── */
+  const aiDoneRef = useRef(false);          // выполнен ли AI для текущего step=2
+  const aiAbortRef = useRef<AbortController | null>(null); // отмена текущего запроса
+  const titleRef = useRef('');
+  const descriptionRef = useRef('');
+
+  // Синхронизируем ref с актуальными данными
+  titleRef.current = title;
+  descriptionRef.current = description;
+
   const [newTagInput, setNewTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showCustomTagInput, setShowCustomTagInput] = useState(false);
@@ -124,12 +127,11 @@ export default function NewTicketPage() {
   const projectDropdownRef = useRef<HTMLDivElement>(null);
   const reporterDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Проверяет, есть ли текстовое содержимое в описании
   const hasDescription = descriptionBlocks.some(
     b => (b.type === 'text' && b.value.trim().length > 0) || (b.type === 'image' && b.localFile)
   );
 
-  // ─── Effects ───────────────────────────────────────────────────────────────
+  // ─── Effects ───
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
@@ -143,11 +145,7 @@ export default function NewTicketPage() {
 
   useEffect(() => { pageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, [step]);
   useEffect(() => { if (isCustomer && user?.counterparty_id) loadCustomerCounterparty(); }, [user]);
-  useEffect(() => {
-    if (canSelectCounterparty) {
-      loadCounterparties();
-    }
-  }, [canSelectCounterparty]);
+  useEffect(() => { if (canSelectCounterparty) loadCounterparties(); }, [canSelectCounterparty]);
 
   useEffect(() => {
     if (selectionType === 'counterparty' && selectedCounterparty) loadProjects(selectedCounterparty.id);
@@ -163,19 +161,15 @@ export default function NewTicketPage() {
 
   useEffect(() => {
     if (!preselectedProjectId || !canSelectCounterparty) return;
-
     const autoSelectProject = async () => {
       setSelectionType('project');
-
       try {
         const items = (await projectsApi.getAll(1, 100)).items;
         setProjects(items);
-
         const found = items.find(p => p.id === preselectedProjectId);
         if (found) {
           setSelectedProject(found);
           setProjectSearch(`${found.key} - ${found.name}`);
-
           if (found.counterparty_id) {
             try {
               const cp = await counterpartiesApi.getById(found.counterparty_id);
@@ -190,54 +184,70 @@ export default function NewTicketPage() {
         setLoadingProjects(false);
       }
     };
-
     autoSelectProject();
   }, [preselectedProjectId, canSelectCounterparty]);
 
-  // AI — запускаем при переходе на шаг 2
-// ─── AI State ────────────────────────────────────────────────────────────────
+  /* ══════════════════════════════════════════════════════════════════════
+     AI — исправленная логика без бесконечного цикла
+     ══════════════════════════════════════════════════════════════════════ */
 
-// AI — запускаем один раз при переходе на шаг 2
-const runAI = useCallback(async () => {
-  const titleTrimmed = title.trim();
-  const descTrimmed = description.trim();
-  const dataHash = `${titleTrimmed}|${descTrimmed}`;
-  
-  if (!titleTrimmed || !descTrimmed) return;
-  if (aiRunRef.current && lastDataHashRef.current === dataHash) return;
-  
-  setAiLoading(true);
-  aiRunRef.current = true;
-  lastDataHashRef.current = dataHash;
-  
-  try {
-    const r = await ticketsApi.predict(titleTrimmed, descTrimmed);
-    setAiSuggestion(r);
-    setAiSuggestedTags(r.suggested_tags || []);
-    setPriority(r.suggested_priority);
-    setTags(r.suggested_tags || []);
-  } catch (error) {
-    console.error('AI prediction failed:', error);
-  } finally {
-    setAiLoading(false);
-  }
-}, [title, description]);
+  useEffect(() => {
+    // Запускаем только когда переходим на шаг 2 и AI ещё не выполнялся
+    if (step !== 2) {
+      // При возврате на шаг 1 — сбрасываем флаг, чтобы при следующем переходе AI запустился снова
+      if (step === 1) {
+        aiDoneRef.current = false;
+        // Отменяем текущий запрос, если он был
+        aiAbortRef.current?.abort();
+        aiAbortRef.current = null;
+      }
+      return;
+    }
 
-// Запускаем AI при переходе на шаг 2
-useEffect(() => {
-  if (step === 2 && title.trim() && description.trim()) {
-    runAI();
-  }
-}, [step, runAI]);
+    // Уже выполняли для этого захода на шаг 2
+    if (aiDoneRef.current) return;
 
-// Сбрасываем флаг при возврате на шаг 1
-useEffect(() => {
-  if (step === 1) {
-    aiRunRef.current = false;
-  }
-}, [step]);
+    const currentTitle = titleRef.current.trim();
+    const currentDesc = descriptionRef.current.trim();
 
-  // ─── Loaders ───────────────────────────────────────────────────────────────
+    // Нечего анализировать
+    if (!currentTitle || !currentDesc) {
+      return;
+    }
+
+    // Отменяем предыдущий запрос если был
+    aiAbortRef.current?.abort();
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
+    aiDoneRef.current = true; // сразу ставим флаг — больше не запускаем
+    setAiLoading(true);
+    setAiSuggestion(null);
+
+    ticketsApi.predict(currentTitle, currentDesc)
+      .then(r => {
+        if (controller.signal.aborted) return;
+        setAiSuggestion(r);
+        setAiSuggestedTags(r.suggested_tags || []);
+        setPriority(r.suggested_priority);
+        setTags(r.suggested_tags || []);
+      })
+      .catch(err => {
+        if (controller.signal.aborted) return;
+        console.error('AI prediction failed:', err);
+      })
+      .finally(() => {
+        if (controller.signal.aborted) return;
+        setAiLoading(false);
+      });
+
+    // Cleanup при размонтировании или смене step
+    return () => {
+      controller.abort();
+    };
+  }, [step]); // ← ТОЛЬКО step в зависимостях — это ключевое исправление
+
+  // ─── Loaders ───
 
   const loadCustomerCounterparty = async () => {
     if (!user?.counterparty_id) return;
@@ -257,7 +267,6 @@ useEffect(() => {
         );
       }
       setCounterparties(items);
-
       if (!search && preselectedCounterpartyId && !selectedCounterparty) {
         const found = items.find(c => c.id === preselectedCounterpartyId);
         if (found) {
@@ -272,7 +281,9 @@ useEffect(() => {
 
   const loadProjects = async (cpId: string) => {
     setLoadingProjects(true);
-    try { setProjects((await projectsApi.getByCounterparty(cpId, 1, 50)).items); } catch { } finally { setLoadingProjects(false); }
+    try { setProjects((await projectsApi.getByCounterparty(cpId, 1, 50)).items); }
+    catch { }
+    finally { setLoadingProjects(false); }
   };
 
   const loadProjectsForAll = async (): Promise<Project[]> => {
@@ -281,11 +292,8 @@ useEffect(() => {
       const items = (await projectsApi.getAll(1, 100)).items;
       setProjects(items);
       return items;
-    } catch {
-      return [];
-    } finally {
-      setLoadingProjects(false);
-    }
+    } catch { return []; }
+    finally { setLoadingProjects(false); }
   };
 
   const loadUsers = async (cpId: string) => {
@@ -299,10 +307,11 @@ useEffect(() => {
         all = [{ id: user.user_id, username: user.username || '', full_name: user.full_name || null, email: user.email || '', role: user.role }, ...items];
       }
       setUsers(all); setSelectedReporter(null); setReporterSearch('');
-    } catch { } finally { setLoadingUsers(false); }
+    } catch { }
+    finally { setLoadingUsers(false); }
   };
 
-  // ─── Handlers ──────────────────────────────────────────────────────────────
+  // ─── Handlers ──
 
   const handleSelectionTypeChange = (t: SelectionType) => {
     setSelectionType(t); setSelectedCounterparty(null); setSelectedProject(null);
@@ -312,14 +321,17 @@ useEffect(() => {
   const togglePresetTag = (tag: TicketTag) => {
     setTags(p => p.some(t => t.name === tag.name) ? p.filter(t => t.name !== tag.name) : [...p, tag]);
   };
+
   const addCustomTag = () => {
     const n = newTagInput.trim();
     if (!n || tags.some(t => t.name.toLowerCase() === n.toLowerCase())) return;
-    setTags(p => [...p, { name: n, color: '#a1a1aa' }]); setNewTagInput(''); setShowCustomTagInput(false);
+    setTags(p => [...p, { name: n, color: '#a1a1aa' }]);
+    setNewTagInput('');
+    setShowCustomTagInput(false);
   };
+
   const removeTag = (name: string) => setTags(p => p.filter(t => t.name !== name));
 
-  // Валидация перехода на следующий шаг
   const validateStep1 = (): boolean => {
     const errors: string[] = [];
     if (!title.trim()) errors.push('Укажите тему заявки');
@@ -336,14 +348,12 @@ useEffect(() => {
     setStep(step + 1);
   };
 
-  // Убираем ошибки при вводе
   useEffect(() => {
     if (validationErrors.length > 0 && title.trim() && hasDescription) {
       setValidationErrors([]);
     }
   }, [title, descriptionBlocks]);
 
-  // Обычные файлы
   const handleGeneralFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newF: GeneralFile[] = files.map(f => ({
@@ -353,6 +363,7 @@ useEffect(() => {
     setGeneralFiles(p => [...p, ...newF].slice(0, 10));
     e.target.value = '';
   };
+
   const handleGeneralDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
@@ -362,25 +373,24 @@ useEffect(() => {
     }));
     setGeneralFiles(p => [...p, ...newF].slice(0, 10));
   };
+
   const removeGeneralFile = (id: string) => {
     const f = generalFiles.find(x => x.id === id);
     if (f?.preview) URL.revokeObjectURL(f.preview);
     setGeneralFiles(p => p.filter(x => x.id !== id));
   };
 
-  const formatFileSize = (b: number) => b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1048576).toFixed(1)} MB`;
+  const formatFileSize = (b: number) =>
+    b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1048576).toFixed(1)} MB`;
 
-  // ─── Submit ────────────────────────────────────────────────────────────────
+  // ─── Submit ────
 
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
       const textOnlyDesc = descriptionBlocks
-        .filter(
-          (b): b is Extract<DescriptionBlock, { type: 'text' }> =>
-            b.type === 'text'
-        )
-        .map((b) => b.value.trim())
+        .filter((b): b is Extract<DescriptionBlock, { type: 'text' }> => b.type === 'text')
+        .map(b => b.value.trim())
         .filter(Boolean)
         .join('\n\n');
 
@@ -389,35 +399,26 @@ useEffect(() => {
         description: textOnlyDesc || '(описание с изображениями)',
         priority,
         type,
-        tags: tags.map((t) => ({ name: t.name, color: t.color || '#64748b' })),
+        tags: tags.map(t => ({ name: t.name, color: t.color || '#64748b' })),
       };
 
-      if (isCustomer && customerCounterparty)
-        data.counterparty_id = customerCounterparty.id;
+      if (isCustomer && customerCounterparty) data.counterparty_id = customerCounterparty.id;
       else if (selectedProject) data.project_id = selectedProject.id;
-      else if (selectedCounterparty)
-        data.counterparty_id = selectedCounterparty.id;
+      else if (selectedCounterparty) data.counterparty_id = selectedCounterparty.id;
 
       if (isCustomer && user?.user_id) data.reporter_id = user.user_id;
-      else if (canSelectReporter)
-        data.reporter_id = selectedReporter?.id || user?.user_id;
+      else if (canSelectReporter) data.reporter_id = selectedReporter?.id || user?.user_id;
 
       const ticket = await ticketsApi.create(data);
 
       const imageBlocks = descriptionBlocks.filter(
-        (b): b is Extract<DescriptionBlock, { type: 'image' }> =>
-          b.type === 'image' && !!b.localFile
+        (b): b is Extract<DescriptionBlock, { type: 'image' }> => b.type === 'image' && !!b.localFile
       );
 
       const uploadMap: Record<string, string> = {};
-
       for (const block of imageBlocks) {
         try {
-          const att = await attachmentsApi.uploadAttachment(
-            block.localFile!,
-            'ticket',
-            ticket.id
-          );
+          const att = await attachmentsApi.uploadAttachment(block.localFile!, 'ticket', ticket.id);
           uploadMap[block.id] = att.id;
         } catch (err) {
           console.error('Image upload failed:', block.id, err);
@@ -426,23 +427,14 @@ useEffect(() => {
 
       if (imageBlocks.length > 0) {
         let finalDesc = serializeBlocks(descriptionBlocks);
-
         for (const [blockId, attachmentId] of Object.entries(uploadMap)) {
-          finalDesc = finalDesc.replaceAll(
-            `![image](local:${blockId})`,
-            `![image](media://${attachmentId})`
-          );
+          finalDesc = finalDesc.replaceAll(`![image](local:${blockId})`, `![image](media://${attachmentId})`);
         }
-
-        finalDesc = finalDesc.replace(
-          /!\[image\]\(local:[a-f0-9-]+\)\n*/gi,
-          ''
-        );
-
+        finalDesc = finalDesc.replace(/!\[image\]\(local:[a-f0-9-]+\)\n*/gi, '');
         await ticketsApi.update(ticket.id, { description: finalDesc });
       }
 
-      for (const f of generalFiles.filter((x) => x.status === 'pending')) {
+      for (const f of generalFiles.filter(x => x.status === 'pending')) {
         try {
           await attachmentsApi.uploadAttachment(f.file, 'ticket', ticket.id);
         } catch (err) {
@@ -462,13 +454,14 @@ useEffect(() => {
   const prjName = (p: Project) => `${p.key} - ${p.name}`;
   const uName = (u: SimpleUser) => u.full_name || u.username || u.email;
 
-  // ─── Render ────────────────────────────────────────────────────────────────
+  // ─── Render ────
 
   return (
     <div ref={pageRef} className="max-w-7xl mx-auto pb-12">
       {/* Header */}
-        <div className="flex items-center gap-6 mb-8">
-        <button onClick={() => navigate(-1)} className="p-3 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-1)] transition-colors">
+      <div className="flex items-center gap-6 mb-8">
+        <button onClick={() => navigate(-1)}
+          className="p-3 rounded-xl bg-[var(--hover-1)] hover:bg-[var(--hover-2)] transition-colors">
           <ArrowLeft className="w-6 h-6 text-[var(--text-primary)]" />
         </button>
         <div>
@@ -487,11 +480,23 @@ useEffect(() => {
           ].map((s, i) => (
             <div key={s.num} className="flex items-center">
               <div className={`flex items-center gap-4 ${step >= s.num ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40'}`}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${step === s.num ? 'bg-red-600 border-red-500 scale-110' : step > s.num ? 'bg-emerald-600 border-emerald-500' : 'bg-[var(--hover-1)] border-[var(--border-color)]'
-                  }`}>{step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}</div>
-                <div><div className="font-semibold text-lg">Шаг {s.num}</div><div className="text-sm">{s.label}</div></div>
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all
+                  ${step === s.num
+                    ? 'bg-red-600 border-red-500 scale-110'
+                    : step > s.num
+                      ? 'bg-emerald-600 border-emerald-500'
+                      : 'bg-[var(--hover-1)] border-[var(--border-color)]'
+                  }`}>
+                  {step > s.num ? <CheckCircle2 className="w-6 h-6" /> : s.icon}
+                </div>
+                <div>
+                  <div className="font-semibold text-lg">Шаг {s.num}</div>
+                  <div className="text-sm">{s.label}</div>
+                </div>
               </div>
-              {i < 2 && <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`} />}
+              {i < 2 && (
+                <div className={`w-24 h-1 mx-6 rounded-full ${step > s.num ? 'bg-red-600' : 'bg-[var(--hover-1)]'}`} />
+              )}
             </div>
           ))}
         </div>
@@ -502,7 +507,6 @@ useEffect(() => {
         {/* ═══ Step 1 ═══ */}
         {step === 1 && (
           <div className="space-y-10">
-            {/* Ошибки валидации */}
             {validationErrors.length > 0 && (
               <div className="p-5 rounded-2xl bg-red-500/10 border border-red-500/30 space-y-2">
                 {validationErrors.map((err, i) => (
@@ -514,25 +518,40 @@ useEffect(() => {
               </div>
             )}
 
-            {/* Привязка (admin/support) */}
+            {/* Привязка */}
             {canSelectCounterparty && (
               <>
                 <div>
                   <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Привязать заявку к</label>
                   <div className="flex gap-4">
                     <button type="button" onClick={() => handleSelectionTypeChange('project')}
-                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'project' ? 'border-amber-500 bg-amber-500/20 text-amber-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
-                      <FolderOpen className="w-6 h-6" /><span className="text-lg font-medium">Проекту</span>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all
+                        ${selectionType === 'project'
+                          ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                          : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                        }`}>
+                      <FolderOpen className="w-6 h-6" />
+                      <span className="text-lg font-medium">Проекту</span>
                     </button>
                     <button type="button" onClick={() => handleSelectionTypeChange('counterparty')}
-                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === 'counterparty' ? 'border-blue-500 bg-blue-500/20 text-blue-400' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
-                      <Building2 className="w-6 h-6" /><span className="text-lg font-medium">Контрагенту</span>
+                      className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all
+                        ${selectionType === 'counterparty'
+                          ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+                          : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                        }`}>
+                      <Building2 className="w-6 h-6" />
+                      <span className="text-lg font-medium">Контрагенту</span>
                     </button>
                   </div>
                 </div>
                 <button type="button" onClick={() => handleSelectionTypeChange(null)}
-                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all ${selectionType === null ? 'border-white bg-[var(--hover-1)] text-[var(--text-primary)]' : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
-                  <X className="w-5 h-5" /><span className="text-lg font-medium">Без привязки</span>
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all
+                    ${selectionType === null
+                      ? 'border-white bg-[var(--hover-1)] text-[var(--text-primary)]'
+                      : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                    }`}>
+                  <X className="w-5 h-5" />
+                  <span className="text-lg font-medium">Без привязки</span>
                 </button>
               </>
             )}
@@ -540,59 +559,79 @@ useEffect(() => {
             {/* Контрагент */}
             {canSelectCounterparty && selectionType === 'counterparty' && (
               <div>
-                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Контрагент <span className="text-red-400">*</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
+                  Контрагент <span className="text-red-400">*</span>
+                </label>
                 <div className="relative" ref={counterpartyDropdownRef}>
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input value={counterpartySearch}
                       onChange={e => { setCounterpartySearch(e.target.value); setShowCounterpartyDropdown(true); loadCounterparties(e.target.value); }}
                       onFocus={() => { setShowCounterpartyDropdown(true); if (!counterparties.length) loadCounterparties(); }}
-                      placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
+                      placeholder="Поиск..."
+                      style={{ paddingLeft: '3.5rem' }}
+                      className="input-field py-5 text-lg w-full" />
                   </div>
                   {showCounterpartyDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingCounterparties ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> :
-                        counterparties.map(cp => (
-                          <button key={cp.id} onClick={() => { setSelectedCounterparty(cp); setCounterpartySearch(cpName(cp)); setShowCounterpartyDropdown(false); }}
+                      {loadingCounterparties
+                        ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div>
+                        : counterparties.map(cp => (
+                          <button key={cp.id}
+                            onClick={() => { setSelectedCounterparty(cp); setCounterpartySearch(cpName(cp)); setShowCounterpartyDropdown(false); }}
                             className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
                             <div className="font-semibold text-[var(--text-primary)]">{cpName(cp)}</div>
                             {cp.inn && <div className="text-xs text-[var(--text-primary)]/40 mt-1">ИНН: {cp.inn}</div>}
                           </button>
-                        ))
-                      }
+                        ))}
                     </div>
                   )}
                 </div>
-                {selectedCounterparty && <div className="mt-3 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400">✓ {cpName(selectedCounterparty)}</div>}
+                {selectedCounterparty && (
+                  <div className="mt-3 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400">
+                    ✓ {cpName(selectedCounterparty)}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Проект */}
             {canSelectCounterparty && selectionType === 'project' && (
               <div>
-                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Проект <span className="text-red-400">*</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
+                  Проект <span className="text-red-400">*</span>
+                </label>
                 <div className="relative" ref={projectDropdownRef}>
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input value={projectSearch}
                       onChange={e => { setProjectSearch(e.target.value); setShowProjectDropdown(true); }}
                       onFocus={() => { setShowProjectDropdown(true); if (!projects.length) loadProjectsForAll(); }}
-                      placeholder="Поиск..." className="input-field pl-12 py-5 text-lg w-full" />
+                      placeholder="Поиск..."
+                      style={{ paddingLeft: '3.5rem' }}
+                      className="input-field py-5 text-lg w-full" />
                   </div>
                   {showProjectDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingProjects ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> :
-                        projects.filter(p => !projectSearch || p.name.toLowerCase().includes(projectSearch.toLowerCase()) || p.key.toLowerCase().includes(projectSearch.toLowerCase())).map(p => (
-                          <button key={p.id} onClick={() => { setSelectedProject(p); setProjectSearch(prjName(p)); setShowProjectDropdown(false); }}
-                            className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
-                            <span className="text-amber-400">{p.key}</span> — {p.name}
-                          </button>
-                        ))
-                      }
+                      {loadingProjects
+                        ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div>
+                        : projects
+                          .filter(p => !projectSearch || p.name.toLowerCase().includes(projectSearch.toLowerCase()) || p.key.toLowerCase().includes(projectSearch.toLowerCase()))
+                          .map(p => (
+                            <button key={p.id}
+                              onClick={() => { setSelectedProject(p); setProjectSearch(prjName(p)); setShowProjectDropdown(false); }}
+                              className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
+                              <span className="text-amber-400">{p.key}</span> — {p.name}
+                            </button>
+                          ))}
                     </div>
                   )}
                 </div>
-                {selectedProject && <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">✓ {prjName(selectedProject)}</div>}
+                {selectedProject && (
+                  <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                    ✓ {prjName(selectedProject)}
+                  </div>
+                )}
               </div>
             )}
 
@@ -602,7 +641,9 @@ useEffect(() => {
                 <Building2 className="w-8 h-8 text-blue-400" />
                 <div>
                   <p className="text-base font-semibold text-[var(--text-primary)]">{customerCounterparty.name}</p>
-                  {customerCounterparty.inn && <p className="text-[var(--text-primary)]/50 text-sm">ИНН: {customerCounterparty.inn}</p>}
+                  {customerCounterparty.inn && (
+                    <p className="text-[var(--text-primary)]/50 text-sm">ИНН: {customerCounterparty.inn}</p>
+                  )}
                 </div>
               </div>
             )}
@@ -610,35 +651,50 @@ useEffect(() => {
             {/* Инициатор */}
             {canSelectReporter && (selectedCounterparty || selectedProject) && (
               <div>
-                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">Инициатор <span className="text-[var(--text-primary)]/40 text-sm">(по умолчанию — вы)</span></label>
+                <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
+                  Инициатор <span className="text-[var(--text-primary)]/40 text-sm">(по умолчанию — вы)</span>
+                </label>
                 <div className="relative" ref={reporterDropdownRef}>
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                   <input value={reporterSearch}
                     onChange={e => { setReporterSearch(e.target.value); setShowReporterDropdown(true); }}
                     onFocus={() => setShowReporterDropdown(true)}
-                    placeholder="Выберите..." className="input-field pl-12 py-5 text-lg w-full" />
+                    placeholder="Выберите..."
+                    style={{ paddingLeft: '3.5rem' }}
+                    className="input-field py-5 text-lg w-full" />
                   {showReporterDropdown && (
                     <div className="absolute z-50 mt-2 w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-2xl max-h-80 overflow-y-auto">
-                      {loadingUsers ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div> : (
-                        <>
-                          <button onClick={() => { setSelectedReporter(null); setReporterSearch(''); setShowReporterDropdown(false); }}
-                            className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)]">
-                            <span className="text-[var(--text-primary)]">{user?.full_name || 'Вы'}</span> <span className="text-[var(--text-primary)]/40">(текущий)</span>
-                          </button>
-                          {users.filter(u => !reporterSearch || (u.full_name?.toLowerCase().includes(reporterSearch.toLowerCase()) || u.email.toLowerCase().includes(reporterSearch.toLowerCase()))).map(u => (
-                            <button key={u.id} onClick={() => { setSelectedReporter(u); setReporterSearch(uName(u)); setShowReporterDropdown(false); }}
-                              className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
-                              <div className="text-[var(--text-primary)]">{uName(u)}</div>
-                              <div className="text-[var(--text-primary)]/40 text-sm">{u.email}</div>
+                      {loadingUsers
+                        ? <div className="p-6 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--text-primary)]/40" /></div>
+                        : (
+                          <>
+                            <button onClick={() => { setSelectedReporter(null); setReporterSearch(''); setShowReporterDropdown(false); }}
+                              className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)]">
+                              <span className="text-[var(--text-primary)]">{user?.full_name || 'Вы'}</span>{' '}
+                              <span className="text-[var(--text-primary)]/40">(текущий)</span>
                             </button>
-                          ))}
-                        </>
-                      )}
+                            {users
+                              .filter(u => !reporterSearch ||
+                                u.full_name?.toLowerCase().includes(reporterSearch.toLowerCase()) ||
+                                u.email.toLowerCase().includes(reporterSearch.toLowerCase()))
+                              .map(u => (
+                                <button key={u.id}
+                                  onClick={() => { setSelectedReporter(u); setReporterSearch(uName(u)); setShowReporterDropdown(false); }}
+                                  className="w-full text-left p-4 hover:bg-[var(--hover-1)] border-b border-[var(--border-color)] last:border-0">
+                                  <div className="text-[var(--text-primary)]">{uName(u)}</div>
+                                  <div className="text-[var(--text-primary)]/40 text-sm">{u.email}</div>
+                                </button>
+                              ))}
+                          </>
+                        )}
                     </div>
                   )}
                 </div>
                 <div className="mt-3 p-4 rounded-xl bg-[var(--hover-1)] text-[var(--text-primary)]/60">
-                  Инициатор: <span className="text-[var(--text-primary)] font-medium">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</span>
+                  Инициатор:{' '}
+                  <span className="text-[var(--text-primary)] font-medium">
+                    {selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}
+                  </span>
                 </div>
               </div>
             )}
@@ -660,7 +716,7 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* Обычные вложения */}
+            {/* Вложения */}
             <div>
               <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-4">
                 <Upload className="inline w-6 h-6 mr-2 text-[var(--text-primary)]/40" />
@@ -685,8 +741,9 @@ useEffect(() => {
                     <div key={f.id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--hover-2)] border border-[var(--border-color)]">
                       {f.preview
                         ? <img src={f.preview} alt="" className="w-12 h-12 rounded-lg object-cover" />
-                        : <div className="w-12 h-12 rounded-lg bg-[var(--hover-2)] flex items-center justify-center"><File className="w-5 h-5 text-[var(--text-primary)]/40" /></div>
-                      }
+                        : <div className="w-12 h-12 rounded-lg bg-[var(--hover-2)] flex items-center justify-center">
+                          <File className="w-5 h-5 text-[var(--text-primary)]/40" />
+                        </div>}
                       <div className="flex-1 min-w-0">
                         <p className="text-base text-[var(--text-primary)] truncate">{f.file.name}</p>
                         <p className="text-sm text-[var(--text-primary)]/40">{formatFileSize(f.file.size)}</p>
@@ -706,45 +763,40 @@ useEffect(() => {
         {/* ═══ Step 2 ═══ */}
         {step === 2 && (
           <div className="space-y-12">
-            {/* Индикатор загрузки ИИ */}
+
+            {/* AI Loading */}
             {aiLoading && (
-              <div className="p-8 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 flex flex-col items-center gap-4">
+              <div className="p-8 rounded-2xl bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 flex flex-col items-center gap-4">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-amber-400 animate-pulse" />
+                  <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
                   </div>
-                  <Loader2 className="w-16 h-16 text-amber-400 animate-spin absolute inset-0" />
+                  <Loader2 className="w-16 h-16 text-yellow-400 animate-spin absolute inset-0" />
                 </div>
                 <div className="text-center">
                   <h3 className="text-xl font-semibold text-[var(--text-primary)]">ИИ анализирует вашу заявку...</h3>
-                  <p className="text-[var(--text-secondary)] mt-2">Подбираем оптимальный приоритет и теги на основе описания</p>
+                  <p className="text-[var(--text-secondary)] mt-2">Подбираем оптимальный приоритет и теги</p>
                 </div>
               </div>
             )}
 
-            {/* Уведомление об успешном предложении ИИ */}
+            {/* AI Success */}
             {aiSuggestion && !aiLoading && (
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/30 to-orange-500/20
-                              dark:from-amber-500/10 dark:to-orange-500/10
-                              border border-amber-500/20 dark:border-amber-500/30
-                              flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/50
-                                flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-yellow-500/20 to-orange-500/15
+                              border border-yellow-500/20 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-5 h-5 text-yellow-400" />
                 </div>
-
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                    ИИ предложил приоритет и теги
-                  </h3>
-                  <p className="text-[var(--text-secondary)] mt-1">
-                    Проверьте и внесите правки при необходимости
-                  </p>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">ИИ предложил приоритет и теги</h3>
+                  <p className="text-[var(--text-secondary)] mt-1">Проверьте и внесите правки при необходимости</p>
                 </div>
               </div>
             )}
 
             <div className={aiLoading ? 'opacity-40 pointer-events-none transition-opacity' : 'transition-opacity'}>
+
+              {/* Тип */}
               <div>
                 <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Тип заявки</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -752,7 +804,8 @@ useEffect(() => {
                     const isSelected = type === t.value;
                     return (
                       <button key={t.value} onClick={() => setType(t.value as TicketType)}
-                        className={`px-6 py-4 rounded-2xl text-left border transition-all ${isSelected
+                        className={`px-6 py-4 rounded-2xl text-left border transition-all
+                          ${isSelected
                             ? `${t.activeColor} scale-[1.02] shadow-lg`
                             : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
                           }`}>
@@ -762,9 +815,7 @@ useEffect(() => {
                             <div className="font-semibold text-lg">{t.label}</div>
                             <div className="text-sm opacity-70 mt-1">{t.desc}</div>
                           </div>
-                          {isSelected && (
-                            <CheckCircle2 className="w-6 h-6 flex-shrink-0 mt-0.5" />
-                          )}
+                          {isSelected && <CheckCircle2 className="w-6 h-6 flex-shrink-0 mt-0.5" />}
                         </div>
                       </button>
                     );
@@ -772,6 +823,7 @@ useEffect(() => {
                 </div>
               </div>
 
+              {/* Приоритет */}
               <div className="mt-12">
                 <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Приоритет</label>
                 <div className="flex flex-wrap gap-3">
@@ -779,7 +831,8 @@ useEffect(() => {
                     const isSelected = priority === p.value;
                     return (
                       <button key={p.value} onClick={() => setPriority(p.value as TicketPriority)}
-                        className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all ${isSelected
+                        className={`px-8 py-5 rounded-2xl text-lg font-medium border flex-1 min-w-[200px] text-left transition-all
+                          ${isSelected
                             ? `${p.activeColor} scale-[1.02] shadow-lg`
                             : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
                           }`}>
@@ -789,9 +842,7 @@ useEffect(() => {
                             <div className="font-semibold">{p.label}</div>
                             <div className="text-sm opacity-70">{p.desc}</div>
                           </div>
-                          {isSelected && (
-                            <CheckCircle2 className="w-6 h-6 ml-auto flex-shrink-0" />
-                          )}
+                          {isSelected && <CheckCircle2 className="w-6 h-6 ml-auto flex-shrink-0" />}
                         </div>
                       </button>
                     );
@@ -799,17 +850,22 @@ useEffect(() => {
                 </div>
               </div>
 
+              {/* Теги */}
               <div className="mt-12">
                 <label className="block text-2xl font-semibold text-[var(--text-primary)] mb-6">Теги</label>
+
                 {aiSuggestedTags.length > 0 && (
                   <div className="mb-6">
-                    <p className="text-[var(--text-primary)]/50 text-sm mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4" />Предложено ИИ</p>
+                    <p className="text-[var(--text-primary)]/50 text-sm mb-3 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" /> Предложено ИИ
+                    </p>
                     <div className="flex flex-wrap gap-3">
                       {aiSuggestedTags.map(t => {
                         const isSelected = tags.some(x => x.name === t.name);
                         return (
                           <button key={t.name} onClick={() => togglePresetTag(t)}
-                            className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${isSelected
+                            className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all
+                              ${isSelected
                                 ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 ring-1 ring-amber-500/30'
                                 : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
                               }`}>
@@ -823,21 +879,19 @@ useEffect(() => {
                     </div>
                   </div>
                 )}
+
                 <div className="flex flex-wrap gap-3 mb-6">
                   {PRESET_TAGS.map(t => {
                     const isSelected = tags.some(x => x.name === t.name);
                     return (
                       <button key={t.name} onClick={() => togglePresetTag(t)}
-                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all ${isSelected
-                            ? 'border-[color:var(--tag-color)] ring-1 ring-[color:var(--tag-color)]'
-                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
-                          }`}
+                        className={`px-6 py-3 rounded-2xl text-base font-medium border transition-all
+                          ${isSelected ? '' : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'}`}
                         style={{
-                          '--tag-color': t.color,
                           backgroundColor: isSelected ? `${t.color}25` : undefined,
                           color: isSelected ? t.color : undefined,
                           borderColor: isSelected ? `${t.color}80` : undefined,
-                        } as React.CSSProperties}>
+                        }}>
                         <span className="flex items-center gap-2">
                           {isSelected && <CheckCircle2 className="w-4 h-4" />}
                           {t.name}
@@ -846,17 +900,24 @@ useEffect(() => {
                     );
                   })}
                 </div>
-                <button onClick={() => setShowCustomTagInput(!showCustomTagInput)} className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm mb-4">
+
+                <button onClick={() => setShowCustomTagInput(!showCustomTagInput)}
+                  className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm mb-4">
                   <Plus className="w-4 h-4" />{showCustomTagInput ? 'Скрыть' : 'Свой тег'}
                 </button>
+
                 {showCustomTagInput && (
                   <div className="flex gap-3 mb-6">
-                    <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && addCustomTag()}
+                    <input value={newTagInput} onChange={e => setNewTagInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && addCustomTag()}
                       placeholder="Тег..." className="input-field flex-1 py-4 text-lg" />
                     <button onClick={addCustomTag} disabled={!newTagInput.trim()}
-                      className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">Добавить</button>
+                      className="px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-medium disabled:opacity-40">
+                      Добавить
+                    </button>
                   </div>
                 )}
+
                 {tags.length > 0 && (
                   <div className="p-5 bg-[var(--hover-1)] rounded-2xl">
                     <p className="text-[var(--text-primary)]/50 mb-3">Выбрано: {tags.length}</p>
@@ -869,7 +930,8 @@ useEffect(() => {
                             color: t.color || '#d1d5db',
                           }}>
                           {t.name}
-                          <X className="w-4 h-4 cursor-pointer opacity-60 hover:opacity-100 hover:text-red-400 transition-all" onClick={() => removeTag(t.name)} />
+                          <X className="w-4 h-4 cursor-pointer opacity-60 hover:opacity-100 hover:text-red-400 transition-all"
+                            onClick={() => removeTag(t.name)} />
                         </div>
                       ))}
                     </div>
@@ -892,11 +954,13 @@ useEffect(() => {
             </div>
 
             <div className="space-y-6 animate-in fade-in duration-500">
-              {/* Привязка */}
               {selectedProject && (
                 <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-4">
                   <FolderOpen className="w-8 h-8 text-amber-400" />
-                  <div><p className="text-[var(--text-primary)] font-semibold">{prjName(selectedProject)}</p><p className="text-[var(--text-primary)]/40 text-sm">контрагент из проекта</p></div>
+                  <div>
+                    <p className="text-[var(--text-primary)] font-semibold">{prjName(selectedProject)}</p>
+                    <p className="text-[var(--text-primary)]/40 text-sm">контрагент из проекта</p>
+                  </div>
                 </div>
               )}
               {!selectedProject && selectedCounterparty && (
@@ -917,22 +981,23 @@ useEffect(() => {
                 </div>
               )}
 
-              {/* Инициатор */}
               <div className="p-6 rounded-2xl bg-green-500/10 border border-green-500/30 flex items-center gap-4">
                 <User className="w-8 h-8 text-green-400" />
                 <div>
-                  <p className="text-[var(--text-primary)] font-semibold">{selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}</p>
-                  <p className="text-[var(--text-primary)]/40 text-sm">{selectedReporter ? selectedReporter.email : user?.email}</p>
+                  <p className="text-[var(--text-primary)] font-semibold">
+                    {selectedReporter ? uName(selectedReporter) : (user?.full_name || 'Вы')}
+                  </p>
+                  <p className="text-[var(--text-primary)]/40 text-sm">
+                    {selectedReporter ? selectedReporter.email : user?.email}
+                  </p>
                 </div>
               </div>
 
-              {/* Тема */}
               <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                 <p className="text-[var(--text-primary)]/50 mb-2">Тема</p>
                 <p className="text-[var(--text-primary)] font-semibold text-lg break-words">{title || '—'}</p>
               </div>
 
-              {/* Описание */}
               <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                 <p className="text-[var(--text-primary)]/50 mb-4">Описание</p>
                 <div className="space-y-4">
@@ -940,26 +1005,25 @@ useEffect(() => {
                     if (block.type === 'text') {
                       if (!block.value.trim()) return null;
                       return (
-                        <TicketDescriptionContent
-                          key={block.id}
-                          text={block.value}
-                          className="text-[var(--text-primary)] text-base leading-relaxed"
-                        />
+                        <TicketDescriptionContent key={block.id} text={block.value}
+                          className="text-[var(--text-primary)] text-base leading-relaxed" />
                       );
                     }
                     if (block.type === 'image' && block.localPreview) {
-                      return <img key={block.id} src={block.localPreview} alt="вложение"
-                        className="max-w-full max-h-[400px] rounded-2xl border border-[var(--border-color)] object-contain" />;
+                      return (
+                        <img key={block.id} src={block.localPreview} alt="вложение"
+                          className="max-w-full max-h-[400px] rounded-2xl border border-[var(--border-color)] object-contain" />
+                      );
                     }
                     return null;
                   })}
-                  {descriptionBlocks.every(b => (b.type === 'text' && !b.value.trim()) || (b.type === 'image' && !b.localPreview)) && (
-                    <p className="text-[var(--text-primary)]/30">—</p>
-                  )}
+                  {descriptionBlocks.every(b =>
+                    (b.type === 'text' && !b.value.trim()) ||
+                    (b.type === 'image' && !b.localPreview)
+                  ) && <p className="text-[var(--text-primary)]/30">—</p>}
                 </div>
               </div>
 
-              {/* Приоритет + теги */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                   <p className="text-[var(--text-primary)]/50 mb-3">Тип</p>
@@ -981,7 +1045,10 @@ useEffect(() => {
                   <div className="flex flex-wrap gap-2">
                     {tags.map(t => (
                       <span key={t.name} className="px-4 py-2 rounded-xl text-base font-medium"
-                        style={{ backgroundColor: (t.color || '#71717a') + '30', color: t.color || '#d1d5db' }}>
+                        style={{
+                          backgroundColor: (t.color || '#71717a') + '30',
+                          color: t.color || '#d1d5db',
+                        }}>
                         {t.name}
                       </span>
                     ))}
@@ -989,7 +1056,6 @@ useEffect(() => {
                 </div>
               )}
 
-              {/* Обычные вложения */}
               {generalFiles.length > 0 && (
                 <div className="p-6 rounded-2xl bg-[var(--hover-1)]">
                   <p className="text-[var(--text-primary)]/50 mb-3">Вложения ({generalFiles.length})</p>
@@ -1020,13 +1086,17 @@ useEffect(() => {
           {step < 3 ? (
             <button onClick={handleNextStep}
               disabled={step === 1 && (!title.trim() || !hasDescription)}
-              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto shadow-lg shadow-red-900/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-700">
+              className="px-10 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold ml-auto
+                         shadow-lg shadow-red-900/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-red-700">
               Далее <ArrowRight className="w-5 h-5 inline ml-2" />
             </button>
           ) : (
             <button onClick={handleSubmit} disabled={submitting}
-              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
-              {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <><FileText className="w-5 h-5" /> Создать заявку</>}
+              className="px-12 py-4 rounded-2xl bg-red-700 hover:bg-red-600 text-white text-lg font-semibold
+                         flex items-center gap-3 ml-auto disabled:opacity-50 shadow-lg shadow-red-900/30">
+              {submitting
+                ? <Loader2 className="w-6 h-6 animate-spin" />
+                : <><FileText className="w-5 h-5" /> Создать заявку</>}
             </button>
           )}
         </div>

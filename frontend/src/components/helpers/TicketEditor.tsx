@@ -8,7 +8,7 @@ import { proofreadingApi } from '../../api/client';
 import { attachmentsApi } from '../../api/attachments';
 import { SpellCheckDiff } from './SpellCheckDiff';
 
-// ─── Типы ─────────────────────────────────────────────────────────────────────
+// ─── Типы ─────────
 
 export type DescriptionBlock =
   | { id: string; type: 'text'; value: string }
@@ -54,7 +54,7 @@ const TicketImage = ImageExtension.extend({
   },
 });
 
-// ─── Хелперы ──────────────────────────────────────────────────────────────────
+// ─── Хелперы ──────
 
 function makeId() {
   return Math.random().toString(36).slice(2, 10);
@@ -150,7 +150,7 @@ export function deserializeToBlocks(text: string): DescriptionBlock[] {
   return blocks;
 }
 
-// ─── Toolbar ──────────────────────────────────────────────────────────────────
+// ─── Toolbar ──────
 
 function EditorToolbar({
   editor,
@@ -238,7 +238,7 @@ function EditorToolbar({
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 interface TicketEditorProps {
   blocks: DescriptionBlock[];
@@ -250,12 +250,12 @@ export function TicketEditor({ blocks, onChange }: TicketEditorProps) {
   const [spellChecking, setSpellChecking] = useState(false);
   const [spellResult, setSpellResult] = useState<any>(null);
 
-  // ────────────────────────────────────────────────────────────────────────────
+  // ────────────────
   // КЛЮЧЕВОЙ ФИКС: imageFiles храним в ref, а не в state.
   // useState — асинхронный, и при быстрой вставке картинки
   // syncBlocksFromEditor мог не видеть File, потому что setState
   // ещё не применился. useRef обновляется мгновенно.
-  // ────────────────────────────────────────────────────────────────────────────
+  // ────────────────
   const imageFilesRef = useRef<Map<string, File>>(new Map());
 
   const insertImageRef = useRef<(file: File) => void>(() => { });
@@ -366,7 +366,7 @@ function markdownToHtml(text: string): string {
       .join('');
   }, [blocks, resolvedUrls]);
 
-  // ── Ref на editor ─────────────────────────────────────────────────────────
+  // ── Ref на editor ──
   const editorRef = useRef<Editor | null>(null);
 
   // ── Синхронизация editor → blocks ─────────────────────────────────────────
@@ -524,7 +524,7 @@ function markdownToHtml(text: string): string {
     return () => clearTimeout(timer);
   }, [urlsReady, resolvedUrls]); // eslint-disable-line
 
-  // ── Вставка картинки ───────────────────────────────────────────────────────
+  // ── Вставка картинки 
 
   const insertImageFile = useCallback(
     (file: File) => {
@@ -553,7 +553,7 @@ function markdownToHtml(text: string): string {
     insertImageRef.current = insertImageFile;
   }, [insertImageFile]);
 
-  // ── SpellCheck ─────────────────────────────────────────────────────────────
+  // ── SpellCheck ─
 
   const handleSpellCheck = useCallback(async () => {
     if (!editor) return;
@@ -590,7 +590,7 @@ function markdownToHtml(text: string): string {
     [editor]
   );
 
-  // ── Рендер ─────────────────────────────────────────────────────────────────
+  // ── Рендер ─────
 
   if (!urlsReady) {
     return (

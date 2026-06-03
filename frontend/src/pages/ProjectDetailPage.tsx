@@ -13,15 +13,51 @@ import type { Project, Counterparty, TicketListItem, SimpleUser, CounterpartyCus
 
 type TabType = 'info' | 'members' | 'tickets';
 
-// ─── Константы ────────────────────────────────────────────────────────────────
+// ─── Константы ────
 
 const PROJECT_ROLES = [
-  { value: 'owner', label: 'Владелец', color: 'text-[var(--accent)]', bg: 'bg-[var(--accent-soft)]', border: 'border-[var(--accent)]/15' },
-  { value: 'manager', label: 'Менеджер', color: 'text-[var(--info)]', bg: 'bg-blue-500/15', border: 'border-blue-500/30' },
-  { value: 'member', label: 'Участник', color: 'text-[var(--success)]', bg: 'bg-[var(--success)]/8', border: 'border-emerald-500/30' },
-  { value: 'viewer', label: 'Наблюдатель', color: 'text-[var(--text-primary)]/50', bg: 'bg-[var(--hover-2)]', border: 'border-[var(--border-color)]' },
-  { value: 'customer', label: 'Клиент', color: 'text-violet-400', bg: 'bg-violet-500/15', border: 'border-violet-500/30' },
-  { value: 'customer_admin', label: 'Администратор клиента', color: 'text-[var(--info)]', bg: 'bg-cyan-500/15', border: 'border-cyan-500/30' },
+  {
+    value: 'owner',
+    label: 'Владелец',
+    color: 'text-[var(--accent)]',
+    bg: 'bg-[var(--accent-soft)]',
+    border: 'border-[var(--accent)]/15',
+  },
+  {
+    value: 'manager',
+    label: 'Менеджер',
+    color: 'text-[var(--info)]',
+    bg: 'bg-blue-500/15',
+    border: 'border-blue-500/30',
+  },
+  {
+    value: 'contributor',         // ← было 'member'
+    label: 'Участник',
+    color: 'text-[var(--success)]',
+    bg: 'bg-[var(--success)]/8',
+    border: 'border-emerald-500/30',
+  },
+  {
+    value: 'viewer',
+    label: 'Наблюдатель',
+    color: 'text-[var(--text-primary)]/50',
+    bg: 'bg-[var(--hover-2)]',
+    border: 'border-[var(--border-color)]',
+  },
+  {
+    value: 'customer',
+    label: 'Клиент',
+    color: 'text-violet-400',
+    bg: 'bg-violet-500/15',
+    border: 'border-violet-500/30',
+  },
+  {
+    value: 'customer_manager',    // ← было 'customer_admin'
+    label: 'Менеджер клиента',
+    color: 'text-[var(--info)]',
+    bg: 'bg-cyan-500/15',
+    border: 'border-cyan-500/30',
+  },
 ] as const;
 
 type RoleValue = typeof PROJECT_ROLES[number]['value'];
@@ -126,7 +162,7 @@ function ArchiveModal({
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -156,7 +192,7 @@ export default function ProjectDetailPage() {
   const [availableUsers, setAvailableUsers] = useState<Array<CounterpartyCustomer | SimpleUser>>([]);
   const [loadingAvailable, setLoadingAvailable] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<Map<string, CounterpartyCustomer | SimpleUser>>(new Map());
-  const [selectedRole, setSelectedRole] = useState<RoleValue>('member');
+  const [selectedRole, setSelectedRole] = useState<RoleValue>('contributor');
   const [searchUser, setSearchUser] = useState('');
   const [addingMembers, setAddingMembers] = useState(false);
 
@@ -325,7 +361,7 @@ export default function ProjectDetailPage() {
   useEffect(() => { if (activeTab === 'tickets') loadTickets(); }, [activeTab, loadTickets]);
   useEffect(() => { if (showAddModal) loadAvailableUsers(); }, [showAddModal, loadAvailableUsers]);
 
-  // ── Действия ─────────────────────────────────────────────────────────────
+  // ── Действия ─
 
   const handleArchive = async () => {
     setArchiving(true);
@@ -341,27 +377,42 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const handleAddMembers = async () => {
-    if (!selectedUsers.size) return;
-    setAddingMembers(true);
-    try {
-      const payload = Array.from(selectedUsers.values()).map(u => ({
-        user_id: u.id,
-        project_role: selectedRole,
-      }));
-      await projectsApi.addMembers(id!, payload);
-      toast({ title: 'Успешно', description: `Добавлено ${payload.length} участников` });
-      setShowAddModal(false);
-      setSelectedUsers(new Map());
-      setSearchUser('');
-      setSelectedRole('member');
-      await loadProject();
-    } catch {
-      toast({ title: 'Ошибка', description: 'Не удалось добавить участников', variant: 'destructive' });
-    } finally {
-      setAddingMembers(false);
-    }
-  };
+const handleAddMembers = async () => {
+  if (!selectedUsers.size) return;
+  setAddingMembers(true);
+  try {
+    const payload = Array.from(selectedUsers.values()).map(u => ({
+      user_id: u.id,
+      project_role: selectedRole,
+    }));
+
+    await projectsApi.addMembers(id!, payload);
+
+    toast({
+      title: 'Успешно',
+      description: payload.length === 1
+        ? 'Участник добавлен'
+        : `Добавлено ${payload.length} участников`,
+    });
+
+    setShowAddModal(false);
+    setSelectedUsers(new Map());
+    setSearchUser('');
+    setSelectedRole('member');
+    await loadProject();
+  } catch (e: any) {
+    const msg = e?.response?.data?.detail?.[0]?.msg
+      || e?.response?.data?.detail
+      || 'Не удалось добавить участников';
+    toast({
+      title: 'Ошибка',
+      description: typeof msg === 'string' ? msg : 'Не удалось добавить участников',
+      variant: 'destructive',
+    });
+  } finally {
+    setAddingMembers(false);
+  }
+};
 
   const toggleUser = (u: CounterpartyCustomer | SimpleUser) => {
     setSelectedUsers(prev => {
@@ -371,7 +422,7 @@ export default function ProjectDetailPage() {
     });
   };
 
-  // ── Вспомогательные ───────────────────────────────────────────────────────
+  // ── Вспомогательные 
 
   // Получить имя и email участника
   // Получить имя и email участника
@@ -463,7 +514,7 @@ export default function ProjectDetailPage() {
     'Критический': 'bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent)]/15',
   }[p] ?? 'bg-[var(--hover-1)] text-[var(--text-primary)]/50 border-white/10');
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render ────
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -487,7 +538,7 @@ export default function ProjectDetailPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
+      {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex items-start gap-4">
           <button onClick={() => navigate('/projects')}
@@ -539,7 +590,7 @@ export default function ProjectDetailPage() {
         )}
       </div>
 
-      {/* ── Tabs ─────────────────────────────────────────────────────────── */}
+      {/* ── Tabs ──── */}
       <div className="flex gap-1.5 border-b border-[var(--border-color)]">
         {([
           { id: 'info' as TabType, label: 'Информация', icon: FolderOpen },
@@ -561,7 +612,7 @@ export default function ProjectDetailPage() {
         ))}
       </div>
 
-      {/* ── Content ──────────────────────────────────────────────────────── */}
+      {/* ── Content ─ */}
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
 

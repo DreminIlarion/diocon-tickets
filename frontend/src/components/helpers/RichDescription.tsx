@@ -8,7 +8,7 @@ interface RichDescriptionProps {
   className?: string;
 }
 
-// ─── Оба формата ───────────────────────────────────────────────────────────
+// ─── Оба формата ────
 // Новый:   ![любой alt](attachment:UUID)
 // Legacy:  [[image:UUID]]
 const ATTACHMENT_REGEX =

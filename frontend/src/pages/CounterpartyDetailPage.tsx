@@ -12,7 +12,7 @@ import {
 import { counterpartiesApi, ticketsApi, productsApi } from '../api/client';
 import type { Counterparty, CounterpartyCustomer, TicketListItem } from '../types';
 
-// ─── Phone mask ───────────────────────────────────────────────────────────────
+// ─── Phone mask ───
 
 function formatPhone(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -62,7 +62,7 @@ function PhoneInput({ value, onChange, placeholder = '+7 (999) 123-45-67', class
   );
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ──────
 
 function getInitials(name?: string | null): string {
   if (!name) return '?';
@@ -143,7 +143,7 @@ const formatAttrValue = (v: any): string => {
   return String(v);
 };
 
-// ─── Модалка удаления ─────────────────────────────────────────────────────────
+// ─── Модалка удаления ──
 
 function DeleteModal({ title, name, loading, onConfirm, onClose }: {
   title?: string; name: string; loading: boolean; onConfirm: () => void; onClose: () => void;
@@ -756,7 +756,7 @@ function BranchesTab({ counterpartyId, counterpartyName }: {
   );
 }
 
-// ─── Вкладка продуктов ────────────────────────────────────────────────────────
+// ─── Вкладка продуктов ─
 
 function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
   const [products, setProducts] = useState<any[]>([]);
@@ -977,11 +977,11 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
   );
 }
 
-// ─── Типы вкладок ─────────────────────────────────────────────────────────────
+// ─── Типы вкладок ─
 
 type TabType = 'info' | 'contact' | 'products' | 'branches' | 'customers' | 'tickets' | 'history';
 
-// ─── Основная страница ────────────────────────────────────────────────────────
+// ─── Основная страница ─
 
 export default function CounterpartyDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -1100,7 +1100,7 @@ export default function CounterpartyDetailPage() {
                 {counterparty.parent_id && (
                   <Link to={`/counterparties/${counterparty.parent_id}`}
                     className="flex items-center gap-1.5 text-sm text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors">
-                    <ArrowLeft size={12} /> Головная организация
+                    <ArrowLeft size={12} /> К головному контрагенту
                   </Link>
                 )}
               </div>

@@ -8,7 +8,7 @@ import {
 import { productsApi } from '../api/client';
 import { useNavigate } from 'react-router-dom';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// ─── Constants ────
 
 const CATEGORIES = [
   { value: 'ERP', label: 'ERP', icon: Server, color: 'text-[var(--warning)]', bg: 'bg-orange-500/10' },
@@ -58,7 +58,7 @@ const formatAttrValue = (v: any): string => {
   return String(v);
 };
 
-// ─── Filter Dropdown ──────────────────────────────────────────────────────────
+// ─── Filter Dropdown ───
 
 interface FilterOption { value: string; label: string; icon?: React.ReactNode; dot?: string; }
 
@@ -172,7 +172,7 @@ function FilterDropdown({
   );
 }
 
-// ─── Active Filters ───────────────────────────────────────────────────────────
+// ─── Active Filters ────
 
 function ActiveFilters({
   category, status, onClearCategory, onClearStatus, onClearAll,
@@ -214,7 +214,7 @@ function ActiveFilters({
   );
 }
 
-// ─── Product Row ──────────────────────────────────────────────────────────────
+// ─── Product Row ──
 
 const ProductRow = ({ product, onClick }: { product: any; onClick: () => void }) => {
   const cat = catMeta(product.category);
@@ -262,7 +262,7 @@ const ProductRow = ({ product, onClick }: { product: any; onClick: () => void })
   );
 };
 
-// ─── Product Modal ────────────────────────────────────────────────────────────
+// ─── Product Modal 
 
 const ProductModal = ({ product, onClose }: { product: any; onClose: () => void }) => {
   const cat = catMeta(product.category);
@@ -351,7 +351,7 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
   );
 };
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Main ─────────
 
 export default function ProductsPage() {
   const navigate = useNavigate();
@@ -407,7 +407,7 @@ export default function ProductsPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
+      {/* ── Header ── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">Продукты</h2>
@@ -492,7 +492,7 @@ export default function ProductsPage() {
         <div className="w-[100px] text-right">Статус</div>
       </div>
 
-      {/* ── Список ───────────────────────────────────────────────────────── */}
+      {/* ── Список ── */}
       {loading ? (
         <div className="flex justify-center py-24">
           <Loader2 size={24} className="animate-spin text-[var(--accent)]/50" />

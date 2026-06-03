@@ -107,7 +107,7 @@ function ReplyFilePreview({ file, onRemove }: ReplyFilePreviewProps) {
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 export const CommentItem = React.memo(({
   comment,
@@ -218,7 +218,7 @@ export const CommentItem = React.memo(({
     await forceLoadReplies();
   }, [showReplies, replies.length, repliesDirty, forceLoadReplies]);
 
-  // ── Реакции ───────────────────────────────────────────────────────────────
+  // ── Реакции ───
   const handleReaction = useCallback(async (reactionType: string) => {
     if (loadingReaction) return;
     setLoadingReaction(true);
@@ -305,7 +305,7 @@ export const CommentItem = React.memo(({
     if (onReplyDeleted) onReplyDeleted(replyId, comment.id);
   }, [comment.id, onDeleteComment, onReplyDeleted]);
 
-  // ── Высота textarea ───────────────────────────────────────────────────────
+  // ── Высота textarea 
   const adjustReplyHeight = useCallback(() => {
     const ta = replyTextareaRef.current;
     if (ta) { ta.style.height = 'auto'; ta.style.height = `${Math.min(ta.scrollHeight, 150)}px`; }
@@ -397,7 +397,7 @@ export const CommentItem = React.memo(({
     }
   };
 
-  // ── Редактирование ────────────────────────────────────────────────────────
+  // ── Редактирование ─
   const handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); handleSaveEdit(); }
     if (e.key === 'Escape') { setIsEditing(false); setEditText(comment.text); }
@@ -478,7 +478,7 @@ export const CommentItem = React.memo(({
     );
   };
 
-  // ── Рендер ───────────────────────────────────────────────────────────────
+  // ── Рендер ───
   return (
     <>
       <div

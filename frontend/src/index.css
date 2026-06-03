@@ -30,18 +30,18 @@
   --text-muted:     rgba(255, 255, 255, 0.45);
   --text-disabled:  rgba(255, 255, 255, 0.25);
 
-  /* Акценты */
+  /* Акценты — красный (основной) */
   --accent:       #b91c1c;
   --accent-light: #dc2626;
   --accent-dark:  #991b1b;
   --accent-glow:  rgba(185, 28, 28, 0.25);
   --accent-soft:  rgba(185, 28, 28, 0.12);
 
-  /* Состояния */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error:   #ef4444;
-  --info:    #3b82f6;
+  /* Состояния — приглушённые */
+  --success: #059669;      /* зелёный */
+  --warning: #d97706;      /* оранжевый */
+  --error:   #dc2626;      /* красный */
+  --info:    #2563eb;      /* синий */
 
   /* Hover слои */
   --hover-1: rgba(255, 255, 255, 0.03);
@@ -49,8 +49,8 @@
   --hover-3: rgba(255, 255, 255, 0.08);
 
   /* Сетка-фон */
-  --grid-color: rgba(255, 255, 255, 0.279);
-  --dot-color:  rgba(255, 255, 255, 0.4);
+  --grid-color: rgba(255, 255, 255, 0.08);
+  --dot-color:  rgba(255, 255, 255, 0.12);
 
   /* Тени */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -61,96 +61,96 @@
   --scroll-thumb: rgba(255, 255, 255, 0.12);
   --scroll-thumb-hover: rgba(255, 255, 255, 0.22);
 
-  /* Статусы — приглушённые, не кислотные */
+  /* Статусы — нейтральная палитра */
   --status-new-bg: rgba(59, 130, 246, 0.12);
   --status-new-text: #60a5fa;
   --status-new-border: rgba(59, 130, 246, 0.20);
 
-  --status-agreement-bg: rgba(139, 92, 246, 0.12);
-  --status-agreement-text: #a78bfa;
-  --status-agreement-border: rgba(139, 92, 246, 0.20);
+  --status-agreement-bg: rgba(107, 114, 128, 0.12);
+  --status-agreement-text: #9ca3af;
+  --status-agreement-border: rgba(107, 114, 128, 0.20);
 
-  --status-open-bg: rgba(6, 182, 212, 0.12);
-  --status-open-text: #22d3ee;
-  --status-open-border: rgba(6, 182, 212, 0.20);
+  --status-open-bg: rgba(59, 130, 246, 0.12);
+  --status-open-text: #60a5fa;
+  --status-open-border: rgba(59, 130, 246, 0.20);
 
-  --status-progress-bg: rgba(251, 191, 36, 0.12);
+  --status-progress-bg: rgba(245, 158, 11, 0.12);
   --status-progress-text: #fbbf24;
-  --status-progress-border: rgba(251, 191, 36, 0.20);
+  --status-progress-border: rgba(245, 158, 11, 0.20);
 
-  --status-waiting-bg: rgba(251, 146, 60, 0.12);
-  --status-waiting-text: #fb923c;
-  --status-waiting-border: rgba(251, 146, 60, 0.20);
+  --status-waiting-bg: rgba(107, 114, 128, 0.12);
+  --status-waiting-text: #9ca3af;
+  --status-waiting-border: rgba(107, 114, 128, 0.20);
 
   --status-resolved-bg: rgba(16, 185, 129, 0.12);
   --status-resolved-text: #34d399;
   --status-resolved-border: rgba(16, 185, 129, 0.20);
 
-  --status-closed-bg: rgba(115, 115, 115, 0.12);
-  --status-closed-text: #a3a3a3;
-  --status-closed-border: rgba(115, 115, 115, 0.20);
+  --status-closed-bg: rgba(107, 114, 128, 0.12);
+  --status-closed-text: #9ca3af;
+  --status-closed-border: rgba(107, 114, 128, 0.20);
 
-  --status-reopened-bg: rgba(248, 113, 113, 0.12);
+  --status-reopened-bg: rgba(220, 38, 38, 0.12);
   --status-reopened-text: #f87171;
-  --status-reopened-border: rgba(248, 113, 113, 0.20);
+  --status-reopened-border: rgba(220, 38, 38, 0.20);
 
-  --status-rejected-bg: rgba(82, 82, 82, 0.12);
+  --status-rejected-bg: rgba(107, 114, 128, 0.12);
   --status-rejected-text: #737373;
-  --status-rejected-border: rgba(82, 82, 82, 0.20);
+  --status-rejected-border: rgba(107, 114, 128, 0.20);
 
-  /* Приоритеты */
-  --priority-low-bg: rgba(16, 185, 24, 0.12);
+  /* Приоритеты — нейтральные */
+  --priority-low-bg: rgba(16, 185, 129, 0.12);
   --priority-low-text: #34d399;
   --priority-low-border: rgba(16, 185, 129, 0.20);
 
-  --priority-medium-bg: rgba(251, 191, 36, 0.12);
+  --priority-medium-bg: rgba(245, 158, 11, 0.12);
   --priority-medium-text: #fbbf24;
-  --priority-medium-border: rgba(251, 191, 36, 0.20);
+  --priority-medium-border: rgba(245, 158, 11, 0.20);
 
-  --priority-high-bg: rgba(251, 146, 60, 0.12);
+  --priority-high-bg: rgba(249, 115, 22, 0.12);
   --priority-high-text: #fb923c;
-  --priority-high-border: rgba(251, 146, 60, 0.20);
+  --priority-high-border: rgba(249, 115, 22, 0.20);
 
-  --priority-critical-bg: rgba(248, 113, 113, 0.12);
+  --priority-critical-bg: rgba(220, 38, 38, 0.12);
   --priority-critical-text: #f87171;
-  --priority-critical-border: rgba(248, 113, 113, 0.20);
+  --priority-critical-border: rgba(220, 38, 38, 0.20);
 
-  /* Типы тикетов */
-  --type-incident-bg: rgba(239, 68, 68, 0.12);
+  /* Типы тикетов — приглушённые */
+  --type-incident-bg: rgba(220, 38, 38, 0.12);
   --type-incident-text: #f87171;
-  --type-incident-border: rgba(239, 68, 68, 0.20);
+  --type-incident-border: rgba(220, 38, 38, 0.20);
 
   --type-service-bg: rgba(59, 130, 246, 0.12);
   --type-service-text: #60a5fa;
   --type-service-border: rgba(59, 130, 246, 0.20);
 
-  --type-consultation-bg: rgba(6, 182, 212, 0.12);
-  --type-consultation-text: #22d3ee;
-  --type-consultation-border: rgba(6, 182, 212, 0.20);
+  --type-consultation-bg: rgba(107, 114, 128, 0.12);
+  --type-consultation-text: #9ca3af;
+  --type-consultation-border: rgba(107, 114, 128, 0.20);
 
-  --type-complaint-bg: rgba(251, 146, 60, 0.12);
+  --type-complaint-bg: rgba(249, 115, 22, 0.12);
   --type-complaint-text: #fb923c;
-  --type-complaint-border: rgba(251, 146, 60, 0.20);
+  --type-complaint-border: rgba(249, 115, 22, 0.20);
 
-  --type-task-bg: rgba(168, 85, 247, 0.12);
-  --type-task-text: #c084fc;
-  --type-task-border: rgba(168, 85, 247, 0.20);
+  --type-task-bg: rgba(16, 185, 129, 0.12);
+  --type-task-text: #34d399;
+  --type-task-border: rgba(16, 185, 129, 0.20);
 
-  --type-problem-bg: rgba(234, 179, 8, 0.12);
-  --type-problem-text: #facc15;
-  --type-problem-border: rgba(234, 179, 8, 0.20);
+  --type-problem-bg: rgba(245, 158, 11, 0.12);
+  --type-problem-text: #fbbf24;
+  --type-problem-border: rgba(245, 158, 11, 0.20);
 
-  --type-change-bg: rgba(34, 197, 94, 0.12);
-  --type-change-text: #4ade80;
-  --type-change-border: rgba(34, 197, 94, 0.20);
+  --type-change-bg: rgba(59, 130, 246, 0.12);
+  --type-change-text: #60a5fa;
+  --type-change-border: rgba(59, 130, 246, 0.20);
 
   --type-improvement-bg: rgba(16, 185, 129, 0.12);
   --type-improvement-text: #34d399;
   --type-improvement-border: rgba(16, 185, 129, 0.20);
 
-  --type-other-bg: rgba(161, 161, 170, 0.12);
-  --type-other-text: #a1a1aa;
-  --type-other-border: rgba(161, 161, 170, 0.20);
+  --type-other-bg: rgba(107, 114, 128, 0.12);
+  --type-other-text: #9ca3af;
+  --type-other-border: rgba(107, 114, 128, 0.20);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -179,14 +179,14 @@
   --text-muted:     #64748b;
   --text-disabled:  #94a3b8;
 
-  /* Акценты — насыщенные, выразительные */
+  /* Акценты — красный (основной) */
   --accent:       #dc2626;
   --accent-light: #ef4444;
   --accent-dark:  #b91c1c;
   --accent-glow:  rgba(220, 38, 38, 0.20);
   --accent-soft:  rgba(220, 38, 38, 0.10);
 
-  /* Состояния */
+  /* Состояния — приглушённые */
   --success: #059669;
   --warning: #d97706;
   --error:   #dc2626;
@@ -210,51 +210,51 @@
   --scroll-thumb:       rgba(148, 163, 184, 0.50);
   --scroll-thumb-hover: rgba(148, 163, 184, 0.75);
 
-  /* Статусы — яркие, насыщенные */
+  /* Статусы — приглушённые */
   --status-new-bg: #dbeafe;
   --status-new-text: #1e40af;
   --status-new-border: #93c5fd;
 
-  --status-agreement-bg: #f3e8ff;
-  --status-agreement-text: #6b21a8;
-  --status-agreement-border: #d8b4fe;
+  --status-agreement-bg: #f3f4f6;
+  --status-agreement-text: #4b5563;
+  --status-agreement-border: #d1d5db;
 
-  --status-open-bg: #cffafe;
-  --status-open-text: #155e75;
-  --status-open-border: #67e8f9;
+  --status-open-bg: #dbeafe;
+  --status-open-text: #1e40af;
+  --status-open-border: #93c5fd;
 
-  --status-progress-bg: #fef08a;
-  --status-progress-text: #854d0e;
-  --status-progress-border: #fde047;
+  --status-progress-bg: #fef3c7;
+  --status-progress-text: #92400e;
+  --status-progress-border: #fcd34d;
 
-  --status-waiting-bg: #ffedd5;
-  --status-waiting-text: #9a3412;
-  --status-waiting-border: #fdba74;
+  --status-waiting-bg: #f3f4f6;
+  --status-waiting-text: #4b5563;
+  --status-waiting-border: #d1d5db;
 
   --status-resolved-bg: #d1fae5;
   --status-resolved-text: #047857;
   --status-resolved-border: #6ee7b7;
 
-  --status-closed-bg: #e5e7eb;
-  --status-closed-text: #374151;
-  --status-closed-border: #9ca3af;
+  --status-closed-bg: #f3f4f6;
+  --status-closed-text: #4b5563;
+  --status-closed-border: #d1d5db;
 
   --status-reopened-bg: #fee2e2;
   --status-reopened-text: #b91c1c;
   --status-reopened-border: #fca5a5;
 
-  --status-rejected-bg: #e5e7eb;
-  --status-rejected-text: #374151;
-  --status-rejected-border: #9ca3af;
+  --status-rejected-bg: #f3f4f6;
+  --status-rejected-text: #4b5563;
+  --status-rejected-border: #d1d5db;
 
-  /* Приоритеты — выразительные */
-  --priority-low-bg: #d1fad3;
+  /* Приоритеты — приглушённые */
+  --priority-low-bg: #d1fae5;
   --priority-low-text: #047857;
   --priority-low-border: #6ee7b7;
 
-  --priority-medium-bg: #fef08a;
-  --priority-medium-text: #854d0e;
-  --priority-medium-border: #fde047;
+  --priority-medium-bg: #fef3c7;
+  --priority-medium-text: #92400e;
+  --priority-medium-border: #fcd34d;
 
   --priority-high-bg: #ffedd5;
   --priority-high-text: #9a3412;
@@ -264,7 +264,7 @@
   --priority-critical-text: #b91c1c;
   --priority-critical-border: #fca5a5;
 
-  /* Типы тикетов */
+  /* Типы тикетов — приглушённые */
   --type-incident-bg: #fee2e2;
   --type-incident-text: #b91c1c;
   --type-incident-border: #fca5a5;
@@ -273,33 +273,33 @@
   --type-service-text: #1e40af;
   --type-service-border: #93c5fd;
 
-  --type-consultation-bg: #cffafe;
-  --type-consultation-text: #155e75;
-  --type-consultation-border: #67e8f9;
+  --type-consultation-bg: #f3f4f6;
+  --type-consultation-text: #4b5563;
+  --type-consultation-border: #d1d5db;
 
   --type-complaint-bg: #ffedd5;
   --type-complaint-text: #9a3412;
   --type-complaint-border: #fdba74;
 
-  --type-task-bg: #f3e8ff;
-  --type-task-text: #6b21a8;
-  --type-task-border: #d8b4fe;
+  --type-task-bg: #d1fae5;
+  --type-task-text: #047857;
+  --type-task-border: #6ee7b7;
 
-  --type-problem-bg: #fef9c3;
-  --type-problem-text: #854d0e;
-  --type-problem-border: #fde047;
+  --type-problem-bg: #fef3c7;
+  --type-problem-text: #92400e;
+  --type-problem-border: #fcd34d;
 
-  --type-change-bg: #dcfce7;
-  --type-change-text: #166534;
-  --type-change-border: #86efac;
+  --type-change-bg: #dbeafe;
+  --type-change-text: #1e40af;
+  --type-change-border: #93c5fd;
 
   --type-improvement-bg: #d1fae5;
   --type-improvement-text: #047857;
   --type-improvement-border: #6ee7b7;
 
-  --type-other-bg: #e5e7eb;
-  --type-other-text: #374151;
-  --type-other-border: #9ca3af;
+  --type-other-bg: #f3f4f6;
+  --type-other-text: #4b5563;
+  --type-other-border: #d1d5db;
 }
 
 /* ═══════════════════════════════════════════════════════════════

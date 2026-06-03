@@ -8,7 +8,7 @@ import {
 import { invitationsApi, counterpartiesApi } from '../api/client';
 import type { Counterparty, Invitation, UserRole } from '../types';
 
-// ─── Роли ─────────────────────────────────────────────────────────────────────
+// ─── Роли ─────────
 
 interface RoleOption {
   value: UserRole;
@@ -223,7 +223,7 @@ function CounterpartyDropdown({
   );
 }
 
-// ─── Статус приглашения ───────────────────────────────────────────────────────
+// ─── Статус приглашения 
 
 function getInvitationStatus(inv: Invitation) {
   if (inv.is_used) return { label: 'Принято', cls: 'bg-green-500/15 text-[var(--success)] border border-green-500/20', Icon: CheckCircle2 };
@@ -231,7 +231,7 @@ function getInvitationStatus(inv: Invitation) {
   return { label: 'Ожидает', cls: 'bg-yellow-500/15 text-[var(--warning)] border border-yellow-500/20', Icon: Clock };
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
+// ─── Основной компонент 
 
 export default function InvitationsPage() {
   const [activeTab, setActiveTab] = useState<'send' | 'history'>('send');
@@ -353,7 +353,7 @@ export default function InvitationsPage() {
   return (
     <div className="space-y-8">
 
-      {/* ── Header ────────────────────────────────────────────────────────── */}
+      {/* ── Header ─── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-2">Приглашения</h1>
@@ -372,7 +372,7 @@ export default function InvitationsPage() {
         </div>
       </div>
 
-      {/* ── Tabs ──────────────────────────────────────────────────────────── */}
+      {/* ── Tabs  */}
       <div className="flex gap-2 border-b border-white/10">
         {[
           { id: 'send' as const, label: 'Отправить', icon: Send },
@@ -395,7 +395,7 @@ export default function InvitationsPage() {
         ))}
       </div>
 
-      {/* ── Content ───────────────────────────────────────────────────────── */}
+      {/* ── Content ── */}
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
 
@@ -720,7 +720,7 @@ export default function InvitationsPage() {
           )}
         </div>
 
-        {/* ── Sidebar ─────────────────────────────────────────────────────── */}
+        {/* ── Sidebar  */}
         <div className="space-y-6">
 
           {/* Статистика (видна на вкладке истории) */}
