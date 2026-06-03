@@ -23,7 +23,7 @@ import {
   TicketEditor, serializeBlocks, deserializeToBlocks, type DescriptionBlock,
 } from '../components/helpers/TicketEditor';
 
-// ── Константы ────────────────────────────────────────────────────────────────
+// ── Константы
 
 const STATUS_TRANSITIONS: Record<string, string[]> = {
   'Новый': ['На согласовании', 'Открыт'],
@@ -70,7 +70,7 @@ interface NormalizedComments {
   rootIds: string[];
 }
 
-// ── Компонент ────────────────────────────────────────────────────────────────
+// ── Компонент 
 
 export default function TicketDetailPage() {
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});

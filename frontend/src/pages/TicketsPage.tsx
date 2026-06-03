@@ -13,59 +13,48 @@ import { ticketsApi } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import type { TicketListItem, TicketStatus, TicketPriority } from '../types';
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONSTANTS
-   ═══════════════════════════════════════════════════════════════════════════ */
-
 const STATUSES: { value: TicketStatus; label: string; color: string }[] = [
-  { value: 'Новый',           label: 'Новый',           color: 'status-new' },
+  { value: 'Новый', label: 'Новый', color: 'status-new' },
   { value: 'На согласовании', label: 'На согласовании', color: 'status-agreement' },
-  { value: 'Открыт',          label: 'Открыт',          color: 'status-open' },
-  { value: 'В работе',        label: 'В работе',        color: 'status-progress' },
-  { value: 'Ожидает ответа',  label: 'Ожидает ответа',  color: 'status-waiting' },
-  { value: 'Решён',           label: 'Решён',           color: 'status-resolved' },
-  { value: 'Закрыт',          label: 'Закрыт',          color: 'status-closed' },
-  { value: 'Переоткрыт',      label: 'Переоткрыт',      color: 'status-reopened' },
+  { value: 'Открыт', label: 'Открыт', color: 'status-open' },
+  { value: 'В работе', label: 'В работе', color: 'status-progress' },
+  { value: 'Ожидает ответа', label: 'Ожидает ответа', color: 'status-waiting' },
+  { value: 'Решён', label: 'Решён', color: 'status-resolved' },
+  { value: 'Закрыт', label: 'Закрыт', color: 'status-closed' },
+  { value: 'Переоткрыт', label: 'Переоткрыт', color: 'status-reopened' },
 ];
 
 const PRIORITIES: { value: TicketPriority; label: string; color: string }[] = [
-  { value: 'Низкий',      label: 'Низкий',      color: 'priority-low' },
-  { value: 'Средний',     label: 'Средний',      color: 'priority-medium' },
-  { value: 'Высокий',     label: 'Высокий',      color: 'priority-high' },
-  { value: 'Критический', label: 'Критический',  color: 'priority-critical' },
+  { value: 'Низкий', label: 'Низкий', color: 'priority-low' },
+  { value: 'Средний', label: 'Средний', color: 'priority-medium' },
+  { value: 'Высокий', label: 'Высокий', color: 'priority-high' },
+  { value: 'Критический', label: 'Критический', color: 'priority-critical' },
 ];
 
 const TICKET_TYPES: { value: string; label: string; icon: ReactNode; color: string }[] = [
-  { value: 'Инцидент',            label: 'Инцидент',            icon: <AlertTriangle size={16} />, color: 'type-incident' },
-  { value: 'Запрос на услугу',    label: 'Запрос на услугу',    icon: <CheckCircle2 size={16} />,  color: 'type-service' },
-  { value: 'Консультация',        label: 'Консультация',        icon: <HelpCircle size={16} />,    color: 'type-consultation' },
-  { value: 'Жалоба',              label: 'Жалоба',              icon: <AlertTriangle size={16} />, color: 'type-complaint' },
-  { value: 'Задача',              label: 'Задача',              icon: <MessageSquare size={16} />, color: 'type-task' },
-  { value: 'Проблема',            label: 'Проблема',            icon: <AlertTriangle size={16} />, color: 'type-problem' },
-  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 size={16} />,         color: 'type-change' },
-  { value: 'Улучшение',           label: 'Улучшение',           icon: <Sparkles size={16} />,      color: 'type-improvement' },
-  { value: 'Прочее',              label: 'Прочее',              icon: <MessageSquare size={16} />, color: 'type-other' },
+  { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle size={18} />, color: 'type-incident' },
+  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle2 size={18} />, color: 'type-service' },
+  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle size={18} />, color: 'type-consultation' },
+  { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle size={18} />, color: 'type-complaint' },
+  { value: 'Задача', label: 'Задача', icon: <MessageSquare size={18} />, color: 'type-task' },
+  { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle size={18} />, color: 'type-problem' },
+  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 size={18} />, color: 'type-change' },
+  { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles size={18} />, color: 'type-improvement' },
+  { value: 'Прочее', label: 'Прочее', icon: <MessageSquare size={18} />, color: 'type-other' },
 ];
 
 const STATUS_ICON: Record<string, ReactNode> = {
-  'Новый':           <Sparkles size={16} />,
-  'На согласовании': <Clock size={16} />,
-  'Открыт':          <CheckCircle2 size={16} />,
-  'В работе':        <Loader2 size={16} />,
-  'Ожидает ответа':  <Clock size={16} />,
-  'Решён':           <CheckCircle2 size={16} />,
-  'Закрыт':          <XCircle size={16} />,
-  'Переоткрыт':      <AlertTriangle size={16} />,
+  'Новый': <Sparkles size={18} />,
+  'На согласовании': <Clock size={18} />,
+  'Открыт': <CheckCircle2 size={18} />,
+  'В работе': <Loader2 size={18} />,
+  'Ожидает ответа': <Clock size={18} />,
+  'Решён': <CheckCircle2 size={18} />,
+  'Закрыт': <XCircle size={18} />,
+  'Переоткрыт': <AlertTriangle size={18} />,
 };
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   UTILS
-   ═══════════════════════════════════════════════════════════════════════════ */
 
-/**
- * «Иванов Иван Иванович» → «Иванов И.И.»
- * Если строка не похожа на ФИО (одно слово) — возвращает как есть.
- */
 function toShortName(fullName: string | null | undefined): string {
   if (!fullName) return '—';
   const parts = fullName.trim().split(/\s+/);
@@ -77,10 +66,6 @@ function toShortName(fullName: string | null | undefined): string {
     .join('');
   return initials ? `${last} ${initials}` : last;
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   FILTER DROPDOWN
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 interface DropdownOption {
   value: string;
@@ -102,9 +87,9 @@ interface FilterDropdownProps {
 function FilterDropdown({
   label, icon, options, value, onChange, placeholder = 'Все', searchable = false,
 }: FilterDropdownProps) {
-  const [open, setOpen]   = useState(false);
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const ref      = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -125,8 +110,8 @@ function FilterDropdown({
   const selected = options.find(o => o.value === value);
   const filtered = query
     ? options.filter(o =>
-        o.label.toLowerCase().includes(query.toLowerCase()) ||
-        o.sublabel?.toLowerCase().includes(query.toLowerCase()))
+      o.label.toLowerCase().includes(query.toLowerCase()) ||
+      o.sublabel?.toLowerCase().includes(query.toLowerCase()))
     : options;
 
   return (
@@ -146,7 +131,7 @@ function FilterDropdown({
             <span className="flex items-center gap-2 truncate">
               {selected.color && (
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: `var(--${selected.color}-text)` }} />
+                  style={{ backgroundColor: `var(--${selected.color}-text)` }} />
               )}
               <span className="truncate">{selected.label}</span>
             </span>
@@ -161,7 +146,7 @@ function FilterDropdown({
             <X size={14} />
           </span>
         ) : (
-          <ChevronDown size={16}
+          <ChevronDown size={18}
             className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         )}
       </button>
@@ -169,7 +154,7 @@ function FilterDropdown({
       {open && (
         <div className="absolute z-[100] min-w-[220px] w-max top-full mt-2 left-0
                         bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl overflow-hidden"
-             style={{ boxShadow: 'var(--shadow-lg)' }}>
+          style={{ boxShadow: 'var(--shadow-lg)' }}>
           {searchable && (
             <div className="p-2 border-b border-[var(--border-color)]">
               <div className="relative">
@@ -185,7 +170,7 @@ function FilterDropdown({
             <button type="button" onClick={() => { onChange(''); setOpen(false); setQuery(''); }}
               className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors
                 ${!value ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)]'}`}>
-              {!value ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
+              {!value ? <Check size={18} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
               <span>{placeholder}</span>
             </button>
             <div className="h-px bg-[var(--hover-2)] mx-3 my-1" />
@@ -198,7 +183,7 @@ function FilterDropdown({
                   onClick={() => { onChange(option.value); setOpen(false); setQuery(''); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-left text-base transition-colors
                     ${isSelected ? 'bg-red-500/10 text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70 hover:bg-[var(--hover-1)]'}`}>
-                  {isSelected ? <Check size={16} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
+                  {isSelected ? <Check size={18} className="text-red-400 flex-shrink-0" /> : <span className="w-4 flex-shrink-0" />}
                   {option.color ? (
                     <span className={`px-2.5 py-1 rounded-lg text-base font-medium border ${option.color}`}>{option.label}</span>
                   ) : (
@@ -217,9 +202,6 @@ function FilterDropdown({
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   STAT CARD
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 function StatCard({ label, value, icon: Icon, color, bg }: {
   label: string; value: number; icon: ElementType; color: string; bg: string;
@@ -238,9 +220,6 @@ function StatCard({ label, value, icon: Icon, color, bg }: {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   FILTER TAG
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 function FilterTag({ label, icon, colorClass, onRemove }: {
   label: string; icon?: ReactNode; colorClass?: string; onRemove: () => void;
@@ -256,9 +235,6 @@ function FilterTag({ label, icon, colorClass, onRemove }: {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TICKET ROW
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTypeColor }: {
   ticket: TicketListItem;
@@ -279,7 +255,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
     >
       {/* ── Название + номер ── */}
       <div className="min-w-0 pr-3">
-        <span className="text-base font-semibold text-[var(--text-primary)] block leading-snug
+        <span className="text-[16px] font-semibold text-[var(--text-primary)] block leading-snug
                          group-hover:text-[var(--accent-light)] transition-colors line-clamp-1">
           {ticket.title}
         </span>
@@ -292,7 +268,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       <div className="min-w-0 pr-2 self-center">
         {ticket.counterparty_name ? (
           <span className="flex items-center gap-1 text-base text-[var(--text-primary)]/55 truncate">
-            <Building2 size={16} className="shrink-0 text-[var(--text-primary)]/30" />
+            <Building2 size={18} className="shrink-0 text-[var(--text-primary)]/30" />
             <span className="truncate">{ticket.counterparty_name}</span>
           </span>
         ) : (
@@ -301,7 +277,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
         {/* Проект под контрагентом */}
         {ticket.project_key && (
           <span className="flex items-center gap-1 text-[15px] text-[var(--text-primary)]/30 mt-0.5 truncate">
-            <FolderOpen size={16} className="shrink-0" />
+            <FolderOpen size={18} className="shrink-0" />
             <span className="font-mono truncate">{ticket.project_key}</span>
           </span>
         )}
@@ -311,7 +287,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       <div className="min-w-0 pr-2 self-center">
         {ticket.assignee_full_name ? (
           <span className="flex items-center gap-1 text-base text-[var(--text-primary)]/55 truncate">
-            <UserCheck size={16} className="shrink-0 text-[var(--text-primary)]/30" />
+            <UserCheck size={18} className="shrink-0 text-[var(--text-primary)]/30" />
             <span className="truncate">{toShortName(ticket.assignee_full_name)}</span>
           </span>
         ) : (
@@ -320,14 +296,14 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
         {/* Автор под исполнителем */}
         {ticket.reporter_full_name && (
           <span className="flex items-center gap-1 text-[15px] text-[var(--text-primary)]/30 mt-0.5 truncate">
-            <User size={16} className="shrink-0" />
+            <User size={18} className="shrink-0" />
             <span className="truncate">{toShortName(ticket.reporter_full_name)}</span>
           </span>
         )}
       </div>
 
-      
-      
+
+
 
       {/* ── Статус ── */}
       <div className="self-center">
@@ -342,7 +318,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       <div className="self-center">
         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[13px] font-medium
                          border whitespace-nowrap ${getPriorityColor(ticket.priority)}`}>
-          {ticket.priority === 'Критический' && <Flame size={16} />}
+          {ticket.priority === 'Критический' && <Flame size={18} />}
           {ticket.priority}
         </span>
       </div>
@@ -364,9 +340,6 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   TABLE HEADER
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 function TableHeader() {
   const cols: { label: string; extra?: string }[] = [
@@ -395,9 +368,6 @@ function TableHeader() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   EMPTY STATE
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 function EmptyState({ hasFilters, hasSearch, onCreateClick }: {
   hasFilters: boolean; hasSearch: boolean; onCreateClick: () => void;
@@ -424,29 +394,26 @@ function EmptyState({ hasFilters, hasSearch, onCreateClick }: {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function TicketsPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
-  const [tickets,     setTickets]     = useState<TicketListItem[]>([]);
-  const [loading,     setLoading]     = useState(true);
+  const [tickets, setTickets] = useState<TicketListItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [page,        setPage]        = useState(1);
-  const [totalPages,  setTotalPages]  = useState(1);
-  const [totalItems,  setTotalItems]  = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const [search,          setSearch]          = useState('');
+  const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [statusFilter,    setStatusFilter]    = useState<TicketStatus | ''>('');
-  const [priorityFilter,  setPriorityFilter]  = useState<TicketPriority | ''>('');
-  const [typeFilter,      setTypeFilter]      = useState('');
-  const [showFilters,     setShowFilters]     = useState(false);
+  const [statusFilter, setStatusFilter] = useState<TicketStatus | ''>('');
+  const [priorityFilter, setPriorityFilter] = useState<TicketPriority | ''>('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
-  /* ── Debounce ────────────────────────────────────────────────────── */
+  /* ── Debounce ─ */
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 500);
     return () => clearTimeout(t);
@@ -455,15 +422,15 @@ export default function TicketsPage() {
   /* ── Сброс страницы при смене фильтров ──────────────────────────── */
   useEffect(() => { setPage(1); }, [statusFilter, priorityFilter, typeFilter, debouncedSearch]);
 
-  /* ── Загрузка ───────────────────────────────────────────────────── */
+  /* ── Загрузка  */
   const loadTickets = useCallback(async () => {
     setLoading(true);
     try {
       const response = await ticketsApi.getAll(page, 20, {
-        status:      statusFilter    || undefined,
-        priority:    priorityFilter  || undefined,
-        ticket_type: typeFilter      || undefined,
-        query:       debouncedSearch || undefined,
+        status: statusFilter || undefined,
+        priority: priorityFilter || undefined,
+        ticket_type: typeFilter || undefined,
+        query: debouncedSearch || undefined,
       });
       setTickets(response.items);
       setTotalPages(response.total_pages);
@@ -478,7 +445,7 @@ export default function TicketsPage() {
 
   useEffect(() => { loadTickets(); }, [loadTickets]);
 
-  /* ── Helpers ─────────────────────────────────────────────────────── */
+  /* ── Helpers ── */
   const resetFilters = () => {
     setStatusFilter('');
     setPriorityFilter('');
@@ -487,40 +454,40 @@ export default function TicketsPage() {
     setPage(1);
   };
 
-  const hasFilters       = !!(statusFilter || priorityFilter || typeFilter);
+  const hasFilters = !!(statusFilter || priorityFilter || typeFilter);
   const hasActiveFilters = !!(hasFilters || debouncedSearch);
   const activeFiltersCount = [statusFilter, priorityFilter, typeFilter].filter(Boolean).length;
 
-  const getStatusColor   = (s: string) => STATUSES.find(x => x.value === s)?.color     || 'status-closed';
-  const getPriorityColor = (p: string) => PRIORITIES.find(x => x.value === p)?.color   || 'priority-medium';
-  const getTypeColor     = (t: string) => TICKET_TYPES.find(x => x.value === t)?.color || 'type-other';
+  const getStatusColor = (s: string) => STATUSES.find(x => x.value === s)?.color || 'status-closed';
+  const getPriorityColor = (p: string) => PRIORITIES.find(x => x.value === p)?.color || 'priority-medium';
+  const getTypeColor = (t: string) => TICKET_TYPES.find(x => x.value === t)?.color || 'type-other';
 
-const formatDate = (d: string) => {
-  if (!d) return '—';
-  const date = new Date(d);
-  const now = new Date();
-  
-  // Обнуляем время для корректного сравнения дат
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const diffDays = Math.floor((today.getTime() - compareDate.getTime()) / 86400000);
-  
-  if (diffDays === 0) {
-    // Сегодня — показываем "Сегодня, HH:MM"
-    return `Сегодня, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
-  }
-  if (diffDays === 1) return 'Вчера';
-  if (diffDays < 7) return `${diffDays} дн. назад`;
-  
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-};
+  const formatDate = (d: string) => {
+    if (!d) return '—';
+    const date = new Date(d);
+    const now = new Date();
 
-  /* ── Options ─────────────────────────────────────────────────────── */
-  const statusOptions:   DropdownOption[] = STATUSES.map(s     => ({ value: s.value, label: s.label, color: s.color }));
-  const priorityOptions: DropdownOption[] = PRIORITIES.map(p   => ({ value: p.value, label: p.label, color: p.color }));
-  const typeOptions:     DropdownOption[] = TICKET_TYPES.map(t => ({ value: t.value, label: t.label }));
+    // Обнуляем время для корректного сравнения дат
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.floor((today.getTime() - compareDate.getTime()) / 86400000);
 
-  /* ── Initial loader ──────────────────────────────────────────────── */
+    if (diffDays === 0) {
+      // Сегодня — показываем "Сегодня, HH:MM"
+      return `Сегодня, ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    if (diffDays === 1) return 'Вчера';
+    if (diffDays < 7) return `${diffDays} дн. назад`;
+
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  };
+
+  /* ── Options ── */
+  const statusOptions: DropdownOption[] = STATUSES.map(s => ({ value: s.value, label: s.label, color: s.color }));
+  const priorityOptions: DropdownOption[] = PRIORITIES.map(p => ({ value: p.value, label: p.label, color: p.color }));
+  const typeOptions: DropdownOption[] = TICKET_TYPES.map(t => ({ value: t.value, label: t.label }));
+
+  /* ── Initial loader ───────── */
   if (initialLoad) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -529,11 +496,11 @@ const formatDate = (d: string) => {
     );
   }
 
-  /* ── Render ──────────────────────────────────────────────────────── */
+  /* ── Render ─── */
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
 
-      {/* ── Header ─────────────────────────────────────────────────── */}
+      {/* ── Header ──────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5">
@@ -553,22 +520,22 @@ const formatDate = (d: string) => {
         </button>
       </div>
 
-      {/* ── Stats ──────────────────────────────────────────────────── */}
+      {/* ── Stats ───────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Всего"       value={totalItems}
-          icon={FileText}      color="text-[var(--text-secondary)]"          bg="bg-[var(--hover-1)]" />
-        <StatCard label="Новых"       value={tickets.filter(t => t.status === 'Новый').length}
-          icon={Clock}         color="text-[var(--status-new-text)]"         bg="bg-[var(--status-new-bg)]" />
-        <StatCard label="В работе"    value={tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length}
-          icon={CheckCircle2}  color="text-[var(--status-progress-text)]"    bg="bg-[var(--status-progress-bg)]" />
+        <StatCard label="Всего" value={totalItems}
+          icon={FileText} color="text-[var(--text-secondary)]" bg="bg-[var(--hover-1)]" />
+        <StatCard label="Новых" value={tickets.filter(t => t.status === 'Новый').length}
+          icon={Clock} color="text-[var(--status-new-text)]" bg="bg-[var(--status-new-bg)]" />
+        <StatCard label="В работе" value={tickets.filter(t => t.status === 'В работе' || t.status === 'Открыт').length}
+          icon={CheckCircle2} color="text-[var(--status-progress-text)]" bg="bg-[var(--status-progress-bg)]" />
         <StatCard label="Критических" value={tickets.filter(t => t.priority === 'Критический').length}
-          icon={AlertTriangle} color="text-[var(--priority-critical-text)]"  bg="bg-[var(--priority-critical-bg)]" />
+          icon={AlertTriangle} color="text-[var(--priority-critical-text)]" bg="bg-[var(--priority-critical-bg)]" />
       </div>
 
       {/* ── Search + Filter toggle ──────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-2.5">
         <div className="relative flex-1 min-w-[220px]">
-          <Search size={16}
+          <Search size={18}
             className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none" />
           <input
             type="text"
@@ -600,7 +567,7 @@ const formatDate = (d: string) => {
               ? 'bg-red-500/10 border-red-500/40 text-[var(--text-primary)]'
               : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70'
             }`}>
-          <SlidersHorizontal size={16}
+          <SlidersHorizontal size={18}
             className={showFilters || activeFiltersCount > 0 ? 'text-red-400' : 'text-[var(--text-primary)]/40'} />
           <span>Фильтры</span>
           {activeFiltersCount > 0 ? (
@@ -609,13 +576,13 @@ const formatDate = (d: string) => {
               {activeFiltersCount}
             </span>
           ) : (
-            <ChevronDown size={16}
+            <ChevronDown size={18}
               className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
           )}
         </button>
       </div>
 
-      {/* ── Filters panel ──────────────────────────────────────────── */}
+      {/* ── Filters panel ───── */}
       {showFilters && (
         <div className=" rounded-xl border border-[var(--border-color)] p-3.5 space-y-3
                         animate-in fade-in slide-in-from-top-1 duration-200">
@@ -626,22 +593,22 @@ const formatDate = (d: string) => {
             {hasActiveFilters && (
               <button onClick={resetFilters}
                 className="text-base text-red-400 hover:text-red-300 flex items-center gap-1 transition-colors">
-                <X size={16} /> Сбросить
+                <X size={18} /> Сбросить
               </button>
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <FilterDropdown label="Статус"     options={statusOptions}   value={statusFilter}
-              onChange={v => setStatusFilter(v as TicketStatus | '')}     placeholder="Все статусы" />
-            <FilterDropdown label="Приоритет"  options={priorityOptions} value={priorityFilter}
+            <FilterDropdown label="Статус" options={statusOptions} value={statusFilter}
+              onChange={v => setStatusFilter(v as TicketStatus | '')} placeholder="Все статусы" />
+            <FilterDropdown label="Приоритет" options={priorityOptions} value={priorityFilter}
               onChange={v => setPriorityFilter(v as TicketPriority | '')} placeholder="Все приоритеты" />
-            <FilterDropdown label="Тип заявки" options={typeOptions}     value={typeFilter}
-              onChange={v => setTypeFilter(v)}                            placeholder="Все типы" />
+            <FilterDropdown label="Тип заявки" options={typeOptions} value={typeFilter}
+              onChange={v => setTypeFilter(v)} placeholder="Все типы" />
           </div>
         </div>
       )}
 
-      {/* ── Active filter tags ─────────────────────────────────────── */}
+      {/* ── Active filter tags  */}
       {hasActiveFilters && (
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="text-base text-[var(--text-primary)]/40 flex items-center gap-1.5">
@@ -669,7 +636,7 @@ const formatDate = (d: string) => {
         </div>
       )}
 
-      {/* ── Loading indicator ──────────────────────────────────────── */}
+      {/* ── Loading indicator ─ */}
       {loading && !initialLoad && (
         <div className="flex justify-center py-2">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--hover-1)] border border-[var(--border-color)]">
@@ -679,7 +646,7 @@ const formatDate = (d: string) => {
         </div>
       )}
 
-      {/* ── Content ────────────────────────────────────────────────── */}
+      {/* ── Content ─────────── */}
       {tickets.length === 0 && !loading ? (
         <EmptyState hasFilters={hasFilters} hasSearch={!!debouncedSearch}
           onCreateClick={() => navigate('/tickets/new')} />
@@ -702,10 +669,10 @@ const formatDate = (d: string) => {
             </div>
           </div>
 
-          {/* ── Mobile cards ───────────────────────────────────────── */}
+          {/* ── Mobile cards ── */}
           <div className="lg:hidden space-y-2">
             {tickets.map(ticket => {
-              const closed   = ticket.status === 'Закрыт' || ticket.status === 'Решён';
+              const closed = ticket.status === 'Закрыт' || ticket.status === 'Решён';
               const typeInfo = TICKET_TYPES.find(t => t.value === ticket.type);
 
               return (
@@ -726,7 +693,7 @@ const formatDate = (d: string) => {
                         </span>
                       ) : (
                         <span className="flex items-center gap-1 text-[10px] text-[var(--text-muted)]">
-                          <XCircle size={16} /> Закрыта
+                          <XCircle size={18} /> Закрыта
                         </span>
                       )}
                     </div>
@@ -750,7 +717,7 @@ const formatDate = (d: string) => {
                       {STATUS_ICON[ticket.status]} {ticket.status}
                     </span>
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[15px] font-medium border ${getPriorityColor(ticket.priority)}`}>
-                      {ticket.priority === 'Критический' && <Flame size={16} />} {ticket.priority}
+                      {ticket.priority === 'Критический' && <Flame size={18} />} {ticket.priority}
                     </span>
                   </div>
 
@@ -758,26 +725,26 @@ const formatDate = (d: string) => {
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-base text-[var(--text-muted)]
                                   border-t border-[var(--border-color)] pt-2.5">
                     <span className="flex items-center gap-1">
-                      <Calendar size={16} />{formatDate(ticket.created_at)}
+                      <Calendar size={18} />{formatDate(ticket.created_at)}
                     </span>
                     {ticket.counterparty_name && (
                       <span className="flex items-center gap-1 truncate max-w-[150px]">
-                        <Building2 size={16} />{ticket.counterparty_name}
+                        <Building2 size={18} />{ticket.counterparty_name}
                       </span>
                     )}
                     {ticket.project_key && (
                       <span className="flex items-center gap-1 font-mono">
-                        <FolderOpen size={16} />{ticket.project_key}
+                        <FolderOpen size={18} />{ticket.project_key}
                       </span>
                     )}
                     {ticket.assignee_full_name && (
                       <span className="flex items-center gap-1 truncate max-w-[130px]">
-                        <UserCheck size={16} />{toShortName(ticket.assignee_full_name)}
+                        <UserCheck size={18} />{toShortName(ticket.assignee_full_name)}
                       </span>
                     )}
                     {ticket.reporter_full_name && (
                       <span className="flex items-center gap-1 truncate max-w-[130px]">
-                        <User size={16} />{toShortName(ticket.reporter_full_name)}
+                        <User size={18} />{toShortName(ticket.reporter_full_name)}
                       </span>
                     )}
                   </div>
@@ -786,7 +753,7 @@ const formatDate = (d: string) => {
             })}
           </div>
 
-          {/* ── Pagination ─────────────────────────────────────────── */}
+          {/* ── Pagination ──── */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-4 border-t border-[var(--border-color)]">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

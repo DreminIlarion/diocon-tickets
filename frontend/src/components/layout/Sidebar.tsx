@@ -2,15 +2,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  FileText, 
+  Ticket, 
+  CheckSquare,
   Building2, 
-  Mail, 
+  UserPlus, 
   Bell, 
   User,
   X,
   Building,
   FolderOpen,
-  FileAxis3d,
+  Package,
   ChevronLeft,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
@@ -47,14 +48,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const mainNavItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Главная' },
-    { to: '/tickets', icon: FileText, label: 'Заявки' },
+    { to: '/tickets', icon: Ticket, label: 'Заявки' },
     ...(isCustomer 
       ? [{ to: '/my-company', icon: Building, label: 'Моя компания' }]
       : [{ to: '/counterparties', icon: Building2, label: 'Контрагенты' }]
     ),
     { to: '/projects', icon: FolderOpen, label: 'Проекты' },
-    ...(canInvite ? [{ to: '/products', icon: FileAxis3d, label: 'Продукты' }] : []),
-    ...(canInvite ? [{ to: '/invitations', icon: Mail, label: 'Приглашения' }] : []),
+    ...(canInvite ? [{ to: '/products', icon: Package, label: 'Продукты' }] : []),
+    ...(canInvite ? [{ to: '/tasks', icon: CheckSquare, label: 'Задачи' }] : []),
+    ...(canInvite ? [{ to: '/invitations', icon: UserPlus, label: 'Приглашения' }] : []),
   ];
 
   const accountItems = [

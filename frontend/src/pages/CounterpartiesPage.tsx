@@ -771,7 +771,7 @@ export default function CounterpartiesPage() {
                 className={`
                   glass-card rounded-2xl border overflow-hidden transition-all
                   ${(companyMatched || hasMatchedBranch)
-                    ? 'border-[var(--accent)]/25 shadow-[0_0_0_1px_rgba(239,68,68,0.08)]'
+                    ? ' '
                     : 'border-[var(--border-color)]'
                   }
                 `}
@@ -937,7 +937,7 @@ export default function CounterpartiesPage() {
                             className={`
                               w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all
                               ${branchIsMatched
-                                ? 'bg-[var(--accent-soft)] border-[var(--accent)]/20'
+                                ? 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-2)]'
                                 : 'bg-[var(--hover-1)] border-[var(--border-color)] hover:bg-[var(--hover-2)]'
                               }
                             `}

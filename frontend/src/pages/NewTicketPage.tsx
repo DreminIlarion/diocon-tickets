@@ -82,7 +82,6 @@ export default function NewTicketPage() {
   const [priority, setPriority] = useState<TicketPriority>('Средний');
   const [type, setType] = useState<TicketType>('Инцидент');
   const [tags, setTags] = useState<TicketTag[]>([]);
-  const [aiSuggestedTags, setAiSuggestedTags] = useState<TicketTag[]>([]);
 
   // Обычные вложения (не картинки в тексте)
   const [generalFiles, setGeneralFiles] = useState<GeneralFile[]>([]);
@@ -108,6 +107,10 @@ export default function NewTicketPage() {
 
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<any>(null);
+  const [aiSuggestedTags, setAiSuggestedTags] = useState<TicketTag[]>([]);
+  const aiRunRef = useRef(false);
+  const lastDataHashRef = useRef<string>('');
+
   const [aiTriggered, setAiTriggered] = useState(false);
   const [newTagInput, setNewTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -192,32 +195,47 @@ export default function NewTicketPage() {
   }, [preselectedProjectId, canSelectCounterparty]);
 
   // AI — запускаем при переходе на шаг 2
-  const runAI = useCallback(async () => {
-    if (!title.trim() || !description.trim()) return;
-    setAiLoading(true);
-    setAiTriggered(true);
-    try {
-      const r = await ticketsApi.predict(title, description);
-      setAiSuggestion(r);
-      setAiSuggestedTags(r.suggested_tags || []);
-      setPriority(r.suggested_priority);
-      setTags(r.suggested_tags || []);
-    } catch { } finally { setAiLoading(false); }
-  }, [title, description]);
+// ─── AI State ────────────────────────────────────────────────────────────────
 
-  // Запускаем AI при входе на шаг 2 (если ещё не запускали или данные поменялись)
-  useEffect(() => {
-    if (step === 2 && !aiTriggered && title.trim() && description.trim()) {
-      runAI();
-    }
-  }, [step]);
+// AI — запускаем один раз при переходе на шаг 2
+const runAI = useCallback(async () => {
+  const titleTrimmed = title.trim();
+  const descTrimmed = description.trim();
+  const dataHash = `${titleTrimmed}|${descTrimmed}`;
+  
+  if (!titleTrimmed || !descTrimmed) return;
+  if (aiRunRef.current && lastDataHashRef.current === dataHash) return;
+  
+  setAiLoading(true);
+  aiRunRef.current = true;
+  lastDataHashRef.current = dataHash;
+  
+  try {
+    const r = await ticketsApi.predict(titleTrimmed, descTrimmed);
+    setAiSuggestion(r);
+    setAiSuggestedTags(r.suggested_tags || []);
+    setPriority(r.suggested_priority);
+    setTags(r.suggested_tags || []);
+  } catch (error) {
+    console.error('AI prediction failed:', error);
+  } finally {
+    setAiLoading(false);
+  }
+}, [title, description]);
 
-  // Сбрасываем триггер AI если вернулись на шаг 1 и поменяли данные
-  useEffect(() => {
-    if (step === 1) {
-      setAiTriggered(false);
-    }
-  }, [title, description]);
+// Запускаем AI при переходе на шаг 2
+useEffect(() => {
+  if (step === 2 && title.trim() && description.trim()) {
+    runAI();
+  }
+}, [step, runAI]);
+
+// Сбрасываем флаг при возврате на шаг 1
+useEffect(() => {
+  if (step === 1) {
+    aiRunRef.current = false;
+  }
+}, [step]);
 
   // ─── Loaders ───────────────────────────────────────────────────────────────
 
