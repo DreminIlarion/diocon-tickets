@@ -642,11 +642,11 @@ function BranchesTab({ counterpartyId, counterpartyName }: {
 
           <div>
             <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Название <span className="text-[var(--accent)]">*</span></label>
-            <input value={form.name} onChange={e => set('name')(e.target.value)} placeholder="Филиал в г. Казань" className={inputCls} />
+            <input value={form.name} onChange={e => set('name')(e.target.value)} placeholder="Подразделение в г. Казань" className={inputCls} />
           </div>
           <div>
             <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Полное наименование</label>
-            <input value={form.legal_name} onChange={e => set('legal_name')(e.target.value)} placeholder="ООО «Название» — филиал" className={inputCls} />
+            <input value={form.legal_name} onChange={e => set('legal_name')(e.target.value)} placeholder="ООО «Название»" className={inputCls} />
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -1080,7 +1080,7 @@ export default function CounterpartyDetailPage() {
           </button>
           <div className="flex items-center gap-5">
             <div className="w-16 h-16 rounded-2xl bg-[var(--accent)] flex items-center justify-center shadow-[var(--shadow-md)] flex-shrink-0">
-              <Building2 className="w-8 h-8 text-[var(--text-primary)]" />
+              <Building2 className="w-8 h-8 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-3 flex-wrap mb-2">

@@ -1150,7 +1150,6 @@ a {
   .max-w-7xl\\.mx-auto { max-width: 100% !important; }
   
   /* Progress indicator */
-  .gap-4 > * { flex: 1; }
   .mx-6 { margin-left: var(--space-2) !important; margin-right: var(--space-2) !important; }
   .w-24 { width: 40px !important; }
   

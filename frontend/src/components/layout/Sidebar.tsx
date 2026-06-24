@@ -15,7 +15,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
-import { useUnreadNotifications } from '../../hooks/useUnreadNotifications';
+import { useNotifications } from '../../contexts/NotificationsContext';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -32,9 +32,9 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const { unreadCount: unreadNotifications } = useNotifications();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  const { count: unreadNotifications } = useUnreadNotifications();
 
   const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
   const canInvite = ['support_agent', 'support_manager', 'executor', 'admin'].includes(user?.role || '');
@@ -66,9 +66,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   ];
 
   // ─── Nav item ───
-  const NavItem = ({ to, icon: Icon, label, badge }: {
-    to: string; icon: any; label: string; badge?: number;
-  }) => (
+const NavItem = ({
+  to,
+  icon: Icon,
+  label,
+  badge,
+}: {
+  to: string;
+  icon: any;
+  label: string;
+  badge?: number;
+}) => (
     <NavLink
       to={to}
       onClick={onClose}
@@ -83,65 +91,59 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       }
     >
       {({ isActive }) => (
-        <>
-          {/* Активный индикатор слева */}
-          {isActive && !isCollapsed && (
-            <span
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full
-                         bg-gradient-to-b from-[var(--accent-light)] to-[var(--accent)]"
-              style={{ boxShadow: '0 0 8px var(--accent-glow)' }}
-            />
-          )}
+  <>
+    {isActive && !isCollapsed && (
+      <span
+        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full
+                   bg-gradient-to-b from-[var(--accent-light)] to-[var(--accent)]"
+        style={{ boxShadow: '0 0 8px var(--accent-glow)' }}
+      />
+    )}
 
-          {/* Иконка с бейджем */}
-          <div className="relative flex-shrink-0">
-            <Icon
-              className={`w-6 h-6 transition-transform group-hover:scale-110
-                         ${isActive ? 'text-[var(--accent-light)]' : ''}`}
-            />
-            {/* Бейдж на иконке (для свёрнутого режима) */}
-            {badge != null && badge > 0 && isCollapsed && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1
-                               flex items-center justify-center rounded-full
-                               bg-[var(--accent)] text-white text-[10px] font-bold
-                               ring-2 ring-[var(--bg-primary)] animate-pulse">
-                {badge > 99 ? '99+' : badge}
-              </span>
-            )}
-          </div>
-
-          {!isCollapsed && (
-            <>
-              <span className="truncate flex-1">{label}</span>
-
-              {/* Бейдж рядом с текстом (для развёрнутого режима) */}
-              {badge != null && badge > 0 && (
-                <span className="ml-auto px-2 py-0.5 min-w-[22px] text-center
-                                 rounded-full bg-[var(--accent)] text-white
-                                 text-xs font-bold animate-pulse">
-                  {badge > 99 ? '99+' : badge}
-                </span>
-              )}
-            </>
-          )}
-
-          {/* Tooltip для свёрнутого режима */}
-          {isCollapsed && (
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg
-                             bg-[var(--bg-card)] border border-[var(--border-color)]
-                             text-xs font-medium text-[var(--text-primary)] whitespace-nowrap
-                             opacity-0 group-hover:opacity-100 transition-opacity duration-150
-                             shadow-lg z-50 flex items-center gap-2">
-              {label}
-              {badge != null && badge > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold">
-                  {badge}
-                </span>
-              )}
-            </span>
-          )}
-        </>
+    <div className="relative flex-shrink-0">
+      <Icon
+        className={`w-6 h-6 transition-transform group-hover:scale-110
+                   ${isActive ? 'text-[var(--accent-light)]' : ''}`}
+      />
+      {badge != null && badge > 0 && isCollapsed && (
+        <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1
+                         flex items-center justify-center rounded-full
+                         bg-[var(--accent)] text-white text-[10px] font-bold
+                         ring-2 ring-[var(--bg-primary)] animate-pulse">
+          {badge > 99 ? '99+' : badge}
+        </span>
       )}
+    </div>
+
+    {!isCollapsed && (
+      <>
+        <span className="truncate flex-1">{label}</span>
+        {badge != null && badge > 0 && (
+          <span className="ml-auto px-2 py-0.5 min-w-[22px] text-center
+                           rounded-full bg-[var(--accent)] text-white
+                           text-xs font-bold animate-pulse">
+            {badge > 99 ? '99+' : badge}
+          </span>
+        )}
+      </>
+    )}
+
+    {isCollapsed && (
+      <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg
+                       bg-[var(--bg-card)] border border-[var(--border-color)]
+                       text-xs font-medium text-[var(--text-primary)] whitespace-nowrap
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                       shadow-lg z-50 flex items-center gap-2">
+        {label}
+        {badge != null && badge > 0 && (
+          <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold">
+            {badge}
+          </span>
+        )}
+      </span>
+    )}
+  </>
+)}
     </NavLink>
   );
 

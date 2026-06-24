@@ -57,6 +57,7 @@ const STATUS_ICON: Record<string, ReactNode> = {
 
 function toShortName(fullName: string | null | undefined): string {
   if (!fullName) return '—';
+  if (!fullName || fullName === 'None') return 'ФИО Не указано';
   const parts = fullName.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
   const [last, first, middle] = parts;
@@ -334,7 +335,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
 
 function TableHeader() {
   const cols: { label: string; align?: string }[] = [
-    { label: 'Заявка' },
+    { label: 'Тема / Номер' },
     { label: 'Контрагент / Проект' },
     { label: 'Исполнитель / Автор' },
     { label: 'Статус' },

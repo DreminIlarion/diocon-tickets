@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
 import { Toaster } from './components/ui/toaster';
 import { Loader2 } from 'lucide-react';
+import { NotificationsProvider } from './contexts/NotificationsContext';
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -34,9 +35,10 @@ const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const ProductsTab = lazy(() => import('./pages/ProductsPage'));
 const CreateProductPage = lazy(() => import('./pages/CreateProductPage'));
 const TasksPage = lazy(() => import('./pages/TasksPage'));
-
+const LurvDetailPage = lazy(() => import('./pages/LurvDetailPage'));
 export default function App() {
   return (
+    <NotificationsProvider>
     <ThemeProvider>
       <>
         <Routes>
@@ -44,6 +46,9 @@ export default function App() {
           <Route path="/auth/invite/accept" element={<LazyRoute><RegisterPage /></LazyRoute>} />
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<LazyRoute><DashboardPage /></LazyRoute>} />
+
+            <Route path="/lurvs" element={<LazyRoute><LurvDetailPage /></LazyRoute>} />
+
             <Route path="/tasks" element={<LazyRoute><TasksPage /></LazyRoute>} />
             <Route path="/tickets" element={<LazyRoute><TicketsPage /></LazyRoute>} />
             <Route path="/tickets/new" element={<LazyRoute><NewTicketPage /></LazyRoute>} />
@@ -66,5 +71,6 @@ export default function App() {
         <Toaster />
       </>
     </ThemeProvider>
+    </NotificationsProvider>
   );
 }

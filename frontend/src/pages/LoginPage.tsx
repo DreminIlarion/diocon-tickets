@@ -56,7 +56,7 @@ export default function LoginPage() {
               className="w-20 h-20 object-contain"
             />
           </div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">ДИО-Консалт</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">ДИО-Деск</h1>
           <p className="text-lg text-[var(--text-primary)]/60">Система поддержки клиентов</p>
         </div>
 

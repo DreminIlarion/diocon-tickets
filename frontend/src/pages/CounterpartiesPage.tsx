@@ -521,13 +521,13 @@ export default function CounterpartiesPage() {
 
     switch (type) {
       case 'Юридическое лицо':
-        return <Building2 className={`${cls} text-[var(--text-primary)]/40`} />;
+        return <Building2 className={`${cls} text-[var(--text-secondary)]`} />;
       case 'Физическое лицо':
-        return <User className={`${cls} text-[var(--text-primary)]/40`} />;
+        return <User className={`${cls} text-[var(--text-secondary)]`} />;
       case 'ИП':
-        return <Briefcase className={`${cls} text-[var(--text-primary)]/40`} />;
+        return <Briefcase className={`${cls} text-[var(--text-secondary)]`} />;
       default:
-        return <Building2 className={`${cls} text-[var(--text-primary)]/40`} />;
+        return <Building2 className={`${cls} text-[var(--text-secondary)]`} />;
     }
   };
 
@@ -595,7 +595,7 @@ export default function CounterpartiesPage() {
             className="glass-card rounded-2xl border border-[var(--border-color)] p-4 flex items-center gap-3.5"
           >
             <div className="w-11 h-11 rounded-xl bg-[var(--hover-2)] flex items-center justify-center flex-shrink-0">
-              <stat.icon className="w-5 h-5 text-[var(--text-primary)]/35" />
+              <stat.icon className="w-5 h-5 text-[var(--text-secondary)]" />
             </div>
             <div>
               <p className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</p>

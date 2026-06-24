@@ -102,19 +102,19 @@ export default function InviteAcceptPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-4">
-      {/* Фоновые эффекты */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--accent-soft)] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--accent-soft)] rounded-full blur-3xl" />
-      </div>
+     
 
       <div className="w-full max-w-md relative z-10">
         {/* Логотип */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--accent)] mb-4">
-            <span className="text-2xl font-bold text-white">ДК</span>
+          <div className="inline-flex items-center justify-center mb-6">
+            <img
+              src="http://80.93.62.177:8000/media/images/Logo_bez_fona_bez_teksta.width-80.height-80.png"
+              alt="ДИО-Консалт"
+              className="w-20 h-20 object-contain"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-white">ДИО-Консалт</h1>
+          <h1 className="text-2xl font-bold text-white">ДИО-Деск</h1>
           <p className="text-neutral-500 mt-1">Регистрация по приглашению</p>
         </div>
 

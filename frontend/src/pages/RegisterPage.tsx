@@ -83,19 +83,19 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-primary)]">
-      {/* Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-[var(--accent)]/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-[var(--accent)]/10 rounded-full blur-[100px]" />
-      </div>
+      
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-800 to-red-900 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-bold text-white">ДК</span>
+          <div className="inline-flex items-center justify-center mb-6">
+            <img
+              src="http://80.93.62.177:8000/media/images/Logo_bez_fona_bez_teksta.width-80.height-80.png"
+              alt="ДИО-Консалт"
+              className="w-20 h-20 object-contain"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">ДИО-Консалт</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">ДИО-Деск</h1>
           <p className="text-[var(--text-primary)]/50 mt-1">Создание аккаунта</p>
         </div>
 

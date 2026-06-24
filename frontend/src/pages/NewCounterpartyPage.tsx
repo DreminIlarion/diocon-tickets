@@ -582,6 +582,12 @@ const handleSubmit = async () => {
       phone: companyPhone.rawValue,
       email: formData.email.trim(),
     };
+    if (formData.counterparty_type === 'Юридическое лицо') {
+      if (formData.kpp) payload.kpp = formData.kpp;
+    } else {
+      // Для ИП и Физлица — явно передаем null
+      payload.kpp = 0;
+    }
     if (isKppAllowed(formData.counterparty_type) && formData.kpp) payload.kpp = formData.kpp;
     if (formData.okpo) payload.okpo = formData.okpo;
     if (formData.address?.trim()) payload.address = formData.address.trim();

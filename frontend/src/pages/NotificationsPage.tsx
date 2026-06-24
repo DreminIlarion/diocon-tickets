@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, Check, CheckCheck, FileText, MessageSquare, UserPlus,
-  AlertTriangle, Loader2, ChevronLeft, ChevronRight, Filter,
-  Ticket, RefreshCw, Eye, Clock, Sparkles, X,
+  Loader2, ChevronLeft, ChevronRight, Filter,
+  Ticket, RefreshCw, Eye, Clock, X,
 } from 'lucide-react';
 import { notificationsApi } from '../api/client';
 import type { Notification } from '../api/client';
+import { useNotifications } from '../contexts/NotificationsContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    HELPERS
@@ -90,7 +91,7 @@ function formatTime(dateStr: string): string {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   NOTIFICATION ITEM
+   ITEM
    ═══════════════════════════════════════════════════════════════════════════ */
 
 function NotificationItem({
@@ -115,7 +116,6 @@ function NotificationItem({
         }`}
       onClick={() => onClick(notification)}
     >
-      {/* Индикатор непрочитанного */}
       <div className="flex-shrink-0 pt-1.5">
         {isUnread ? (
           <div className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-pulse" />
@@ -124,12 +124,10 @@ function NotificationItem({
         )}
       </div>
 
-      {/* Иконка типа */}
       <div className={`w-11 h-11 rounded-xl ${meta.bg} flex items-center justify-center flex-shrink-0`}>
         <Icon className={`w-5 h-5 ${meta.color}`} />
       </div>
 
-      {/* Контент */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -137,22 +135,24 @@ function NotificationItem({
               ${isUnread ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70'}`}>
               {notification.title}
             </p>
+
             <p className={`text-base mt-1 leading-relaxed
               ${isUnread ? 'text-[var(--text-primary)]/70' : 'text-[var(--text-primary)]/45'}`}>
               {notification.message}
             </p>
-            <div className="flex items-center gap-3 mt-2">
+
+            <div className="flex items-center gap-3 mt-2 flex-wrap">
               <span className="flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
                 <Clock size={13} />
                 {formatTime(notification.created_at)}
               </span>
+
               <span className={`text-sm px-2 py-0.5 rounded-lg ${meta.bg} ${meta.color} font-medium`}>
                 {meta.label}
               </span>
             </div>
           </div>
 
-          {/* Кнопка «прочитано» */}
           {isUnread && (
             <button
               onClick={e => {
@@ -179,6 +179,7 @@ function NotificationItem({
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
+  const { unreadCount, refreshUnreadCount } = useNotifications();
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -186,23 +187,16 @@ export default function NotificationsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [unreadOnly, setUnreadOnly] = useState(false);
   const [markingAll, setMarkingAll] = useState(false);
-
-  /* ── Load ───────────────────────────────────────────────────────────── */
 
   const loadNotifications = useCallback(async () => {
     setLoading(true);
     try {
-      const [response, count] = await Promise.all([
-        notificationsApi.getAll(page, 20, unreadOnly),
-        notificationsApi.getUnreadCount(),
-      ]);
+      const response = await notificationsApi.getAll(page, 20, unreadOnly);
       setNotifications(response.items);
       setTotalPages(response.total_pages);
       setTotalItems(response.total_items);
-      setUnreadCount(count);
     } catch (err) {
       console.error('Failed to load notifications:', err);
     } finally {
@@ -219,20 +213,25 @@ export default function NotificationsPage() {
     setPage(1);
   }, [unreadOnly]);
 
-  /* ── Actions ────────────────────────────────────────────────────────── */
-
   const handleMarkRead = async (id: string) => {
-    // Оптимистичное обновление
-    setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-    setUnreadCount(prev => Math.max(0, prev - 1));
+    const target = notifications.find(n => n.id === id);
+    if (!target || target.read) return;
+
+    if (unreadOnly) {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      setTotalItems(prev => Math.max(0, prev - 1));
+    } else {
+      setNotifications(prev =>
+        prev.map(n => n.id === id ? { ...n, read: true } : n)
+      );
+    }
 
     try {
       await notificationsApi.markAsRead(id);
+      await refreshUnreadCount();
     } catch {
-      // Откатываем при ошибке
       loadNotifications();
+      refreshUnreadCount();
     }
   };
 
@@ -242,26 +241,29 @@ export default function NotificationsPage() {
 
     setMarkingAll(true);
 
-    // Оптимистичное обновление
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    setUnreadCount(0);
+    if (unreadOnly) {
+      setNotifications([]);
+      setTotalItems(0);
+    } else {
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    }
 
     try {
       await Promise.all(unreadIds.map(id => notificationsApi.markAsRead(id)));
+      await refreshUnreadCount();
     } catch {
       loadNotifications();
+      refreshUnreadCount();
     } finally {
       setMarkingAll(false);
     }
   };
 
   const handleNotificationClick = (n: Notification) => {
-    // Помечаем как прочитанное
     if (!n.read) {
       handleMarkRead(n.id);
     }
 
-    // Переход по типу уведомления
     const ticketNumber = n.data?.ticket_number;
     if (ticketNumber) {
       navigate(`/tickets/${ticketNumber}`);
@@ -273,8 +275,6 @@ export default function NotificationsPage() {
       navigate(`/tickets/${ticketId}`);
     }
   };
-
-  /* ── Render ─────────────────────────────────────────────────────────── */
 
   if (initialLoad) {
     return (
@@ -289,7 +289,7 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
 
-      {/* ── Header ─────────────────────────────────────────────────── */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-1.5 flex items-center gap-3">
@@ -308,7 +308,6 @@ export default function NotificationsPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Фильтр */}
           <button
             onClick={() => setUnreadOnly(!unreadOnly)}
             className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-base transition-all cursor-pointer
@@ -320,14 +319,15 @@ export default function NotificationsPage() {
             <Filter size={16} className={unreadOnly ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'} />
             {unreadOnly ? 'Только непрочитанные' : 'Все уведомления'}
             {unreadOnly && (
-              <span onClick={e => { e.stopPropagation(); setUnreadOnly(false); }}
-                className="p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-muted)] cursor-pointer">
+              <span
+                onClick={e => { e.stopPropagation(); setUnreadOnly(false); }}
+                className="p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-muted)] cursor-pointer"
+              >
                 <X size={14} />
               </span>
             )}
           </button>
 
-          {/* Кнопка «Прочитать все» */}
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllRead}
@@ -346,7 +346,7 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      {/* ── Stats ──────────────────────────────────────────────────── */}
+      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           {
@@ -359,7 +359,7 @@ export default function NotificationsPage() {
           {
             label: 'Непрочитанных',
             value: unreadCount,
-            icon: Sparkles,
+            icon: Clock,
             color: 'text-[var(--accent)]',
             bg: 'bg-[var(--accent-soft)]',
           },
@@ -378,9 +378,11 @@ export default function NotificationsPage() {
             bg: 'bg-emerald-500/10',
           },
         ].map(stat => (
-          <div key={stat.label}
+          <div
+            key={stat.label}
             className="glass-card rounded-xl border border-[var(--border-color)] p-4 flex items-center gap-3
-                       hover:border-[var(--border-hover)] transition-all">
+                       hover:border-[var(--border-hover)] transition-all"
+          >
             <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center flex-shrink-0`}>
               <stat.icon className={`w-5 h-5 ${stat.color}`} />
             </div>
@@ -394,7 +396,7 @@ export default function NotificationsPage() {
         ))}
       </div>
 
-      {/* ── Loading ────────────────────────────────────────────────── */}
+      {/* Loading */}
       {loading && !initialLoad && (
         <div className="flex justify-center py-2">
           <div className="flex items-center gap-2 px-4 py-2 rounded-full
@@ -405,7 +407,7 @@ export default function NotificationsPage() {
         </div>
       )}
 
-      {/* ── Content ────────────────────────────────────────────────── */}
+      {/* Content */}
       {notifications.length === 0 && !loading ? (
         <div className="glass-card rounded-2xl border border-[var(--border-color)] p-16 text-center">
           <div className="w-20 h-20 rounded-2xl bg-[var(--hover-1)] flex items-center justify-center mx-auto mb-6">
@@ -420,23 +422,21 @@ export default function NotificationsPage() {
               : 'Уведомления будут появляться здесь, когда произойдут события в ваших заявках.'}
           </p>
           {unreadOnly && (
-            <button onClick={() => setUnreadOnly(false)}
+            <button
+              onClick={() => setUnreadOnly(false)}
               className="mt-6 px-6 py-3 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)]
-                         text-[var(--text-primary)] text-base font-medium transition-colors">
+                         text-[var(--text-primary)] text-base font-medium transition-colors"
+            >
               Показать все
             </button>
           )}
         </div>
       ) : (
         <div className="glass-card rounded-2xl border border-[var(--border-color)] overflow-hidden">
-
-          {/* Шапка списка */}
           <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--border-color)]
                           bg-[var(--hover-1)]/50">
             <span className="text-base text-[var(--text-muted)]">
-              {unreadOnly
-                ? `${totalItems} непрочитанных`
-                : `${totalItems} уведомлений`}
+              {unreadOnly ? `${totalItems} непрочитанных` : `${totalItems} уведомлений`}
               {currentPageUnread > 0 && !unreadOnly && (
                 <span className="ml-2 text-[var(--accent)]">
                   · {currentPageUnread} новых на странице
@@ -445,7 +445,6 @@ export default function NotificationsPage() {
             </span>
           </div>
 
-          {/* Список */}
           <div className="divide-y divide-[var(--border-color)]/50">
             {notifications.map(n => (
               <NotificationItem
@@ -459,7 +458,7 @@ export default function NotificationsPage() {
         </div>
       )}
 
-      {/* ── Pagination ─────────────────────────────────────────────── */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-4 border-t border-[var(--border-color)]">
           <button

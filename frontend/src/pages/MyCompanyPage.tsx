@@ -252,7 +252,7 @@ export default function MyCompanyPage() {
               <img src={company.avatar_url} alt={company.name}
                 className="w-16 h-16 rounded-2xl object-cover" />
             ) : (
-              <Building2 className="w-8 h-8 text-[var(--text-primary)]" />
+              <Building2 className="w-8 h-8 text-white" />
             )}
           </div>
           <div>
@@ -274,12 +274,7 @@ export default function MyCompanyPage() {
           </div>
         </div>
 
-        <Link to="/tickets/new"
-          className="btn-primary flex items-center gap-2 px-4 py-2.5 rounded-xl
-                         text-white text-base font-medium flex-shrink-0 shadow-lg shadow-[var(--accent-glow)]">
-          <Plus className="w-4 h-4" />
-          Создать заявку
-        </Link>
+        
       </div>
 
       {/* ── Tabs ──── */}
@@ -318,7 +313,7 @@ export default function MyCompanyPage() {
                 ].map(field => (
                   <div key={field.label}
                     className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2">{field.label}</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-2">{field.label}</p>
                     <p className="text-base font-semibold text-[var(--text-primary)]">{field.value || '—'}</p>
                   </div>
                 ))}
@@ -326,7 +321,7 @@ export default function MyCompanyPage() {
 
               {company.address && (
                 <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2 flex items-center gap-2">
+                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-2 flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5" /> Адрес
                   </p>
                   <p className="text-base text-[var(--text-primary)]">{company.address}</p>
@@ -334,7 +329,7 @@ export default function MyCompanyPage() {
               )}
 
               <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2 flex items-center gap-2">
+                <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-2 flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" /> Дата регистрации
                 </p>
                 <p className="text-base text-[var(--text-primary)] font-medium">{fmtDateTime(company.created_at)}</p>
@@ -349,7 +344,7 @@ export default function MyCompanyPage() {
                 ].map(s => (
                   <div key={s.label}
                     className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5 text-center">
-                    <s.icon className="w-5 h-5 text-[var(--text-primary)]/30 mx-auto mb-3" />
+                    <s.icon className="w-5 h-5 text-[var(--text-primary)]/40 mx-auto mb-3" />
                     <p className="text-3xl font-bold text-[var(--text-primary)] mb-1">{s.value}</p>
                     <p className="text-sm text-[var(--text-primary)]/40">{s.label}</p>
                   </div>
@@ -411,7 +406,7 @@ export default function MyCompanyPage() {
                 <div className="text-center py-16">
                   <User className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
                   <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Не указано</p>
-                  <p className="text-[var(--text-primary)]/30 text-sm">Контактное лицо не задано</p>
+                  <p className="text-[var(--text-primary)]/40 text-sm">Контактное лицо не задано</p>
                 </div>
               )}
             </div>
@@ -447,7 +442,7 @@ export default function MyCompanyPage() {
                           <p className="text-[var(--text-primary)] font-semibold text-base truncate">{branch.name}</p>
                           <p className="text-[var(--text-primary)]/40 text-sm truncate">{branch.legal_name}</p>
                         </div>
-                        <div className="text-right text-sm text-[var(--text-primary)]/30 flex-shrink-0">
+                        <div className="text-right text-sm text-[var(--text-primary)]/40 flex-shrink-0">
                           {branch.inn && <p>ИНН {branch.inn}</p>}
                           {branch.kpp && <p>КПП {branch.kpp}</p>}
                         </div>
@@ -483,7 +478,7 @@ export default function MyCompanyPage() {
                   <div className="text-center py-16">
                     <Users className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
                     <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Пока нет сотрудников</p>
-                    <p className="text-[var(--text-primary)]/30 text-sm">
+                    <p className="text-[var(--text-primary)]/40 text-sm">
                       Вы можете пригласить коллег через раздел «Приглашения»
                     </p>
                   </div>
@@ -555,7 +550,7 @@ export default function MyCompanyPage() {
                   <div className="text-center py-20">
                     <Ticket className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
                     <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Нет заявок</p>
-                    <p className="text-[var(--text-primary)]/30 text-sm mb-5">
+                    <p className="text-[var(--text-primary)]/40 text-sm mb-5">
                       У вашей компании пока нет заявок
                     </p>
                     <Link to="/tickets/new"
@@ -588,7 +583,7 @@ export default function MyCompanyPage() {
                                         transition-colors truncate">
                             {ticket.title}
                           </p>
-                          <p className="text-[var(--text-primary)]/30 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
+                          <p className="text-[var(--text-primary)]/40 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
                         </div>
                         <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-red-400
                                                  group-hover:translate-x-0.5 transition-all
@@ -654,7 +649,7 @@ export default function MyCompanyPage() {
         <div className="space-y-5">
           {/* Информация */}
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-5 flex items-center gap-2">
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-5 flex items-center gap-2">
               <Settings className="w-3.5 h-3.5" /> Информация
             </p>
             <div className="divide-y divide-white/[0.06]">
@@ -685,7 +680,7 @@ export default function MyCompanyPage() {
 
           {/* Контакты */}
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2">
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2">
               <Phone className="w-3.5 h-3.5" /> Контакты
             </p>
             <div className="space-y-3">
@@ -710,7 +705,7 @@ export default function MyCompanyPage() {
 
           {company.inn && (
             <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Реквизиты</p>
+              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4">Реквизиты</p>
               <div className="space-y-2 text-sm">
                 <p className="text-[var(--text-primary)]/40">ИНН <span className="text-[var(--text-primary)] font-mono">{company.inn}</span></p>
                 {company.kpp && <p className="text-[var(--text-primary)]/40">КПП <span className="text-[var(--text-primary)] font-mono">{company.kpp}</span></p>}

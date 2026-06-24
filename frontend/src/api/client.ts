@@ -1,4 +1,5 @@
 // client.ts
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import type {
   User,
@@ -59,6 +60,13 @@ const TOKEN_KEYS = {
   EXPIRES_AT: 'token_expires_at',
 } as const;
 
+// Event dispatcher для уведомлений об обновлении токена
+const tokenEventTarget = new EventTarget();
+export const onTokenRefreshed = (callback: () => void) => {
+  tokenEventTarget.addEventListener('tokenRefreshed', callback);
+  return () => tokenEventTarget.removeEventListener('tokenRefreshed', callback);
+};
+
 export const tokenStorage = {
   getAccessToken: (): string | null => {
     return localStorage.getItem(TOKEN_KEYS.ACCESS);
@@ -72,6 +80,9 @@ export const tokenStorage = {
     localStorage.setItem(TOKEN_KEYS.ACCESS, accessToken);
     localStorage.setItem(TOKEN_KEYS.REFRESH, refreshToken);
     localStorage.setItem(TOKEN_KEYS.EXPIRES_AT, expiresAt.toString());
+    
+    // Уведомляем подписчиков об обновлении токена
+    tokenEventTarget.dispatchEvent(new Event('tokenRefreshed'));
   },
 
   clearTokens: () => {
@@ -980,6 +991,49 @@ export interface UnreadCountResponse {
   unread_count: number;
 }
 
+export interface NotificationStreamPayload {
+  type: 'notification';
+  notification: Notification;
+}
+
+function getNotificationStreamUrl() {
+  return (
+    import.meta.env.VITE_NOTIFICATIONS_STREAM_URL ||
+    'http://localhost:8000/notifications/stream'
+  );
+}
+
+function getAccessTokenForSSE(): string | null {
+  // Используем тот же источник токена что и в apiClient
+  return tokenStorage.getAccessToken();
+}
+
+function parseNotificationStreamData(raw: string): NotificationStreamPayload | null {
+  if (!raw?.trim()) return null;
+
+  // 1. Сначала пробуем как обычный JSON
+  try {
+    return JSON.parse(raw);
+  } catch {
+    // fallback ниже
+  }
+
+  // 2. Fallback для python dict string:
+  // {'a': 1, 'b': False} -> {"a": 1, "b": false}
+  try {
+    const normalized = raw
+      .replace(/\bTrue\b/g, 'true')
+      .replace(/\bFalse\b/g, 'false')
+      .replace(/\bNone\b/g, 'null')
+      .replace(/'/g, '"');
+
+    return JSON.parse(normalized);
+  } catch (err) {
+    console.error('[notifications] Failed to parse stream payload:', err, raw);
+    return null;
+  }
+}
+
 export const notificationsApi = {
   // Получить уведомления
   getAll: async (
@@ -1003,5 +1057,59 @@ export const notificationsApi = {
   markAsRead: async (notificationId: string): Promise<Notification> => {
     const response = await api.patch<Notification>(`/notifications/${notificationId}/read`);
     return response.data;
+  },
+
+  // SSE stream
+  stream: async ({
+    signal,
+    onNotification,
+    onOpen,
+    onError,
+  }: {
+    signal: AbortSignal;
+    onNotification: (notification: Notification, payload: NotificationStreamPayload) => void;
+    onOpen?: () => void;
+    onError?: (err: any) => void;
+  }) => {
+    const token = getAccessTokenForSSE();
+    if (!token) throw new Error('No access token for notifications stream');
+
+    return fetchEventSource(getNotificationStreamUrl(), {
+      method: 'GET',
+      signal,
+      openWhenHidden: true,
+      headers: {
+        Accept: 'text/event-stream',
+        Authorization: `Bearer ${token}`,
+      },
+
+      async onopen(response) {
+        if (!response.ok) {
+          throw new Error(`SSE open failed: ${response.status}`);
+        }
+        onOpen?.();
+      },
+
+      onmessage(event) {
+        if (!event.data) return;
+
+        const payload = parseNotificationStreamData(event.data);
+        if (!payload) return;
+
+        if (payload.type === 'notification' && payload.notification) {
+          onNotification(payload.notification, payload);
+        }
+      },
+
+      onclose() {
+        throw new Error('SSE connection closed');
+      },
+
+      onerror(err) {
+        console.error('[notifications] SSE error:', err);
+        onError?.(err);
+        return 3000; // retry
+      },
+    });
   },
 };

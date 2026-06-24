@@ -21,22 +21,22 @@ import {
 // ─── Константы ────
 
 const PRIORITIES = [
-  { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
-  { value: 'Средний', label: 'Средний', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-yellow-300 border-yellow-400 ring-2 ring-yellow-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
-  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
-  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
+  { value: 'Низкий', label: 'Низкий', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-[var(--text-primary)] border-emerald-400 ring-2 ring-emerald-500/50', icon: <SignalLow className="w-10 h-10" />, desc: 'Плановый порядок' },
+  { value: 'Средний', label: 'Средний', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-[var(--text-primary)] border-yellow-400 ring-2 ring-yellow-500/50', icon: <SignalMedium className="w-10 h-10" />, desc: 'Стандартный' },
+  { value: 'Высокий', label: 'Высокий', color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-[var(--text-primary)] border-orange-400 ring-2 ring-orange-500/50', icon: <SignalHigh className="w-10 h-10" />, desc: 'Требует внимания' },
+  { value: 'Критический', label: 'Критический', color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-[var(--text-primary)] border-red-400 ring-2 ring-red-500/50', icon: <Flame className="w-10 h-10" />, desc: 'Немедленно!' },
 ];
 
 const TICKET_TYPES = [
-  { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-red-300 border-red-400 ring-2 ring-red-500/50', desc: 'Сбой, ошибка' },
-  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-blue-300 border-blue-400 ring-2 ring-blue-500/50', desc: 'Стандартная услуга' },
-  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-gray-300 border-gray-400 ring-2 ring-gray-500/50', desc: 'Вопрос, консультация' },
-  { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-orange-300 border-orange-400 ring-2 ring-orange-500/50', desc: 'Жалоба клиента' },
-  { value: 'Задача', label: 'Задача', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Планируемая работа' },
-  { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-yellow-300 border-yellow-400 ring-2 ring-yellow-500/50', desc: 'Корневая причина' },
-  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-blue-300 border-blue-400 ring-2 ring-blue-500/50', desc: 'Изменение системы' },
-  { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-emerald-300 border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Предложение по улучшению' },
-  { value: 'Прочее', label: 'Прочее', icon: <MessageSquare className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-gray-300 border-gray-400 ring-2 ring-gray-500/50', desc: 'Другое' },
+  { value: 'Инцидент', label: 'Инцидент', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-red-500/20 text-red-400 border-red-500/40', activeColor: 'bg-red-500/30 text-[var(--text-primary)] border-red-400 ring-2 ring-red-500/50', desc: 'Сбой, ошибка' },
+  { value: 'Запрос на услугу', label: 'Запрос на услугу', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-[var(--text-primary)] border-blue-400 ring-2 ring-blue-500/50', desc: 'Стандартная услуга' },
+  { value: 'Консультация', label: 'Консультация', icon: <HelpCircle className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-[var(--text-primary)] border-gray-400 ring-2 ring-gray-500/50', desc: 'Вопрос, консультация' },
+  { value: 'Жалоба', label: 'Жалоба', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-orange-500/20 text-orange-400 border-orange-500/40', activeColor: 'bg-orange-500/30 text-[var(--text-primary)]border-orange-400 ring-2 ring-orange-500/50', desc: 'Жалоба клиента' },
+  { value: 'Задача', label: 'Задача', icon: <CheckCircle className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-[var(--text-primary)] border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Планируемая работа' },
+  { value: 'Проблема', label: 'Проблема', icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40', activeColor: 'bg-yellow-500/30 text-[var(--text-primary)] border-yellow-400 ring-2 ring-yellow-500/50', desc: 'Корневая причина' },
+  { value: 'Запрос на изменение', label: 'Запрос на изменение', icon: <Edit3 className="w-5 h-5" />, color: 'bg-blue-500/20 text-blue-400 border-blue-500/40', activeColor: 'bg-blue-500/30 text-[var(--text-primary)]border-blue-400 ring-2 ring-blue-500/50', desc: 'Изменение системы' },
+  { value: 'Улучшение', label: 'Улучшение', icon: <Sparkles className="w-5 h-5" />, color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40', activeColor: 'bg-emerald-500/30 text-[var(--text-primary)] border-emerald-400 ring-2 ring-emerald-500/50', desc: 'Предложение по улучшению' },
+  { value: 'Прочее', label: 'Прочее', icon: <MessageSquare className="w-5 h-5" />, color: 'bg-gray-500/20 text-gray-400 border-gray-500/40', activeColor: 'bg-gray-500/30 text-[var(--text-primary)] border-gray-400 ring-2 ring-gray-500/50', desc: 'Другое' },
 ];
 
 const PRESET_TAGS = [
@@ -807,7 +807,7 @@ export default function NewTicketPage() {
                         className={`px-6 py-4 rounded-2xl text-left border transition-all
                           ${isSelected
                             ? `${t.activeColor} scale-[1.02] shadow-lg`
-                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
+                            : 'bg-[var(--hover-1)] border-[var(--border-color)] text-[var(--text-primary)] hover:bg-[var(--hover-2)]'
                           }`}>
                         <div className="flex items-start gap-3">
                           <div className={`flex-shrink-0 mt-0.5 ${isSelected ? '' : 'opacity-50'}`}>{t.icon}</div>

@@ -201,13 +201,19 @@ export default function TicketDetailPage() {
   useEffect(() => { if (canAssign) loadSupportUsers(); }, [canAssign, loadSupportUsers]);
 
   // Улучшенная функция получения имени исполнителя
-  const getAssigneeName = useCallback(() => {
+const getAssigneeName = useCallback(() => {
     if (!ticket?.assignee_id) return null;
     const fromSupport = supportUsers.find(u => u.id === ticket.assignee_id);
-    if (fromSupport) return fromSupport.full_name || fromSupport.username || fromSupport.email;
-    if (user?.user_id === ticket.assignee_id) return user.full_name || user.username || user.email;
+    if (fromSupport) {
+        const name = fromSupport.full_name || fromSupport.username || fromSupport.email;
+        return name === "None" ? "ФИО Не указано" : name;
+    }
+    if (user?.user_id === ticket.assignee_id) {
+        const name = user.full_name || user.username || user.email;
+        return name === "None" ? "ФИО Не указано" : name;
+    }
     return ticket.assignee_id.slice(0, 8);
-  }, [ticket?.assignee_id, supportUsers, user]);
+}, [ticket?.assignee_id, supportUsers, user]);
 
   const filteredUsers = useMemo(() =>
     supportUsers.filter(u =>
@@ -660,7 +666,7 @@ export default function TicketDetailPage() {
           <div className="flex gap-2 border-b border-[var(--border-color)] overflow-x-auto">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-[var(--accent)]/50 text-white border-b-2 border-[var(--accent)] shadow-[0_-4px_12px_var(--accent-glow)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'
+                className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-[var(--accent)]/50 text-white border-b-2 border-[var(--accent)] ' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--hover-1)]'
                   }`}>
                 <tab.icon className="w-5 h-5" />
                 <span className="text-base font-medium">{tab.label}</span>

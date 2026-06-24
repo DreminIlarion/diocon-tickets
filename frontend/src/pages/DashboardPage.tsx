@@ -747,57 +747,7 @@ export default function DashboardPage() {
         {/* ── ПРАВАЯ КОЛОНКА ── */}
         <div className="space-y-5">
 
-          {/* KPI / Производительность */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-5">
-            <GridBackground variant="dots" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <p className="text-[17px] font-bold text-[var(--text-primary)]">Производительность</p>
-                  <p className="text-[13px] text-[var(--text-primary)]/40 mt-0.5">за всё время</p>
-                </div>
-                <div className="w-9 h-9 rounded-lg bg-[var(--status-resolved-bg)] flex items-center justify-center
-                                ring-1 ring-[var(--status-resolved-border)]">
-                  <Zap className="w-4 h-4 text-[var(--status-resolved-text)]" />
-                </div>
-              </div>
-
-              {/* Прогресс-бар выполнения */}
-              <div className="mb-5">
-                <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-[15px] text-[var(--text-primary)]/50">Решено заявок</span>
-                  <span className="text-2xl font-bold text-[var(--text-primary)] tabular-nums">
-                    {resolvePct}<span className="text-[15px] text-[var(--text-primary)]/40">%</span>
-                  </span>
-                </div>
-                <div className="h-2 bg-[var(--hover-1)] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[var(--status-resolved-text)] to-[var(--priority-low-text)] rounded-full
-                               transition-all duration-700 ease-out"
-                    style={{ width: `${resolvePct}%` }}
-                  />
-                </div>
-                <p className="text-[13px] text-[var(--text-primary)]/30 mt-2">
-                  {stats.resolved} из {stats.total} заявок
-                </p>
-              </div>
-
-              {/* Мини-метрики */}
-              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--border-color)]">
-                <div>
-                  <p className="text-[13px] text-[var(--text-primary)]/40 mb-1">Открытых</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">
-                    {stats.total - stats.resolved}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[13px] text-[var(--text-primary)]/40 mb-1">В ожидании</p>
-                  <p className="text-xl font-bold text-[var(--text-primary)] tabular-nums">{stats.waiting}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          
           {/* Карточка контрагента (клиент) */}
           {isCustomer && counterparty && (
             <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)]">
@@ -844,56 +794,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Быстрые действия */}
-          <div className="relative overflow-hidden glass-card rounded-2xl border border-[var(--border-color)] p-5">
-            <GridBackground variant="dots" />
-            <div className="relative z-10">
-              <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
-                Быстрые действия
-              </p>
-              <div className="space-y-2">
-                {[
-                  {
-                    label: 'Новая заявка', desc: 'Создать обращение',
-                    icon: Plus, to: '/tickets/new', accent: true,
-                  },
-                  { label: 'Мои заявки', desc: 'Просмотреть все', icon: FileText, to: '/tickets' },
-                  { label: 'Проекты', desc: 'Все проекты', icon: FolderOpen, to: '/projects' },
-                  ...(isSupport ? [
-                    { label: 'Контрагенты', desc: 'Управление', icon: Building2, to: '/counterparties' },
-                    { label: 'Продукты', desc: `${productsCount} в справочнике`, icon: Package, to: '/products' },
-                  ] : []),
-                ].map(action => (
-                  <Link
-                    key={action.to}
-                    to={action.to}
-                    className={`flex items-center gap-3.5 p-3 rounded-xl transition-all group/action ${
-                      (action as any).accent
-                        ? 'bg-[var(--accent-soft)]  '
-                        : 'bg-[var(--hover-1)] hover:bg-[var(--hover-2)]'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all
-                                    group-hover/action:scale-105 ${
-                      (action as any).accent
-                        ? 'bg-[var(--accent-soft)] ring-1 ring-[var(--accent)]/20'
-                        : 'bg-[var(--hover-2)] group-hover/action:bg-[var(--hover-3)]'
-                    }`}>
-                      <action.icon className={`w-5 h-5 ${
-                        (action as any).accent ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/50 group-hover/action:text-[var(--text-primary)]/80'
-                      }`} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-[15px] font-medium text-[var(--text-primary)]">{action.label}</p>
-                      <p className="text-[13px] text-[var(--text-primary)]/35">{action.desc}</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/15 group-hover/action:text-[var(--text-primary)]/40
-                                            group-hover/action:translate-x-0.5 transition-all" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
+          
 
           {/* Сводка (support) */}
           {isSupport && (
@@ -901,7 +802,7 @@ export default function DashboardPage() {
               <GridBackground variant="grid" />
               <div className="relative z-10">
                 <p className="text-[15px] uppercase tracking-[0.12em] text-[var(--text-primary)]/35 font-bold mb-4">
-                  Сводка системы
+                  общая Информация 
                 </p>
                 <div className="space-y-1">
                   {[

@@ -163,17 +163,12 @@ function ProjectCard({ project, userRole, formatDate, getParticipantsCount }: {
         {/* Шапка: иконка + название + стрелка */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-4 min-w-0 flex-1">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors
-              ${isActive
-                ? 'bg-[var(--accent-soft)] group-hover:bg-[var(--accent)]/15'
-                : 'bg-[var(--hover-2)]'
-              }`}>
-              <FolderOpen className={`w-6 h-6 transition-colors
-                ${isActive
-                  ? 'text-[var(--accent)]/70 group-hover:text-[var(--accent)]'
-                  : 'text-[var(--text-muted)]'
-                }`} />
-            </div>
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]
+                                        flex items-center justify-center flex-shrink-0
+                                        ring-1 ring-[var(--status-open-border)]
+                                        group-hover:ring-[var(--status-open-text)]/30 transition-all">
+                          <FolderOpen className="w-5 h-5 text-[var(--status-open-text)]/70 group-hover:text-[var(--status-open-text)] transition-colors" />
+                        </div>
 
             <div className="min-w-0">
               <h3 className="text-lg font-bold text-[var(--text-primary)] leading-snug
@@ -415,7 +410,7 @@ export default function ProjectsPage() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label="Всего"       value={totalItems}
-          icon={FolderOpen}  color="text-[var(--text-secondary)]"  bg="bg-[var(--hover-1)]" />
+          icon={FolderOpen}  color="text-[var(--status-open-text)]/70"  bg="bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]  "/>
         <StatCard label="Активных"    value={getActiveCount()}
           icon={Check}    color="text-[var(--success)]"         bg="bg-emerald-500/10" />
         <StatCard label="В архиве"    value={totalItems - getActiveCount()}

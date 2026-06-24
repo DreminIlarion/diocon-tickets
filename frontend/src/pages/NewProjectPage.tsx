@@ -374,7 +374,7 @@ const checkKeyAvailability = async () => {
                 {loading ? (
                   <div className="p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--text-primary)]/50" />
-                    <p className="text-[var(--text-primary)]/50 mt-3">Загрузка контрагнета...</p>
+                    <p className="text-[var(--text-primary)]/50 mt-3">Загрузка контрагента...</p>
                   </div>
                 ) : filteredCounterparties.length === 0 ? (
                   <div className="p-8 text-center">
@@ -407,7 +407,7 @@ const checkKeyAvailability = async () => {
           {counterpartyId && (
             <div className="mt-4 p-4 rounded-xl bg-[var(--success)]/8 border border-green-500/30 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[var(--success)]" />
-              <span className="text-[var(--text-primary)]">Контрагнет выбран</span>
+              <span className="text-[var(--text-primary)]">Контрагент выбран</span>
             </div>
           )}
         </div>
@@ -433,24 +433,24 @@ const checkKeyAvailability = async () => {
             )}
             {!aiLoading && aiSuggestion && name && (
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <Sparkles className="w-5 h-5 text-[var(--info)]" />
+                <CheckCircle2 className="w-5 h-5 text-[var(--info)]" />
               </div>
             )}
           </div>
           
           {/* AI подсказка */}
           {aiSuggestion && name && !aiLoading && (
-            <div className="mt-3 p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30">
+            <div className="mt-3 p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-blue-500/10 border border-blue-500/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[var(--info)]" />
+                  <CheckCircle2 className="w-5 h-5 text-[var(--info)]" />
                   <span className="text-[var(--text-primary)]">Предложенный ключ:</span>
                   <span className="text-[var(--info)] font-mono font-bold text-lg">{aiSuggestion}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setKey(aiSuggestion)}
-                  className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-[var(--info)] text-sm transition-colors"
+                  className="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-[var(--text-primary)] text-sm transition-colors"
                 >
                   Использовать
                 </button>
@@ -636,7 +636,7 @@ const checkKeyAvailability = async () => {
                                   </span>
                                 )}
                                 {!isCurrentUser && u.role === 'customer_admin' && (
-                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-[var(--info)]">
+                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-[var(--info)]">
                                     Админ
                                   </span>
                                 )}
