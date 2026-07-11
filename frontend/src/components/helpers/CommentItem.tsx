@@ -95,11 +95,11 @@ function ReplyFilePreview({ file, onRemove }: ReplyFilePreviewProps) {
       )}
       <div className="min-w-0">
         <p className="text-xs text-[var(--text-primary)]/70 truncate max-w-[100px]">{file.name}</p>
-        <p className="text-[10px] text-[var(--text-primary)]/30">{formatSize(file.size)}</p>
+        <p className="text-[10px] text-[var(--text-primary)]/40">{formatSize(file.size)}</p>
       </div>
       <button
         onClick={onRemove}
-        className="ml-1 p-0.5 rounded text-[var(--text-primary)]/30 hover:text-red-400 hover:bg-[var(--hover-2)] transition-colors flex-shrink-0"
+        className="ml-1 p-0.5 rounded text-[var(--text-primary)]/40 hover:text-red-400 hover:bg-[var(--hover-2)] transition-colors flex-shrink-0"
       >
         <X size={12} />
       </button>
@@ -504,7 +504,7 @@ export const CommentItem = React.memo(({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-l font-medium text-[var(--text-primary)]">{getAuthorName(comment)}</span>
               <span className="text-l text-[var(--text-primary)]/40">{formatRelativeTime(comment.created_at)}</span>
-              {comment.edited_at && <span className="text-l text-[var(--text-primary)]/30">(изменён)</span>}
+              {comment.edited_at && <span className="text-l text-[var(--text-primary)]/40">(изменён)</span>}
               {isInternal && (
                 <span className="text-l px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-500/15">
                   Внутренний
@@ -687,7 +687,7 @@ export const CommentItem = React.memo(({
               <div className="mt-3 space-y-3">
                 {loadingReplies ? (
                   <div className="flex justify-center py-2">
-                    <Loader2 size={16} className="text-[var(--text-primary)]/30 animate-spin" />
+                    <Loader2 size={16} className="text-[var(--text-primary)]/40 animate-spin" />
                   </div>
                 ) : (
                   replies.map(reply => (

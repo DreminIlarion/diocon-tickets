@@ -265,7 +265,7 @@ export default function CreateProductPage() {
                           : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/50 hover:bg-[var(--hover-2)] hover:border-[var(--border-color)]'
                         }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg bg-[var(--hover-2)] flex items-center justify-center ${sel ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/30'}`}>
+                      <div className={`w-8 h-8 rounded-lg bg-[var(--hover-2)] flex items-center justify-center ${sel ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/40'}`}>
                         <Icon size={16} />
                       </div>
                       <span>{cat.label}</span>
@@ -335,7 +335,7 @@ export default function CreateProductPage() {
                 labels={ATTRIBUTE_LABELS}
               />
             ) : (
-              <div className="py-16 text-base text-[var(--text-primary)]/30 text-center">
+              <div className="py-16 text-base text-[var(--text-primary)]/40 text-center">
                 Схема не загружена
               </div>
             )}

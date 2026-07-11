@@ -139,7 +139,7 @@ function CounterpartyDropdown({
         {selected ? (
           <div className="flex-1 min-w-0">
             <span className="text-[var(--text-primary)] truncate block">{selected.name}</span>
-            <span className="text-l text-[var(--text-primary)]/30">ИНН: {selected.inn}</span>
+            <span className="text-l text-[var(--text-primary)]/40">ИНН: {selected.inn}</span>
           </div>
         ) : (
           <span className="text-[var(--text-primary)]/40 flex-1">Выберите контрагента...</span>
@@ -208,7 +208,7 @@ function CounterpartyDropdown({
                     }
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-medium">{cp.name}</p>
-                      <p className="text-l text-[var(--text-primary)]/30 truncate">
+                      <p className="text-l text-[var(--text-primary)]/40 truncate">
                         {cp.legal_name} · ИНН: {cp.inn}
                       </p>
                     </div>
@@ -433,7 +433,7 @@ export default function InvitationsPage() {
                     Email адрес <span className="text-[var(--accent)]">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/30" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40" />
                     <input
                       type="email"
                       value={email}
@@ -548,7 +548,7 @@ export default function InvitationsPage() {
                 {/* Превью: что будет отправлено */}
                 {isFormValid && (
                   <div className="p-4 bg-[var(--hover-1)] border border-[var(--border-color)] rounded-xl">
-                    <p className="text-l text-[var(--text-primary)]/30 mb-2">Будет отправлено:</p>
+                    <p className="text-l text-[var(--text-primary)]/40 mb-2">Будет отправлено:</p>
                     <div className="flex flex-wrap items-center gap-2 text-l">
                       <span className="px-2.5 py-1 rounded-lg bg-[var(--hover-1)] text-[var(--text-primary)]/70">{email}</span>
                       <span className="text-[var(--text-primary)]/20">→</span>
@@ -695,7 +695,7 @@ export default function InvitationsPage() {
               {/* Пагинация */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-l text-[var(--text-primary)]/30">
+                  <span className="text-l text-[var(--text-primary)]/40">
                     Страница {page} из {totalPages}
                   </span>
                   <div className="flex items-center gap-1">

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/route-guards/ProtectedRoute';
 import { Toaster } from './components/ui/toaster';
 import { Loader2 } from 'lucide-react';
 import { NotificationsProvider } from './contexts/NotificationsContext';
@@ -49,7 +50,7 @@ export default function App() {
 
             <Route path="/lurvs" element={<LazyRoute><LurvDetailPage /></LazyRoute>} />
 
-            <Route path="/tasks" element={<LazyRoute><TasksPage /></LazyRoute>} />
+            <Route path="/tasks" element={<LazyRoute><ProtectedRoute><TasksPage /></ProtectedRoute></LazyRoute>} />
             <Route path="/tickets" element={<LazyRoute><TicketsPage /></LazyRoute>} />
             <Route path="/tickets/new" element={<LazyRoute><NewTicketPage /></LazyRoute>} />
             <Route path="/tickets/:ticketNumber" element={<LazyRoute><TicketDetailPage /></LazyRoute>} />
@@ -59,11 +60,11 @@ export default function App() {
             <Route path="/projects" element={<LazyRoute><ProjectsPage /></LazyRoute>} />
             <Route path="/projects/new" element={<LazyRoute><NewProjectPage /></LazyRoute>} />
             <Route path="/projects/:id" element={<LazyRoute><ProjectDetailPage /></LazyRoute>} />
-            <Route path="/my-company" element={<LazyRoute><MyCompanyPage /></LazyRoute>} />
-            <Route path="/invitations" element={<LazyRoute><InvitationsPage /></LazyRoute>} />
+            <Route path="/my-company" element={<LazyRoute><ProtectedRoute><MyCompanyPage /></ProtectedRoute></LazyRoute>} />
+            <Route path="/invitations" element={<LazyRoute><ProtectedRoute><InvitationsPage /></ProtectedRoute></LazyRoute>} />
+            <Route path="/products" element={<LazyRoute><ProtectedRoute><ProductsTab /></ProtectedRoute></LazyRoute>} />
+            <Route path="/products/new" element={<LazyRoute><ProtectedRoute><CreateProductPage /></ProtectedRoute></LazyRoute>} />
             <Route path="/notifications" element={<LazyRoute><NotificationsPage /></LazyRoute>} />
-            <Route path="/products" element={<LazyRoute><ProductsTab /></LazyRoute>} />
-            <Route path="/products/new" element={<LazyRoute><CreateProductPage /></LazyRoute>} />
             <Route path="/profile" element={<LazyRoute><ProfilePage /></LazyRoute>} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>

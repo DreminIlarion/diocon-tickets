@@ -19,6 +19,8 @@
   --bg-sidebar:    #1c1c1c;
   --bg-sidebar-inner: #1c1c1c;
 
+  --bg-all: #ffffff;
+
   /* Границы */
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.14);
@@ -167,6 +169,10 @@
   --bg-card-hover: #f8fafc;
   --bg-sidebar:    #f8fafc;
   --bg-sidebar-inner: #f1f5f9;
+
+
+  --bg-all: #000000;
+
 
   /* Границы — ЧЁТКИЕ, контрастные */
   --border-color:  rgba(148, 163, 184, 0.6);

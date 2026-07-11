@@ -57,7 +57,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             alt="ДИО-Консалт"
             className="w-10 h-10 object-contain"
           />
-          <span className="font-bold text-[var(--text-primary)] text-lg">ДИО-Деск</span>
+          <span className="font-bold text-[var(--text-primary)] text-lg">ДИО Деск</span>
         </div>
 
         <div className="hidden lg:block" />

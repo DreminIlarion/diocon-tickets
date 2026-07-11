@@ -343,7 +343,7 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/40
                                  group-focus-within:text-[var(--accent)] transition-colors" />
               <input
                 value={searchQuery}
@@ -379,7 +379,7 @@ export default function DashboardPage() {
           {
             label: 'Всего заявок', value: stats.total, icon: FileText,
             iconBg: 'bg-[var(--info)]/8', iconColor: 'text-[var(--info)]',
-            color: '#8b5cf6', sub: `${stats.new} новых на этой неделе`,
+            color: '#3b4ef6', sub: `${stats.new} новых на этой неделе`,
             trend: stats.new > 0 ? { val: stats.new, up: true } : null,
           },
           {
@@ -435,7 +435,7 @@ export default function DashboardPage() {
                 {card.value}
               </p>
               <p className="text-[15px] text-[var(--text-primary)]/50 font-medium mb-1">{card.label}</p>
-              <p className="text-[13px] text-[var(--text-primary)]/30 mb-3">{card.sub}</p>
+              <p className="text-[13px] text-[var(--text-primary)]/40 mb-3">{card.sub}</p>
 
               {/* Sparkline */}
               <div className="h-8 -mx-1">
@@ -485,7 +485,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
-              <div className="h-[150px] flex items-center justify-center text-[var(--text-primary)]/30 text-[15px]">
+              <div className="h-[150px] flex items-center justify-center text-[var(--text-primary)]/40 text-[15px]">
                 Нет данных для отображения
               </div>
             )}
@@ -645,7 +645,7 @@ export default function DashboardPage() {
                   <p className="text-[var(--text-primary)]/40 text-[15px]">Проектов пока нет</p>
                 </div>
               ) : (
-                <div className="grid sm:grid-cols-2 gap-px bg-[var(--hover-1)]">
+                <div className="grid sm:grid-cols-2 gap-px ">
                   {projects.slice(0, 4).map(proj => (
                     <Link
                       key={proj.id}
@@ -653,7 +653,7 @@ export default function DashboardPage() {
                       className=" p-5 hover:bg-[var(--hover-1)] transition-all group"
                     >
                       <div className="flex items-start gap-3.5">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]
+                        <div className="w-11 h-11 rounded-xl 
                                         flex items-center justify-center flex-shrink-0
                                         ring-1 ring-[var(--status-open-border)]
                                         group-hover:ring-[var(--status-open-text)]/30 transition-all">
@@ -674,7 +674,7 @@ export default function DashboardPage() {
                               {proj.status === 'active' ? 'Активен' : 'Архив'}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[13px] text-[var(--text-primary)]/30">
+                          <div className="flex items-center gap-1.5 text-[13px] text-[var(--text-primary)]/40">
                             <Users className="w-3.5 h-3.5" />
                             {proj.memberships?.length ?? 0} участников
                           </div>
@@ -714,7 +714,7 @@ export default function DashboardPage() {
                       to={`/counterparties/${cp.id}`}
                       className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--hover-1)] transition-all group"
                     >
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--status-waiting-bg)] to-[var(--status-progress-bg)]
+                      <div className="w-11 h-11 rounded-xl 
                                       flex items-center justify-center flex-shrink-0
                                       ring-1 ring-[var(--status-waiting-border)]">
                         <Building2 className="w-5 h-5 text-[var(--status-waiting-text)]/70" />

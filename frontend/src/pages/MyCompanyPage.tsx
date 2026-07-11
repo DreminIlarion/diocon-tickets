@@ -4,15 +4,66 @@ import { Link } from 'react-router-dom';
 import {
   Building2, Phone, Mail, MapPin, Users,
   Calendar, User, MessageSquare, Loader2, AlertCircle,
-  ExternalLink, Crown, GitBranch, Ticket, Clock,
+  ExternalLink, Crown, GitBranch, Ticket,
   ChevronRight, Settings, Plus,
-  Globe, X, CheckCircle2, UserPlus,
+  Globe, X, CheckCircle2, UserPlus, Trash2,
+  ChevronLeft,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { counterpartiesApi, usersApi, ticketsApi } from '@/api/client';
 import type { Counterparty, CounterpartyCustomer, TicketListItem } from '@/types';
 
 type TabType = 'info' | 'contacts' | 'branches' | 'employees' | 'tickets';
+
+// ─── Phone mask (из CounterpartyDetailPage) ───
+
+function formatPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (!digits) return '';
+  let d = digits;
+  if (d.startsWith('8')) d = '7' + d.slice(1);
+  if (!d.startsWith('7')) d = '7' + d;
+  d = d.slice(0, 11);
+  let out = '+7';
+  if (d.length > 1) out += ' (' + d.slice(1, 4);
+  if (d.length >= 4) out += ') ' + d.slice(4, 7);
+  if (d.length >= 7) out += '-' + d.slice(7, 9);
+  if (d.length >= 9) out += '-' + d.slice(9, 11);
+  return out;
+}
+
+function phoneToApi(formatted: string): string {
+  const digits = formatted.replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('7')) return '8' + digits.slice(1);
+  return digits;
+}
+
+function PhoneInput({ value, onChange, placeholder = '+7 (999) 123-45-67', className = '' }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; className?: string;
+}) {
+  return (
+    <input
+      type="tel"
+      value={value}
+      onChange={e => {
+        const digits = e.target.value.replace(/\D/g, '');
+        onChange(formatPhone(digits));
+      }}
+      onKeyDown={e => {
+        if (e.key === 'Backspace') {
+          const digits = value.replace(/\D/g, '');
+          if (digits.length > 0) {
+            onChange(digits.length <= 1 ? '' : formatPhone(digits.slice(0, -1)));
+            e.preventDefault();
+          }
+        }
+      }}
+      placeholder={placeholder}
+      className={className}
+    />
+  );
+}
 
 // ─── Helpers ──────
 
@@ -81,6 +132,14 @@ const getEmployeeRoleInfo = (role: string) => {
   };
 };
 
+const inputCls = `w-full px-4 py-3 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl
+  text-[var(--text-primary)] text-base placeholder-white/25
+  focus:outline-none focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all`;
+
+const inputWithIconCls = `w-full pl-10 pr-4 py-3 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl
+  text-[var(--text-primary)] text-base placeholder-white/25
+  focus:outline-none focus:border-red-500/30 focus:ring-2 focus:ring-red-500/20 transition-all`;
+
 // ─── Основной компонент 
 
 export default function MyCompanyPage() {
@@ -100,41 +159,50 @@ export default function MyCompanyPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('info');
 
+  // ── Состояния для формы контактного лица ──
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    last_name: '', first_name: '', middle_name: '',
+    phone: '', email: '', telegram: '', vk: ''
+  });
+  const [savingContact, setSavingContact] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<any | null>(null);
+  const [deletingContact, setDeletingContact] = useState(false);
+
   const canViewEmployees = user?.role === 'customer_admin' || user?.role === 'admin';
   const canViewTickets = user?.role === 'customer_admin' || user?.role === 'customer' || user?.role === 'admin';
+  const canEditContacts = user?.role === 'customer_admin' || user?.role === 'admin';
 
   // ── Загрузка компании ─────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const load = async () => {
-      if (!user?.counterparty_id) {
-        setError('Вы не привязаны к компании');
-        setLoading(false);
-        return;
-      }
+  const loadCompany = useCallback(async () => {
+    if (!user?.counterparty_id) {
+      setError('Вы не привязаны к компании');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const companyData = await counterpartiesApi.getById(user.counterparty_id);
+      setCompany(companyData);
 
       try {
-        setLoading(true);
-        const companyData = await counterpartiesApi.getById(user.counterparty_id);
-        setCompany(companyData);
-
-        try {
-          const all = await counterpartiesApi.getAll(1, 100);
-          setBranches(all.items.filter(cp => cp.parent_id === companyData.id));
-        } catch {
-          setBranches([]);
-        }
-
-        setError(null);
+        const all = await counterpartiesApi.getAll(1, 100);
+        setBranches(all.items.filter(cp => cp.parent_id === companyData.id));
       } catch {
-        setError('Не удалось загрузить данные компании');
-      } finally {
-        setLoading(false);
+        setBranches([]);
       }
-    };
 
-    load();
+      setError(null);
+    } catch {
+      setError('Не удалось загрузить данные компании');
+    } finally {
+      setLoading(false);
+    }
   }, [user?.counterparty_id]);
+
+  useEffect(() => { loadCompany(); }, [loadCompany]);
 
   // ── Загрузка сотрудников ──────────────────────────────────────────────────
 
@@ -181,15 +249,63 @@ export default function MyCompanyPage() {
     }
   }, [company?.id]);
 
-  // Загружаем общее количество заявок сразу при загрузке компании (для статистики)
-  useEffect(() => {
-    if (company?.id) loadTickets(1);
-  }, [company?.id, loadTickets]);
+  useEffect(() => { if (company?.id) loadTickets(1); }, [company?.id, loadTickets]);
 
-  // При переключении страницы
   useEffect(() => {
     if (activeTab === 'tickets') loadTickets(ticketsPage);
   }, [ticketsPage]);
+
+  // ── Работа с контактными лицами ─────────────────────────────────────────
+
+  const setContactField = (f: string) => (v: string) =>
+    setContactForm(p => ({ ...p, [f]: v }));
+
+  const resetContactForm = () => {
+    setContactForm({ last_name: '', first_name: '', middle_name: '', phone: '', email: '', telegram: '', vk: '' });
+    setShowContactForm(false);
+  };
+
+  const handleSaveContact = async () => {
+    if (!contactForm.last_name.trim() || !contactForm.first_name.trim() || !company?.id) return;
+    setSavingContact(true);
+    try {
+      const messengers: Record<string, string> = {};
+      if (contactForm.telegram.trim()) messengers.telegram = contactForm.telegram.trim().replace('@', '');
+      if (contactForm.vk.trim()) messengers.vk = contactForm.vk.trim();
+
+      await counterpartiesApi.updateContactPerson(company.id, {
+        first_name: contactForm.first_name.trim(),
+        last_name: contactForm.last_name.trim(),
+        middle_name: contactForm.middle_name.trim() || undefined,
+        phone: contactForm.phone.trim() ? phoneToApi(contactForm.phone) : undefined,
+        email: contactForm.email.trim() || undefined,
+        messengers: Object.keys(messengers).length > 0 ? messengers : undefined,
+      });
+      resetContactForm();
+      loadCompany(); // обновить данные компании
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSavingContact(false);
+    }
+  };
+
+  const handleDeleteContact = async (person: any) => {
+    if (!person.phone && !person.email || !company?.id) return;
+    setDeletingContact(true);
+    try {
+      await counterpartiesApi.deleteContactPerson(company.id, {
+        phone: person.phone,
+        email: person.email,
+      });
+      setConfirmDelete(null);
+      loadCompany();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDeletingContact(false);
+    }
+  };
 
   // ── Tabs ──────
 
@@ -197,7 +313,7 @@ export default function MyCompanyPage() {
 
   const tabs: { id: TabType; label: string; icon: typeof Building2; count?: number }[] = [
     { id: 'info', label: 'Информация', icon: Building2 },
-    { id: 'contacts', label: 'Контактное лицо', icon: User },
+    { id: 'contacts', label: 'Контакты', icon: User, count: company?.contact_persons?.length || 0 },
   ];
 
   if (hasBranches) {
@@ -211,10 +327,6 @@ export default function MyCompanyPage() {
   if (canViewTickets) {
     tabs.push({ id: 'tickets', label: 'Заявки', icon: Ticket, count: ticketsTotalItems });
   }
-
-  // ── Stats ─────
-
-  const activeTickets = tickets.filter(t => t.status !== 'Закрыт' && t.status !== 'Решён').length;
 
   // ── Loading / Error 
 
@@ -238,6 +350,8 @@ export default function MyCompanyPage() {
     );
   }
 
+  const persons = company.contact_persons || [];
+
   // ── Render ────
 
   return (
@@ -246,21 +360,21 @@ export default function MyCompanyPage() {
       {/* ── Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-800 to-red-700
-                          flex items-center justify-center shadow-lg shadow-red-900/30 flex-shrink-0">
+          <div className="w-16 h-16 rounded-2xl 
+                          flex items-center justify-center flex-shrink-0">
             {company.avatar_url ? (
               <img src={company.avatar_url} alt={company.name}
-                className="w-16 h-16 rounded-2xl object-cover" />
+                className="w-16 h-16 rounded-2xl object-cover " />
             ) : (
-              <Building2 className="w-8 h-8 text-white" />
+              <Building2 className="w-8 h-8 text-[var(--text-primary)]" />
             )}
           </div>
           <div>
             <div className="flex items-center gap-3 flex-wrap mb-2">
               <h1 className="text-3xl font-bold text-[var(--text-primary)]">{company.name}</h1>
-                            <span className={`px-3 py-1 rounded-lg text-base font-medium border ${company.is_active
-                  ? 'status-resolved'
-                  : 'status-closed'
+              <span className={`px-3 py-1 rounded-lg text-base font-medium border ${company.is_active
+                ? 'status-resolved'
+                : 'status-closed'
                 }`}>
                 {company.is_active ? 'Активен' : 'Неактивен'}
               </span>
@@ -273,8 +387,6 @@ export default function MyCompanyPage() {
             <p className="text-[var(--text-primary)]/50 text-base">{company.legal_name}</p>
           </div>
         </div>
-
-        
       </div>
 
       {/* ── Tabs ──── */}
@@ -283,8 +395,8 @@ export default function MyCompanyPage() {
           <button key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-red-800/50 text-white border-b-2 border-red-500'
-                : 'text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)]'
+              ? 'bg-red-800/50 text-white border-b-2 border-red-500'
+              : 'text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)]'
               }`}>
             <tab.icon className="w-4 h-4" />
             <span className="text-base font-medium">{tab.label}</span>
@@ -335,12 +447,11 @@ export default function MyCompanyPage() {
                 <p className="text-base text-[var(--text-primary)] font-medium">{fmtDateTime(company.created_at)}</p>
               </div>
 
-              {/* Статистика */}
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { icon: GitBranch, value: branches.length, label: 'Подразделений' },
                   { icon: Ticket, value: ticketsTotalItems, label: 'Заявок' },
-                  { icon: Clock, value: activeTickets, label: 'Активных' },
+                  { icon: Users, value: employees.length, label: 'Сотрудников' },
                 ].map(s => (
                   <div key={s.label}
                     className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5 text-center">
@@ -353,62 +464,230 @@ export default function MyCompanyPage() {
             </div>
           )}
 
-          {/* ═══ Contacts ═══ */}
+          {/* ═══ Contacts (НОВЫЙ ВИЗУАЛ) ═══ */}
           {activeTab === 'contacts' && (
-            <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-6">
-              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2.5">
-                <User className="w-5 h-5 text-[var(--text-primary)]/40" />
-                Контактное лицо
-              </h3>
+            <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              <div className="px-6 py-5 border-b border-[var(--border-color)] bg-[var(--hover-1)] flex items-center justify-between">
+                <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
+                  <User className="w-5 h-5 text-[var(--text-primary)]/40" /> Контактные лица
+                  {persons.length > 0 && (
+                    <span className="px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-sm text-[var(--text-primary)]/50">
+                      {persons.length}
+                    </span>
+                  )}
+                </h2>
+                {canEditContacts && (
+                  <button
+                    onClick={() => showContactForm ? resetContactForm() : setShowContactForm(true)}
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-base font-medium transition-all ${showContactForm
+                      ? 'bg-[var(--hover-2)] text-[var(--text-primary)]/70'
+                      : 'bg-red-700 text-white shadow-md'
+                      }`}
+                  >
+                    {showContactForm ? <X size={16} /> : <Plus size={16} />}
+                    {showContactForm ? 'Отмена' : 'Добавить'}
+                  </button>
+                )}
+              </div>
 
-              {company.contact_person ? (
-                <div>
-                  <div className="flex items-center gap-4 mb-6">
-                    <Avatar name={company.contact_person.full_name} size="lg" />
-                    <div>
-                      <p className="text-lg font-bold text-[var(--text-primary)]">{company.contact_person.full_name}</p>
-                      <p className="text-base text-[var(--text-primary)]/40">Контактное лицо</p>
+              <div className="p-6 space-y-6">
+                {/* Форма добавления */}
+                {showContactForm && (
+                  <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--hover-1)] p-5 space-y-4">
+                    <h3 className="text-base font-semibold text-[var(--text-primary)] flex items-center gap-2">
+                      <UserPlus size={16} className="text-red-400" /> Новое контактное лицо
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">
+                          Фамилия <span className="text-red-400">*</span>
+                        </label>
+                        <input value={contactForm.last_name} onChange={e => setContactField('last_name')(e.target.value)}
+                          placeholder="Иванов" className={inputCls} />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">
+                          Имя <span className="text-red-400">*</span>
+                        </label>
+                        <input value={contactForm.first_name} onChange={e => setContactField('first_name')(e.target.value)}
+                          placeholder="Иван" className={inputCls} />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Отчество</label>
+                        <input value={contactForm.middle_name} onChange={e => setContactField('middle_name')(e.target.value)}
+                          placeholder="Иванович" className={inputCls} />
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Телефон</label>
+                        <div className="relative">
+                          <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/25 pointer-events-none" />
+                          <PhoneInput value={contactForm.phone} onChange={setContactField('phone')} className={inputWithIconCls} />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Email</label>
+                        <div className="relative">
+                          <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/25 pointer-events-none" />
+                          <input type="email" value={contactForm.email} onChange={e => setContactField('email')(e.target.value)}
+                            placeholder="contact@company.ru" className={inputWithIconCls} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">Telegram</label>
+                        <div className="relative">
+                          <MessageSquare size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/25 pointer-events-none" />
+                          <input value={contactForm.telegram} onChange={e => setContactField('telegram')(e.target.value)}
+                            placeholder="username" className={inputWithIconCls} />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm text-[var(--text-primary)]/50 mb-1.5">ВКонтакте</label>
+                        <div className="relative">
+                          <Globe size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/25 pointer-events-none" />
+                          <input value={contactForm.vk} onChange={e => setContactField('vk')(e.target.value)}
+                            placeholder="id или username" className={inputWithIconCls} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-1">
+                      <button onClick={resetContactForm} disabled={savingContact}
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/70 text-base font-medium transition-colors disabled:opacity-50">
+                        Отмена
+                      </button>
+                      <button onClick={handleSaveContact}
+                        disabled={savingContact || !contactForm.last_name.trim() || !contactForm.first_name.trim()}
+                        className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-700 text-white text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+                        {savingContact ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+                        {savingContact ? 'Сохранение...' : 'Сохранить'}
+                      </button>
                     </div>
                   </div>
+                )}
 
-                  <div className="space-y-3">
-                    {company.contact_person.phone && (
-                      <a href={`tel:${company.contact_person.phone}`}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--hover-1)]
-                                    hover:bg-[var(--hover-2)] transition-colors group">
-                        <Phone className="w-5 h-5 text-[var(--status-resolved-text)]" />
-                        <span className="text-base text-[var(--text-primary)]">{company.contact_person.phone}</span>
-                      </a>
-                    )}
-                    {company.contact_person.email && (
-                      <a href={`mailto:${company.contact_person.email}`}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--hover-1)]
-                                    hover:bg-[var(--hover-2)] transition-colors group">
-                        <Mail className="w-5 h-5 text-[var(--accent-light)]" />
-                        <span className="text-base text-[var(--text-primary)]">{company.contact_person.email}</span>
-                      </a>
-                    )}
-                    {company.contact_person.messengers?.telegram && (
-                      <a href={`https://t.me/${company.contact_person.messengers.telegram}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--hover-1)]
-                                    hover:bg-[var(--hover-2)] transition-colors group">
-                        <MessageSquare className="w-5 h-5 text-[var(--status-open-text)]" />
-                        <span className="text-base text-[var(--text-primary)] flex-1">
-                          @{company.contact_person.messengers.telegram}
-                        </span>
-                        <ExternalLink className="w-4 h-4 text-[var(--text-muted)]" />
-                      </a>
+                {/* Подтверждение удаления */}
+                {confirmDelete && (
+                  <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-5">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle size={20} className="text-red-400 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-base font-semibold text-[var(--text-primary)] mb-1">Удалить контактное лицо?</p>
+                        <p className="text-sm text-[var(--text-primary)]/60 mb-4">
+                          <span className="font-medium text-[var(--text-primary)]">{confirmDelete.full_name}</span> будет удалён.
+                        </p>
+                        <div className="flex gap-2">
+                          <button onClick={() => setConfirmDelete(null)}
+                            className="flex-1 px-3 py-2 rounded-xl bg-[var(--hover-2)] hover:bg-[var(--hover-3)] text-[var(--text-primary)]/70 text-sm font-medium transition-colors">
+                            Отмена
+                          </button>
+                          <button onClick={() => handleDeleteContact(confirmDelete)} disabled={deletingContact}
+                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50">
+                            {deletingContact ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                            Удалить
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Список контактных лиц */}
+                {persons.length === 0 && !showContactForm ? (
+                  <div className="text-center py-16">
+                    <User size={36} className="text-[var(--text-primary)]/15 mx-auto mb-4" />
+                    <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Контактные лица не указаны</p>
+                    <p className="text-[var(--text-primary)]/40 text-sm mb-5">Добавьте контактное лицо для связи</p>
+                    {canEditContacts && (
+                      <button onClick={() => setShowContactForm(true)}
+                        className="text-red-400 hover:text-red-300 transition-colors text-base">
+                        Добавить контактное лицо →
+                      </button>
                     )}
                   </div>
-                </div>
-              ) : (
-                <div className="text-center py-16">
-                  <User className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
-                  <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Не указано</p>
-                  <p className="text-[var(--text-primary)]/40 text-sm">Контактное лицо не задано</p>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-4">
+                    {persons.map((person: any, i: number) => (
+                      <div key={i} className="rounded-2xl border border-[var(--border-color)] bg-[var(--hover-1)] overflow-hidden">
+                        <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-[var(--border-color)]">
+                          <div className="flex items-center gap-3">
+                            <Avatar name={person.full_name} size="md" />
+                            <div>
+                              <p className="text-base font-semibold text-[var(--text-primary)]">{person.full_name}</p>
+                              <p className="text-sm text-[var(--text-primary)]/40">Контактное лицо</p>
+                            </div>
+                          </div>
+                          {canEditContacts && (
+                            <button
+                              onClick={() => setConfirmDelete(confirmDelete?.full_name === person.full_name ? null : person)}
+                              className="p-2 rounded-xl hover:bg-red-500/10 text-[var(--text-primary)]/40 hover:text-red-400 transition-colors flex-shrink-0"
+                              title="Удалить"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
+                        <div className="p-4 grid md:grid-cols-2 gap-3">
+                          {person.phone && (
+                            <div className="flex items-start gap-3 p-3.5">
+                              <Phone size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Телефон</p>
+                                <a href={`tel:${person.phone}`}
+                                  className="text-sm text-[var(--text-primary)] hover:text-red-400 transition-colors">
+                                  {person.phone}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {person.email && (
+                            <div className="flex items-start gap-3 p-3.5">
+                              <Mail size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Email</p>
+                                <a href={`mailto:${person.email}`}
+                                  className="text-sm text-[var(--text-primary)] hover:text-red-400 transition-colors break-all">
+                                  {person.email}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {person.messengers?.telegram && (
+                            <div className="flex items-start gap-3 p-3.5">
+                              <MessageSquare size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Telegram</p>
+                                <a href={`https://t.me/${person.messengers.telegram.replace('@', '')}`}
+                                  target="_blank" rel="noopener noreferrer"
+                                  className="text-sm text-[var(--text-primary)] hover:text-red-400 transition-colors flex items-center gap-1.5">
+                                  @{person.messengers.telegram.replace('@', '')}
+                                  <ExternalLink size={12} className="text-[var(--text-primary)]/40" />
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {person.messengers?.vk && (
+                            <div className="flex items-start gap-3 p-3.5">
+                              <Globe size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">ВКонтакте</p>
+                                <a href={`https://vk.com/${person.messengers.vk}`}
+                                  target="_blank" rel="noopener noreferrer"
+                                  className="text-sm text-[var(--text-primary)] hover:text-red-400 transition-colors flex items-center gap-1.5">
+                                  {person.messengers.vk}
+                                  <ExternalLink size={12} className="text-[var(--text-primary)]/40" />
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -454,9 +733,10 @@ export default function MyCompanyPage() {
             </div>
           )}
 
-          {/* ═══ Employees ═══ */}
+          {/* ═══ Employees (без изменений) ═══ */}
           {activeTab === 'employees' && canViewEmployees && (
             <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              {/* ... содержимое без изменений ... */}
               <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--hover-1)]">
                 <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                   <Users className="w-5 h-5 text-[var(--text-primary)]/40" />
@@ -468,7 +748,6 @@ export default function MyCompanyPage() {
                   )}
                 </h2>
               </div>
-
               <div className="p-6">
                 {loadingEmployees ? (
                   <div className="flex justify-center py-16">
@@ -478,38 +757,25 @@ export default function MyCompanyPage() {
                   <div className="text-center py-16">
                     <Users className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
                     <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Пока нет сотрудников</p>
-                    <p className="text-[var(--text-primary)]/40 text-sm">
-                      Вы можете пригласить коллег через раздел «Приглашения»
-                    </p>
+                    <p className="text-[var(--text-primary)]/40 text-sm">Вы можете пригласить коллег через раздел «Приглашения»</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-[var(--border-color)]">
                     {employees.map(emp => {
                       const roleInfo = getEmployeeRoleInfo(emp.role);
                       const isMe = emp.id === user?.user_id;
-
                       return (
-                        <div key={emp.id}
-                          className={`flex items-center gap-4 py-4 px-2 rounded-xl ${isMe ? 'bg-red-500/[0.04]' : ''
-                            }`}>
+                        <div key={emp.id} className={`flex items-center gap-4 py-4 px-2 rounded-xl ${isMe ? 'bg-red-500/[0.04]' : ''}`}>
                           <Avatar name={emp.full_name || emp.username} />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[var(--text-primary)] font-semibold text-base truncate">
-                                {emp.full_name || emp.username}
-                              </span>
-                              {isMe && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-[var(--text-primary)]/50">
-                                  Вы
-                                </span>
-                              )}
+                              <span className="text-[var(--text-primary)] font-semibold text-base truncate">{emp.full_name || emp.username}</span>
+                              {isMe && <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-[var(--text-primary)]/50">Вы</span>}
                             </div>
                             <p className="text-[var(--text-primary)]/40 text-sm truncate">{emp.email}</p>
                           </div>
-                          <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm
-                                           font-medium border flex-shrink-0 ${roleInfo.color}`}>
-                            {roleInfo.icon}
-                            {roleInfo.label}
+                          <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border flex-shrink-0 ${roleInfo.color}`}>
+                            {roleInfo.icon}{roleInfo.label}
                           </span>
                         </div>
                       );
@@ -520,123 +786,71 @@ export default function MyCompanyPage() {
             </div>
           )}
 
-          {/* ═══ Tickets ═══ */}
+          {/* ═══ Tickets (без изменений) ═══ */}
           {activeTab === 'tickets' && canViewTickets && (
             <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] overflow-hidden">
+              {/* ... содержимое без изменений ... */}
               <div className="px-6 py-5 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--hover-1)]">
                 <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                   <Ticket className="w-5 h-5 text-[var(--text-primary)]/40" />
                   Заявки
                   {tickets.length > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-sm text-[var(--text-primary)]/50">
-                      {tickets.length}
-                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-sm text-[var(--text-primary)]/50">{tickets.length}</span>
                   )}
                 </h2>
-                <Link to="/tickets/new"
-                  className="btn-primary flex items-center gap-2 px-3.5 py-2 rounded-xl
-                                 text-white text-base font-medium shadow-md shadow-[var(--accent-glow)]">
-                  <Plus className="w-4 h-4" />
-                  Создать
+                <Link to="/tickets/new" className="btn-primary flex items-center gap-2 px-3.5 py-2 rounded-xl text-white text-base font-medium shadow-md shadow-[var(--accent-glow)]">
+                  <Plus className="w-4 h-4" />Создать
                 </Link>
               </div>
-
               <div className="p-6">
                 {loadingTickets ? (
-                  <div className="flex justify-center py-16">
-                    <Loader2 className="w-8 h-8 animate-spin text-[var(--text-primary)]/20" />
-                  </div>
+                  <div className="flex justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-[var(--text-primary)]/20" /></div>
                 ) : tickets.length === 0 ? (
                   <div className="text-center py-20">
                     <Ticket className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
                     <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Нет заявок</p>
-                    <p className="text-[var(--text-primary)]/40 text-sm mb-5">
-                      У вашей компании пока нет заявок
-                    </p>
-                    <Link to="/tickets/new"
-                      className="text-[var(--accent-light)] hover:text-[var(--accent)] transition-colors text-base font-medium">
-                      Создать первую заявку →
-                    </Link>
+                    <p className="text-[var(--text-primary)]/40 text-sm mb-5">У вашей компании пока нет заявок</p>
+                    <Link to="/tickets/new" className="text-[var(--accent-light)] hover:text-[var(--accent)] transition-colors text-base font-medium">Создать первую заявку →</Link>
                   </div>
                 ) : (
                   <div className="divide-y divide-[var(--border-color)]">
                     {tickets.map(ticket => (
-                      <Link key={ticket.id} to={`/tickets/${ticket.number}`}
-                        className="flex items-start justify-between gap-4 py-4 px-2
-                                       hover:bg-[var(--hover-1)] rounded-xl transition-colors group">
+                      <Link key={ticket.id} to={`/tickets/${ticket.number}`} className="flex items-start justify-between gap-4 py-4 px-2 hover:bg-[var(--hover-1)] rounded-xl transition-colors group">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <span className="text-red-400 font-mono text-sm bg-red-500/10
-                                             border border-red-500/20 px-2 py-0.5 rounded-lg">
-                              #{ticket.number}
-                            </span>
-                            <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border
-                                             ${statusClr(ticket.status)}`}>
-                              {ticket.status}
-                            </span>
-                            <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border
-                                             ${priorityClr(ticket.priority)}`}>
-                              {ticket.priority}
-                            </span>
+                            <span className="text-red-400 font-mono text-sm bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-lg">#{ticket.number}</span>
+                            <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border ${statusClr(ticket.status)}`}>{ticket.status}</span>
+                            <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border ${priorityClr(ticket.priority)}`}>{ticket.priority}</span>
                           </div>
-                          <p className="text-[var(--text-primary)] font-medium text-base group-hover:text-red-400
-                                        transition-colors truncate">
-                            {ticket.title}
-                          </p>
+                          <p className="text-[var(--text-primary)] font-medium text-base group-hover:text-red-400 transition-colors truncate">{ticket.title}</p>
                           <p className="text-[var(--text-primary)]/40 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-red-400
-                                                 group-hover:translate-x-0.5 transition-all
-                                                 flex-shrink-0 mt-1" />
+                        <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1" />
                       </Link>
                     ))}
                   </div>
                 )}
-
-                {/* Пагинация */}
                 {ticketsTotalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 pt-6 border-t border-[var(--border-color)]">
-                    <button
-                      onClick={() => setTicketsPage(p => Math.max(1, p - 1))}
-                      disabled={ticketsPage === 1}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl
-                                 bg-[var(--hover-2)] border border-[var(--border-color)]
-                                 hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed
-                                 text-[var(--text-primary)] text-base transition-colors"
-                    >
-                      <ChevronRight className="w-4 h-4 rotate-180" />
-                      Назад
+                    <button onClick={() => setTicketsPage(p => Math.max(1, p - 1))} disabled={ticketsPage === 1}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--hover-2)] border border-[var(--border-color)] hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed text-[var(--text-primary)] text-base transition-colors">
+                      <ChevronRight className="w-4 h-4 rotate-180" />Назад
                     </button>
-
                     <div className="flex items-center gap-1.5">
                       {Array.from({ length: Math.min(5, ticketsTotalPages) }, (_, i) => {
                         const pageNum = Math.max(1, Math.min(ticketsPage - 2, ticketsTotalPages - 4)) + i;
                         if (pageNum > ticketsTotalPages) return null;
                         return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setTicketsPage(pageNum)}
-                            className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === ticketsPage
-                                ? 'bg-red-700 text-white'
-                                : 'bg-[var(--hover-2)] text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-[var(--hover-3)]'
-                              }`}
-                          >
+                          <button key={pageNum} onClick={() => setTicketsPage(pageNum)}
+                            className={`w-10 h-10 rounded-xl text-base font-medium transition-colors ${pageNum === ticketsPage ? 'bg-red-700 text-white' : 'bg-[var(--hover-2)] text-[var(--text-primary)]/60 border border-[var(--border-color)] hover:bg-[var(--hover-3)]'}`}>
                             {pageNum}
                           </button>
                         );
                       })}
                     </div>
-
-                    <button
-                      onClick={() => setTicketsPage(p => Math.min(ticketsTotalPages, p + 1))}
-                      disabled={ticketsPage === ticketsTotalPages}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl
-                                 bg-[var(--hover-2)] border border-[var(--border-color)]
-                                 hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed
-                                 text-[var(--text-primary)] text-base transition-colors"
-                    >
-                      Вперёд
-                      <ChevronRight className="w-4 h-4" />
+                    <button onClick={() => setTicketsPage(p => Math.min(ticketsTotalPages, p + 1))} disabled={ticketsPage === ticketsTotalPages}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--hover-2)] border border-[var(--border-color)] hover:bg-[var(--hover-3)] disabled:opacity-40 disabled:cursor-not-allowed text-[var(--text-primary)] text-base transition-colors">
+                      Вперёд<ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -647,7 +861,6 @@ export default function MyCompanyPage() {
 
         {/* ── Sidebar ───────────────────────────────────────────────────── */}
         <div className="space-y-5">
-          {/* Информация */}
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
             <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-5 flex items-center gap-2">
               <Settings className="w-3.5 h-3.5" /> Информация
@@ -655,19 +868,10 @@ export default function MyCompanyPage() {
             <div className="divide-y divide-white/[0.06]">
               {[
                 { label: 'Тип', value: <span className="text-[var(--text-primary)]/80">{company.counterparty_type}</span> },
-                {
-                  label: 'Статус', value: (
-                    <span className={`text-sm px-2.5 py-1 rounded-lg font-medium border ${company.is_active
-                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                        : 'bg-[var(--hover-2)] text-[var(--text-primary)]/40 border-[var(--border-color)]'
-                      }`}>
-                      {company.is_active ? 'Активен' : 'Неактивен'}
-                    </span>
-                  )
-                },
+                { label: 'Статус', value: <span className={`text-sm px-2.5 py-1 rounded-lg font-medium border ${company.is_active ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-[var(--hover-2)] text-[var(--text-primary)]/40 border-[var(--border-color)]'}`}>{company.is_active ? 'Активен' : 'Неактивен'}</span> },
                 { label: 'Подразделений', value: <span className="text-[var(--text-primary)] font-bold">{branches.length}</span> },
                 { label: 'Заявок', value: <span className="text-[var(--text-primary)] font-bold">{ticketsTotalItems}</span> },
-                { label: 'Активных', value: <span className="text-[var(--text-primary)] font-bold">{activeTickets}</span> },
+                { label: 'Сотрудников', value: <span className="text-[var(--text-primary)] font-bold">{employees.length}</span> },
                 { label: 'Зарегистрирован', value: <span className="text-[var(--text-primary)]/70 text-sm">{fmtDate(company.created_at)}</span> },
               ].map(row => (
                 <div key={row.label} className="flex items-center justify-between py-3">
@@ -678,23 +882,20 @@ export default function MyCompanyPage() {
             </div>
           </div>
 
-          {/* Контакты */}
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
             <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2">
               <Phone className="w-3.5 h-3.5" /> Контакты
             </p>
             <div className="space-y-3">
               {company.phone ? (
-                <a href={`tel:${company.phone}`}
-                  className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base">
+                <a href={`tel:${company.phone}`} className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base">
                   <Phone className="w-4 h-4" /> {company.phone}
                 </a>
               ) : (
                 <p className="text-[var(--text-primary)]/20 text-base">Телефон не указан</p>
               )}
               {company.email ? (
-                <a href={`mailto:${company.email}`}
-                  className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base break-all">
+                <a href={`mailto:${company.email}`} className="flex items-center gap-2 text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 transition-colors text-base break-all">
                   <Mail className="w-4 h-4" /> {company.email}
                 </a>
               ) : (

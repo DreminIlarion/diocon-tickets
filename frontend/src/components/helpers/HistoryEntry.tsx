@@ -424,10 +424,10 @@ export const HistoryEntry = ({
         {/* Обычный diff для статуса, приоритета и т.п. */}
         {showSimpleDiff && (
           <div className="mt-2 text-sm">
-            <span className="text-[var(--text-primary)]/30 line-through">
+            <span className="text-[var(--text-primary)]/40 line-through">
               {formattedOldValue}
             </span>
-            <span className="text-[var(--text-primary)]/30 mx-2">→</span>
+            <span className="text-[var(--text-primary)]/40 mx-2">→</span>
             <span className="text-[var(--text-primary)]/60">
               {formattedNewValue}
             </span>

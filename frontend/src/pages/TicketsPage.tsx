@@ -142,13 +142,13 @@ function FilterDropdown({
           <span role="button" tabIndex={0}
             onClick={e => { e.stopPropagation(); onChange(''); setOpen(false); }}
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onChange(''); setOpen(false); } }}
-            className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30
+            className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40
                        hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
             <X size={18} />
           </span>
         ) : (
           <ChevronDown size={18}
-            className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+            className={`text-[var(--text-primary)]/40 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         )}
       </button>
 
@@ -250,7 +250,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       className="grid items-start px-4 py-3.5 rounded-xl
                  hover:bg-[var(--hover-1)] active:bg-[var(--hover-2)]
                  transition-colors duration-100 group"
-      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 110px 120px 110px 20px' }}
+      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 160px 120px 110px 20px' }}
     >
       {/* ── Название + номер ── */}
       <div className="min-w-0 pr-3">
@@ -267,7 +267,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       <div className="min-w-0 pr-2 self-center">
         {ticket.counterparty_name ? (
           <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/60 truncate">
-            <Building2 size={18} className="shrink-0 text-[var(--text-primary)]/30" />
+            <Building2 size={18} className="shrink-0 text-[var(--text-primary)]/40" />
             <span className="truncate">{ticket.counterparty_name}</span>
           </span>
         ) : (
@@ -285,7 +285,7 @@ function TicketRow({ ticket, formatDate, getStatusColor, getPriorityColor, getTy
       <div className="min-w-0 pr-2 self-center">
         {ticket.assignee_full_name ? (
           <span className="flex items-center gap-1 text-[16px] text-[var(--text-primary)]/60 truncate">
-            <UserCheck size={18} className="shrink-0 text-[var(--text-primary)]/30" />
+            <UserCheck size={18} className="shrink-0 text-[var(--text-primary)]/40" />
             <span className="truncate">{toShortName(ticket.assignee_full_name)}</span>
           </span>
         ) : (
@@ -349,7 +349,7 @@ function TableHeader() {
       className="hidden lg:grid px-4 py-2 text-[13px] uppercase tracking-widest
                  font-semibold text-[var(--text-primary)]/25
                  border-b border-[var(--border-color)]"
-      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 110px 120px 110px 20px' }}
+      style={{ gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) 160px 120px 110px 20px' }}
     >
       {cols.map((c, i) => (
         <div key={i} className={c.align || ''}>
@@ -528,7 +528,7 @@ export default function TicketsPage() {
       <div className="flex flex-wrap items-center gap-2.5">
         <div className="relative flex-1 min-w-[220px]">
           <Search size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none" />
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 pointer-events-none" />
           <input
             type="text"
             placeholder="Поиск по теме, номеру..."
@@ -541,7 +541,7 @@ export default function TicketsPage() {
           {search && !loading && (
             <button type="button" onClick={() => setSearch('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                         text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60
+                         text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60
                          hover:bg-[var(--hover-2)] transition-colors">
               <X size={18} />
             </button>
@@ -569,7 +569,7 @@ export default function TicketsPage() {
             </span>
           ) : (
             <ChevronDown size={18}
-              className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+              className={`text-[var(--text-primary)]/40 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
           )}
         </button>
       </div>
@@ -579,7 +579,7 @@ export default function TicketsPage() {
         <div className=" rounded-xl border border-[var(--border-color)] p-3.5 space-y-3
                         animate-in fade-in slide-in-from-top-1 duration-200">
           <div className="flex items-center justify-between">
-            <span className="text-base font-semibold text-[var(--text-primary)]/30 uppercase tracking-widest">
+            <span className="text-base font-semibold text-[var(--text-primary)]/40 uppercase tracking-widest">
               Фильтрация
             </span>
             {hasActiveFilters && (

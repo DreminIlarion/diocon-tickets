@@ -185,7 +185,7 @@ const Field = ({
     </label>
     {children}
     {description && (
-      <p className="text-xs text-[var(--text-primary)]/30 leading-relaxed">{description}</p>
+      <p className="text-xs text-[var(--text-primary)]/40 leading-relaxed">{description}</p>
     )}
   </div>
 );

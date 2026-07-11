@@ -75,18 +75,18 @@ interface Task {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const TIMESHEET_STATUSES = [
-  { value: 'draft',              label: 'Черновик',          color: 'text-[var(--text-primary)]/60', bg: 'bg-[var(--hover-2)]',    border: 'border-[var(--border-color)]', icon: FileText },
-  { value: 'submitted',          label: 'На согласовании',   color: 'text-[var(--warning)]',         bg: 'bg-yellow-500/15',       border: 'border-yellow-500/30',         icon: Send },
-  { value: 'approved',           label: 'Согласован',        color: 'text-[var(--success)]',         bg: 'bg-[var(--success)]/10', border: 'border-emerald-500/30',        icon: CheckCircle2 },
-  { value: 'partially_approved', label: 'Частично согласован', color: 'text-blue-400',               bg: 'bg-blue-500/15',         border: 'border-blue-500/30',           icon: CheckCircle2 },
-  { value: 'rejected',           label: 'Отклонён',          color: 'text-red-400',                  bg: 'bg-red-500/15',          border: 'border-red-500/30',            icon: XCircle },
+  { value: 'draft', label: 'Черновик', color: 'text-[var(--text-primary)]/60', bg: 'bg-[var(--hover-2)]', border: 'border-[var(--border-color)]', icon: FileText },
+  { value: 'submitted', label: 'На согласовании', color: 'text-[var(--warning)]', bg: 'bg-yellow-500/15', border: 'border-yellow-500/30', icon: Send },
+  { value: 'approved', label: 'Согласован', color: 'text-[var(--success)]', bg: 'bg-[var(--success)]/10', border: 'border-emerald-500/30', icon: CheckCircle2 },
+  { value: 'partially_approved', label: 'Частично согласован', color: 'text-blue-400', bg: 'bg-blue-500/15', border: 'border-blue-500/30', icon: CheckCircle2 },
+  { value: 'rejected', label: 'Отклонён', color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30', icon: XCircle },
 ] as const;
 
 const WORKLOG_STATUSES = [
-  { value: 'draft',     label: 'Черновик',        color: 'text-[var(--text-primary)]/60', bg: 'bg-[var(--hover-2)]',    border: 'border-[var(--border-color)]' },
-  { value: 'submitted', label: 'На согласовании', color: 'text-[var(--warning)]',         bg: 'bg-yellow-500/15',       border: 'border-yellow-500/30' },
-  { value: 'approved',  label: 'Согласован',      color: 'text-[var(--success)]',         bg: 'bg-[var(--success)]/10', border: 'border-emerald-500/30' },
-  { value: 'rejected',  label: 'Отклонён',        color: 'text-red-400',                  bg: 'bg-red-500/15',          border: 'border-red-500/30' },
+  { value: 'draft', label: 'Черновик', color: 'text-[var(--text-primary)]/60', bg: 'bg-[var(--hover-2)]', border: 'border-[var(--border-color)]' },
+  { value: 'submitted', label: 'На согласовании', color: 'text-[var(--warning)]', bg: 'bg-yellow-500/15', border: 'border-yellow-500/30' },
+  { value: 'approved', label: 'Согласован', color: 'text-[var(--success)]', bg: 'bg-[var(--success)]/10', border: 'border-emerald-500/30' },
+  { value: 'rejected', label: 'Отклонён', color: 'text-red-400', bg: 'bg-red-500/15', border: 'border-red-500/30' },
 ] as const;
 
 const getTSStatusMeta = (s: string) => TIMESHEET_STATUSES.find(x => x.value === s) ?? TIMESHEET_STATUSES[0];
@@ -341,7 +341,7 @@ function LogTimeModal({
             <div>
               <label className="block text-sm text-[var(--text-primary)]/60 mb-2">Задача *</label>
               <div className="relative mb-2">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/40" />
                 <input value={taskSearch} onChange={e => setTaskSearch(e.target.value)}
                   placeholder="Поиск по названию или номеру тикета..."
                   className="w-full pl-9 pr-3 py-2.5 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl
@@ -425,11 +425,10 @@ function LogTimeModal({
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {['0.25', '0.5', '1', '2', '4', '6', '8'].map(h => (
                     <button key={h} onClick={() => setHours(h)}
-                      className={`px-3 py-1.5 rounded-lg border text-l font-medium transition-colors ${
-                        hours === h
+                      className={`px-3 py-1.5 rounded-lg border text-l font-medium transition-colors ${hours === h
                           ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
                           : 'bg-[var(--hover-1)] hover:bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/70'
-                      }`}>
+                        }`}>
                       {h} ч
                     </button>
                   ))}
@@ -445,11 +444,10 @@ function LogTimeModal({
                     const iso = dateISO(d);
                     return (
                       <button key={off} onClick={() => setEntryDate(iso)}
-                        className={`px-3 py-1.5 rounded-lg border text-l font-medium transition-colors ${
-                          entryDate === iso
+                        className={`px-3 py-1.5 rounded-lg border text-l font-medium transition-colors ${entryDate === iso
                             ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
                             : 'bg-[var(--hover-1)] hover:bg-[var(--hover-2)] border-[var(--border-color)] text-[var(--text-primary)]/70'
-                        }`}>
+                          }`}>
                         {fmtRelative(iso)}
                       </button>
                     );
@@ -903,8 +901,10 @@ export default function TimesheetsPage() {
     setActionLoading(ts.id);
     await new Promise(r => setTimeout(r, 400));
     setTimesheets(prev => prev.map(t => t.id === ts.id
-      ? { ...t, status: 'approved', approved_at: todayISO(), approved_by: MOCK_APPROVER_ID,
-          approved_hours: t.total_hours, pending_hours: '0.00' }
+      ? {
+        ...t, status: 'approved', approved_at: todayISO(), approved_by: MOCK_APPROVER_ID,
+        approved_hours: t.total_hours, pending_hours: '0.00'
+      }
       : t));
     setWorklogs(prev => prev.map(w => ts.worklog_ids.includes(w.id)
       ? { ...w, status: 'approved', approved_at: todayISO(), approved_by: MOCK_APPROVER_ID } : w));
@@ -944,7 +944,7 @@ export default function TimesheetsPage() {
             <Clock className="w-7 h-7 text-white" />
           </div>
           <div>
-            
+
             <h1 className="text-3xl font-bold text-[var(--text-primary)]">Лист учета рабочего времени</h1>
           </div>
         </div>
@@ -969,25 +969,24 @@ export default function TimesheetsPage() {
 
       {/* Метрики */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Calendar}    label="Сегодня"          value={metrics.todayH.toFixed(1)}    suffix="ч" color="text-[var(--accent)]" />
-        <StatCard icon={TrendingUp}  label="За неделю"        value={metrics.weekH.toFixed(1)}     suffix="ч" color="text-blue-400" />
-        <StatCard icon={CheckCircle2} label="Согласовано"     value={metrics.approvedH.toFixed(1)} suffix="ч" color="text-[var(--success)]" />
-        <StatCard icon={FileText}    label="Не в ЛУРВ"        value={metrics.freeH.toFixed(1)}     suffix="ч" color="text-[var(--warning)]"
-                  subtitle="готово к отчёту" highlight={metrics.freeH > 0} />
+        <StatCard icon={Calendar} label="Сегодня" value={metrics.todayH.toFixed(1)} suffix="ч" color="text-[var(--accent)]" />
+        <StatCard icon={TrendingUp} label="За неделю" value={metrics.weekH.toFixed(1)} suffix="ч" color="text-blue-400" />
+        <StatCard icon={CheckCircle2} label="Согласовано" value={metrics.approvedH.toFixed(1)} suffix="ч" color="text-[var(--success)]" />
+        <StatCard icon={FileText} label="Не в ЛУРВ" value={metrics.freeH.toFixed(1)} suffix="ч" color="text-[var(--warning)]"
+          subtitle="готово к отчёту" highlight={metrics.freeH > 0} />
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1.5 border-b border-[var(--border-color)]">
         {([
-          { id: 'my_time' as ViewMode,    label: 'Моё время',  icon: Clock,    count: freeWorklogsByDate.reduce((s, [, items]) => s + items.length, 0) },
-          { id: 'timesheets' as ViewMode, label: 'Мои ЛУРВ',   icon: FileText, count: timesheets.length },
+          { id: 'my_time' as ViewMode, label: 'Моё время', icon: Clock, count: freeWorklogsByDate.reduce((s, [, items]) => s + items.length, 0) },
+          { id: 'timesheets' as ViewMode, label: 'Мои ЛУРВ', icon: FileText, count: timesheets.length },
         ]).map(tab => (
           <button key={tab.id} onClick={() => setView(tab.id)}
-            className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${
-              view === tab.id
+            className={`flex items-center gap-2 px-5 py-3 rounded-t-xl transition-all whitespace-nowrap ${view === tab.id
                 ? 'bg-[var(--accent)]/50 text-white border-b-2 border-red-500'
                 : 'text-[var(--text-primary)]/50 hover:text-[var(--text-primary)]/70 hover:bg-[var(--hover-2)]'
-            }`}>
+              }`}>
             <tab.icon className="w-4 h-4" />
             <span className="text-base font-medium">{tab.label}</span>
             {tab.count > 0 && (
@@ -1023,7 +1022,7 @@ export default function TimesheetsPage() {
                                  transition-all group">
                       <div className="flex items-start justify-between gap-2 mb-1.5">
                         <p className="text-sm font-medium text-[var(--text-primary)] line-clamp-2">{t.title}</p>
-                        <Plus className="w-4 h-4 text-[var(--text-primary)]/30 group-hover:text-[var(--accent)] flex-shrink-0" />
+                        <Plus className="w-4 h-4 text-[var(--text-primary)]/40 group-hover:text-[var(--accent)] flex-shrink-0" />
                       </div>
                       <div className="flex items-center gap-2 flex-wrap text-[13px] text-[var(--text-primary)]/50">
                         {t.ticket_number && (
@@ -1078,7 +1077,7 @@ export default function TimesheetsPage() {
                   <div className="text-center py-12">
                     <Sparkles className="w-12 h-12 text-[var(--text-primary)]/10 mx-auto mb-3" />
                     <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Всё чисто!</p>
-                    <p className="text-[var(--text-primary)]/30 text-sm mb-4">
+                    <p className="text-[var(--text-primary)]/40 text-sm mb-4">
                       Все ваши записи времени включены в ЛУРВ
                     </p>
                     <button onClick={() => openLogTime()}
@@ -1136,7 +1135,7 @@ export default function TimesheetsPage() {
             <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-16 text-center">
               <FileText className="w-16 h-16 text-[var(--text-primary)]/10 mx-auto mb-4" />
               <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Нет ЛУРВ</p>
-              <p className="text-[var(--text-primary)]/30 text-sm mb-4">
+              <p className="text-[var(--text-primary)]/40 text-sm mb-4">
                 Создайте первый лист учёта рабочего времени
               </p>
               <button onClick={() => setShowTSModal(true)}
@@ -1330,9 +1329,8 @@ function StatCard({
   icon: Icon, label, value, suffix, color, subtitle, highlight,
 }: { icon: any; label: string; value: string; suffix?: string; color: string; subtitle?: string; highlight?: boolean }) {
   return (
-    <div className={`bg-[var(--hover-2)] rounded-2xl border p-5 transition-all ${
-      highlight ? 'border-[var(--accent)]/30 ring-2 ring-[var(--accent)]/10' : 'border-[var(--border-color)]'
-    }`}>
+    <div className={`bg-[var(--hover-2)] rounded-2xl border p-5 transition-all ${highlight ? 'border-[var(--accent)]/30 ring-2 ring-[var(--accent)]/10' : 'border-[var(--border-color)]'
+      }`}>
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl bg-[var(--hover-1)] flex items-center justify-center ${color}`}>
           <Icon className="w-5 h-5" />
@@ -1411,7 +1409,7 @@ function WorklogRow({
 
         {!compact && canDelete && onDelete && (
           <button onClick={() => onDelete(worklog)}
-            className="p-1.5 rounded-lg hover:bg-red-500/20 text-[var(--text-primary)]/30 hover:text-red-400
+            className="p-1.5 rounded-lg hover:bg-red-500/20 text-[var(--text-primary)]/40 hover:text-red-400
                        opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
             <Trash2 className="w-3.5 h-3.5" />
           </button>

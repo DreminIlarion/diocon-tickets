@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  ArrowLeft, Clock, User, FileText, History,
+  ArrowLeft, Clock, User, Ticket as Tic,FileText, History,
   Loader2, Download, Image, File, ChevronDown, ChevronUp,
   Calendar, UserPlus, UserCheck, CheckCircle2, X, Plus,
   Search, Settings, AlertCircle, RefreshCw, Tag, Edit,
   Paperclip as PaperclipIcon, MessageCircle, Building2, Phone, Mail,
-  Archive,
+  Archive, 
 } from 'lucide-react';
 import { ticketsApi, usersApi } from '../api/client';
 import { attachmentsApi } from '../api/attachments';
@@ -625,14 +625,17 @@ const getAssigneeName = useCallback(() => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-
       {/* ── Header ── */}
       <div className="flex items-start gap-5">
         <button onClick={() => navigate(-1)} className="p-3 rounded-xl hover:bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] transition-all mt-1">
           <ArrowLeft className="w-6 h-6" />
         </button>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center  flex-shrink-0">
+                      <Tic className="w-10 h-10 text-[var(--text-primary)]" />
+                    </div>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-4 flex-wrap">
+            
             <h1 className="text-2xl text-[var(--text-primary)] font-semibold">Заявка</h1>
             <span className="text-[var(--text-primary)]/50 font-mono text-base">#{ticket.number}</span>
             
@@ -710,10 +713,10 @@ const getAssigneeName = useCallback(() => {
 
                 <div ref={chatContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-6 space-y-5 max-h-[500px]">
                   {loadingComments && sortedRootComments.length === 0 ? (
-                    <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 text-[var(--text-primary)]/30 animate-spin" /></div>
+                    <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 text-[var(--text-primary)]/40 animate-spin" /></div>
                   ) : sortedRootComments.length > 0 ? (
                     <>
-                      {loadingMoreComments && <div className="flex justify-center py-2"><Loader2 className="w-6 h-6 text-[var(--text-primary)]/30 animate-spin" /></div>}
+                      {loadingMoreComments && <div className="flex justify-center py-2"><Loader2 className="w-6 h-6 text-[var(--text-primary)]/40 animate-spin" /></div>}
                       {sortedRootComments.map(comment => (
                         <CommentItem key={comment.id} comment={comment} isReplying={replyingTo === comment.id}
                           onReply={handleReply} onSendReply={handleSendReply} onEditComment={handleEditComment}
@@ -722,13 +725,13 @@ const getAssigneeName = useCallback(() => {
                           getAuthorName={getAuthorName} formatRelativeTime={formatRelativeTime} getAvatarColor={getAvatarColor}
                           handleDownload={handleDownload} ticketId={ticket.id} currentUser={user} onReactionUpdated={handleReactionUpdated} />
                       ))}
-                      {!hasMoreComments && <div className="text-center py-4 text-base text-[var(--text-primary)]/30">Все комментарии загружены</div>}
+                      {!hasMoreComments && <div className="text-center py-4 text-base text-[var(--text-primary)]/40">Все комментарии загружены</div>}
                     </>
                   ) : (
                     <div className="text-center py-16">
                       <MessageCircle className="w-16 h-16 mx-auto mb-4 text-[var(--text-primary)]/20" />
                       <p className="text-[var(--text-primary)]/50 text-lg">Нет комментариев</p>
-                      <p className="text-base text-[var(--text-primary)]/30 mt-1">Будьте первым</p>
+                      <p className="text-base text-[var(--text-primary)]/40 mt-1">Будьте первым</p>
                     </div>
                   )}
                 </div>
@@ -782,8 +785,8 @@ const getAssigneeName = useCallback(() => {
                             <div className="h-52 bg-zinc-950 flex items-center justify-center relative overflow-hidden">
                               {isImage && imagePreviews[file.id]
                                 ? <img src={imagePreviews[file.id]} alt={file.original_filename} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                                : isImage ? <Loader2 className="w-8 h-8 text-[var(--text-primary)]/30 animate-spin" />
-                                  : <div className="text-6xl text-[var(--text-primary)]/30">{getFileIcon(file.mime_type)}</div>
+                                : isImage ? <Loader2 className="w-8 h-8 text-[var(--text-primary)]/40 animate-spin" />
+                                  : <div className="text-6xl text-[var(--text-primary)]/40">{getFileIcon(file.mime_type)}</div>
                               }
                               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                                 <p className="text-white text-base line-clamp-2 font-medium">{file.original_filename}</p>
@@ -865,7 +868,7 @@ const getAssigneeName = useCallback(() => {
                         const cls = statusBtnMap[status] || 'bg-[var(--hover-1)] text-[var(--text-primary)]';
                         return (
                           <button key={status} onClick={() => handleStatusChange(status)} disabled={updatingStatus}
-                            className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all border ${cls} hover:opacity-90 disabled:opacity-50 text-base`}>
+                            className={`flex items-center justify-center gap-3 px-5 py-3 rounded-xl font-medium transition-all border ${cls} hover:brightness-145 disabled:opacity-50 text-base`}>
                             {updatingStatus ? <Loader2 className="w-5 h-5 animate-spin" /> : status}
                           </button>
                         );
@@ -907,8 +910,12 @@ const getAssigneeName = useCallback(() => {
                         <div className="text-center py-5">
                           <p className="text-[var(--text-primary)]/50 text-lg mb-4">Не назначен</p>
                           <button onClick={() => { loadSupportUsers(); setShowAssigneeModal(true); }}
-                            className="px-5 py-2.5 rounded-xl bg-[var(--accent)]/50 hover:bg-[var(--accent)] text-white text-base">
-                            <UserPlus className="w-5 h-5 inline mr-2" />Назначить
+                            className=" px-4 py-2 rounded-lg text-sm font-medium
+                     bg-[var(--accent)]/40 hover:bg-[var(--accent)]/60
+                     text-[var(--text-primary)]/80 hover:text-[var(--text-primary)]
+                     border border-[var(--accent)]/20 hover:border-[var(--accent)]/40
+                     transition-all duration-200">
+                            <UserPlus className="w-5 h-5 inline mr-2 " />Назначить
                           </button>
                         </div>
                       )}
@@ -935,7 +942,7 @@ const getAssigneeName = useCallback(() => {
                     ) : canArchive() ? (
                       <div className="flex items-center justify-between gap-6">
                         <div>
-                          <div className="flex items-center gap-2 mb-1"><Archive className="w-5 h-5 text-[var(--text-primary)]/60" /><span className="text-base font-semibold text-[var(--text-primary)]">Архивировать</span></div>
+                          <div className="flex items-center gap-2 mb-1"><Archive className="w-5 h-5 text-[var(--text-primary)]/60" /><span className="text-base font-semibold text-[var(--text-primary)] hover:brightness-125">Архивировать</span></div>
                           <p className="text-base text-[var(--text-primary)]/40">Скроется из основного списка</p>
                         </div>
                         <button onClick={() => setShowArchiveConfirm(true)} disabled={archiving}
@@ -945,7 +952,7 @@ const getAssigneeName = useCallback(() => {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-4 text-[var(--text-primary)]/30">
+                      <div className="flex items-center gap-4 text-[var(--text-primary)]/40">
                         <Archive className="w-5 h-5 flex-shrink-0" />
                         <p className="text-base">Нет прав для архивирования</p>
                       </div>
@@ -962,7 +969,7 @@ const getAssigneeName = useCallback(() => {
          {/* Исполнитель */}
 <div className="bg-[var(--hover-1)] backdrop-blur-sm rounded-xl border border-[var(--border-color)] p-6">
   <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-5 flex items-center gap-3">
-    <UserCheck className="w-5 h-5 text-[var(--text-primary)]/60" /> Исполнитель
+    <UserCheck className="w-5 h-5 text-[var(--info)]" /> Исполнитель
   </h3>
   {ticket.assignee_id ? (
     <div className="flex items-center justify-between">
@@ -994,7 +1001,7 @@ const getAssigneeName = useCallback(() => {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-xl bg-[var(--hover-2)] border border-dashed border-[var(--border-color)] flex items-center justify-center">
-          <User className="w-6 h-6 text-[var(--text-primary)]/30" />
+          <User className="w-6 h-6 text-[var(--text-primary)]/40" />
         </div>
         <div>
           <p className="text-[var(--text-primary)]/40 text-base">Не назначен</p>
@@ -1004,10 +1011,10 @@ const getAssigneeName = useCallback(() => {
         <button
           onClick={() => { loadSupportUsers(); setShowAssigneeModal(true); }}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
-                     bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20
-                     text-[var(--accent)] hover:text-[var(--accent-light)]
+                     bg-[var(--accent)]/40 hover:bg-[var(--accent)]/60
+                     text-[var(--text-primary)]/80 hover:text-[var(--text-primary)]
                      border border-[var(--accent)]/20 hover:border-[var(--accent)]/40
-                     transition-all duration-200"
+                     transition-all duration-200 "
         >
           <UserPlus className="w-4 h-4" />
           Назначить
@@ -1125,7 +1132,7 @@ const getAssigneeName = useCallback(() => {
                   </div>
                 );
               }
-              return <p className="text-[var(--text-primary)]/30 text-base">Автор не указан</p>;
+              return <p className="text-[var(--text-primary)]/40 text-base">Автор не указан</p>;
             })()}
           </div>
         </div>
@@ -1143,7 +1150,7 @@ const getAssigneeName = useCallback(() => {
               {previewFile.mime_type.startsWith('image/')
                 ? <img src={imagePreviews[previewFile.id] || ''} alt="" className="max-h-[80vh] max-w-full object-contain rounded-2xl" />
                 : <div className="text-center">
-                  <File className="w-24 h-24 mx-auto mb-6 text-[var(--text-primary)]/30" />
+                  <File className="w-24 h-24 mx-auto mb-6 text-[var(--text-primary)]/40" />
                   <p className="text-2xl text-[var(--text-primary)] mb-3">Предпросмотр недоступен</p>
                   <button onClick={() => handleDownload(previewFile.id)} className="mt-6 px-10 py-3.5 bg-[var(--accent)]/50 hover:bg-[var(--accent)]/80 rounded-2xl text-white font-medium">Скачать</button>
                 </div>
@@ -1184,7 +1191,7 @@ const getAssigneeName = useCallback(() => {
 
               {loadingSupports ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="w-8 h-8 text-[var(--text-primary)]/30 animate-spin" />
+                  <Loader2 className="w-8 h-8 text-[var(--text-primary)]/40 animate-spin" />
                 </div>
               ) : filteredUsers.length === 0 ? (
                 <div className="text-center py-8 text-[var(--text-primary)]/40">
@@ -1277,7 +1284,7 @@ const getAssigneeName = useCallback(() => {
                     <span key={tag.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-base font-medium"
                       style={{ backgroundColor: (tag.color || '#64748b') + '25', color: tag.color || '#94a3b8' }}>
                       {tag.name}
-                      <button type="button" onClick={() => setEditTags(p => p.filter(t => t.name !== tag.name))} className="text-[var(--text-primary)]/30 hover:text-[var(--accent)]"><X size={13} /></button>
+                      <button type="button" onClick={() => setEditTags(p => p.filter(t => t.name !== tag.name))} className="text-[var(--text-primary)]/40 hover:text-[var(--accent)]"><X size={13} /></button>
                     </span>
                   ))}
                 </div>
@@ -1320,7 +1327,7 @@ const getAssigneeName = useCallback(() => {
       <ConfirmModal isOpen={showArchiveConfirm}
         onClose={() => setShowArchiveConfirm(false)}
         onConfirm={handleArchive}
-        title="Архивировать заявку" message={`«${ticket.title}» будет перемещена в архив.`}
+        title="Архивировать заявку" message={`Заявка «${ticket.title}» будет перемещена в архив.`}
         confirmText={archiving ? 'Архивируем...' : 'Архивировать'} cancelText="Отмена" type="warning" />
     </div>
   );

@@ -482,7 +482,7 @@ export default function NewTicketPage() {
               <div className={`flex items-center gap-4 ${step >= s.num ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/40'}`}>
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all
                   ${step === s.num
-                    ? 'bg-red-600 border-red-500 scale-110'
+                    ? 'bg-red-700 border-red-500 scale-110'
                     : step > s.num
                       ? 'bg-emerald-600 border-emerald-500'
                       : 'bg-[var(--hover-1)] border-[var(--border-color)]'
@@ -527,7 +527,7 @@ export default function NewTicketPage() {
                     <button type="button" onClick={() => handleSelectionTypeChange('project')}
                       className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all
                         ${selectionType === 'project'
-                          ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                          ? 'border-amber-500 bg-amber-500/20 text-[var(--text-primary)]'
                           : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
                         }`}>
                       <FolderOpen className="w-6 h-6" />
@@ -536,7 +536,7 @@ export default function NewTicketPage() {
                     <button type="button" onClick={() => handleSelectionTypeChange('counterparty')}
                       className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all
                         ${selectionType === 'counterparty'
-                          ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+                          ? 'border-blue-500 bg-blue-500/20 text-[var(--text-primary)]'
                           : 'border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)]'
                         }`}>
                       <Building2 className="w-6 h-6" />
@@ -588,7 +588,7 @@ export default function NewTicketPage() {
                   )}
                 </div>
                 {selectedCounterparty && (
-                  <div className="mt-3 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400">
+                  <div className="mt-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-500">
                     ✓ {cpName(selectedCounterparty)}
                   </div>
                 )}
@@ -628,7 +628,7 @@ export default function NewTicketPage() {
                   )}
                 </div>
                 {selectedProject && (
-                  <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <div className="mt-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500">
                     ✓ {prjName(selectedProject)}
                   </div>
                 )}
@@ -732,7 +732,7 @@ export default function NewTicketPage() {
                     Выбрать файлы
                   </span>
                 </label>
-                <p className="mt-3 text-sm text-[var(--text-primary)]/30">До 10 файлов, максимум 25 МБ</p>
+                <p className="mt-3 text-sm text-[var(--text-primary)]/40">До 10 файлов, максимум 25 МБ</p>
               </div>
 
               {generalFiles.length > 0 && (
@@ -749,7 +749,7 @@ export default function NewTicketPage() {
                         <p className="text-sm text-[var(--text-primary)]/40">{formatFileSize(f.file.size)}</p>
                       </div>
                       <button onClick={() => removeGeneralFile(f.id)}
-                        className="p-1.5 rounded-lg hover:bg-[var(--hover-3)] text-[var(--text-primary)]/30 hover:text-red-400 transition-colors">
+                        className="p-1.5 rounded-lg hover:bg-[var(--hover-3)] text-[var(--text-primary)]/40 hover:text-red-400 transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -1020,7 +1020,7 @@ export default function NewTicketPage() {
                   {descriptionBlocks.every(b =>
                     (b.type === 'text' && !b.value.trim()) ||
                     (b.type === 'image' && !b.localPreview)
-                  ) && <p className="text-[var(--text-primary)]/30">—</p>}
+                  ) && <p className="text-[var(--text-primary)]/40">—</p>}
                 </div>
               </div>
 

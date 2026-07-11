@@ -302,7 +302,7 @@ function StageDetailsDrawer({ stage, responsible, canEdit, onEdit, onClose }: {
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {stage.description && (
             <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-5">
-              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3">Описание</p>
+              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-3">Описание</p>
               <p className="text-sm text-[var(--text-primary)]/80 leading-relaxed whitespace-pre-wrap">{stage.description}</p>
             </div>
           )}
@@ -328,7 +328,7 @@ function StageDetailsDrawer({ stage, responsible, canEdit, onEdit, onClose }: {
 
           {/* Ответственный */}
           <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Ответственный</p>
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4">Ответственный</p>
             {responsible ? (
               <div className="flex items-center gap-3">
                 <Avatar name={responsible.full_name} />
@@ -345,7 +345,7 @@ function StageDetailsDrawer({ stage, responsible, canEdit, onEdit, onClose }: {
 
           {/* Критерии завершения */}
           <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Критерии завершения</p>
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4">Критерии завершения</p>
             {stage.completion_criteria.length === 0 ? (
               <p className="text-sm text-[var(--text-primary)]/40">Не указаны</p>
             ) : (
@@ -362,7 +362,7 @@ function StageDetailsDrawer({ stage, responsible, canEdit, onEdit, onClose }: {
 
           {/* Служебная информация */}
           <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Служебная информация</p>
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4">Служебная информация</p>
             <div className="space-y-3 text-sm">
               {([
                 { label: 'ID этапа', value: stage.id, mono: true },
@@ -529,7 +529,7 @@ function StageModal({ stage, loading, onSubmit, onClose }: {
                     placeholder={`Критерий ${idx + 1}`}
                     className="flex-1 px-3 py-2 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] text-sm placeholder-white/20 focus:outline-none focus:border-[var(--accent)]/30" />
                   {criteria.length > 1 && (
-                    <button onClick={() => removeCriterion(idx)} className="p-1 rounded hover:bg-red-500/20 text-[var(--text-primary)]/30 hover:text-red-400">
+                    <button onClick={() => removeCriterion(idx)} className="p-1 rounded hover:bg-red-500/20 text-[var(--text-primary)]/40 hover:text-red-400">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -641,34 +641,84 @@ export default function ProjectDetailPage() {
   // ── Загрузка участников ──────────────────────────────────────────────
 
   const enrichMembers = useCallback(async (
-    memberships: Array<{ user_id: string; project_role: string }>,
-    counterpartyId: string | null | undefined,
-  ) => {
-    setLoadingMembers(true);
-    try {
-      const userMap = new Map<string, CounterpartyCustomer | SimpleUser>();
-      if (counterpartyId) {
-        try {
-          const res = await counterpartiesApi.getCustomers(counterpartyId, 1, 15);
-          (res.items ?? []).forEach((u: CounterpartyCustomer) => userMap.set(u.id, u));
-        } catch {}
+  memberships: Array<{ user_id: string; project_role: string }>,
+  counterpartyId: string | null | undefined,
+) => {
+  setLoadingMembers(true);
+  try {
+    const userMap = new Map<string, CounterpartyCustomer | SimpleUser>();
+    
+    // 1. Загружаем сотрудников контрагента (если есть counterparty_id)
+    if (counterpartyId) {
+      try {
+        const res = await counterpartiesApi.getCustomers(counterpartyId, 1, 100); // ← увеличьте лимит, если нужно
+        (res.items ?? []).forEach((u: CounterpartyCustomer) => userMap.set(u.id, u));
+      } catch (e) {
+        console.error('Ошибка загрузки сотрудников контрагента:', e);
       }
-      const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
-      if (!isCustomer) {
-        const missingIds = memberships.map(m => m.user_id).filter(uid => !userMap.has(uid) && uid !== user?.user_id);
-        if (missingIds.length > 0) {
-          try {
-            const res = await usersApi.getAllUsers(1, 15);
-            (res.items ?? []).forEach((u: SimpleUser) => { if (missingIds.includes(u.id)) userMap.set(u.id, u); });
-          } catch {}
+    }
+    
+    // 2. Всегда добавляем текущего пользователя
+    if (user?.user_id && !userMap.has(user.user_id)) {
+      userMap.set(user.user_id, {
+        id: user.user_id,
+        email: user.email ?? '',
+        username: user.username ?? '',
+        full_name: user.full_name ?? '',
+        role: user.role ?? '',
+        is_active: true,
+      } as CounterpartyCustomer);
+    }
+    
+    // 3. Для недостающих ID — загружаем через usersApi
+    const isCustomer = user?.role === 'customer' || user?.role === 'customer_admin';
+    
+    const missingIds = memberships
+      .map(m => m.user_id)
+      .filter(uid => !userMap.has(uid));
+    
+    if (missingIds.length > 0) {
+      try {
+        // Пробуем загрузить оставшихся пользователей
+        const res = await usersApi.getAllUsers(1, Math.max(missingIds.length, 100));
+        (res.items ?? []).forEach((u: SimpleUser) => {
+          if (missingIds.includes(u.id)) {
+            userMap.set(u.id, u);
+          }
+        });
+      } catch (e) {
+        console.error('Ошибка загрузки пользователей:', e);
+      }
+      
+      // 4. Для тех, кого так и не нашли — создаём заглушки
+      for (const uid of missingIds) {
+        if (!userMap.has(uid)) {
+          userMap.set(uid, {
+            id: uid,
+            email: '',
+            username: `user_${uid.slice(0, 8)}`,
+            full_name: `Пользователь ${uid.slice(0, 8)}`,
+            role: '',
+            is_active: true,
+          } as CounterpartyCustomer);
         }
       }
-      if (user?.user_id && !userMap.has(user.user_id)) {
-        userMap.set(user.user_id, { id: user.user_id, email: user.email ?? '', username: user.username ?? '', full_name: user.full_name ?? '', role: user.role ?? '' } as any);
-      }
-      setMembers(memberships.map(m => ({ user_id: m.user_id, project_role: m.project_role, user: userMap.get(m.user_id) ?? null })));
-    } finally { setLoadingMembers(false); }
-  }, [user]);
+    }
+    
+    // 5. Формируем результат
+    setMembers(
+      memberships.map(m => ({
+        user_id: m.user_id,
+        project_role: m.project_role,
+        user: userMap.get(m.user_id) ?? null,
+      }))
+    );
+  } catch (e) {
+    console.error('enrichMembers error:', e);
+  } finally {
+    setLoadingMembers(false);
+  }
+}, [user]);
 
   const loadProject = useCallback(async () => {
     setLoading(true);
@@ -819,8 +869,8 @@ export default function ProjectDetailPage() {
 
   const statusClr = (s: string) => ({
     'Новый': 'bg-blue-500/15 text-[var(--info)] border-blue-500/30',
-    'На согласовании': 'bg-purple-500/15 text-[var(--info)] border-purple-500/30',
-    'Открыт': 'bg-cyan-500/15 text-[var(--info)] border-cyan-500/30',
+    'На согласовании': 'bg-neutral-500/15 text-[var(--text-muted)] border-[var(--text-muted)]/15',
+    'Открыт': 'bg-[var(--info)]/15 text-[var(--info)] border-[var(--info)]/30',
     'В работе': 'bg-yellow-500/15 text-[var(--warning)] border-yellow-500/30',
     'Ожидает ответа': 'bg-orange-500/15 text-[var(--warning)] border-orange-500/30',
     'Решён': 'bg-[var(--success)]/8 text-[var(--success)] border-emerald-500/30',
@@ -861,8 +911,8 @@ export default function ProjectDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--accent)] flex items-center justify-center shadow-[var(--shadow-md)]">
-              <FolderOpen className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 rounded-2xl  flex items-center justify-center ">
+              <FolderOpen className="w-10 h-10 text-[var(--text-primary)]" />
             </div>
             <div>
               <div className="flex items-center gap-3 flex-wrap mb-2">
@@ -872,7 +922,7 @@ export default function ProjectDetailPage() {
                 }`}>{isActive ? 'Активен' : 'Архивирован'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Hash className="w-4 h-4 text-[var(--text-primary)]/30" />
+                <Hash className="w-4 h-4 text-[var(--text-primary)]/40" />
                 <span className="text-[var(--text-primary)]/50 font-mono text-base">{project.key}</span>
               </div>
             </div>
@@ -928,24 +978,24 @@ export default function ProjectDetailPage() {
               <div className="space-y-6 animate-in fade-in duration-500">
                 {project.description && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-6">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3">Описание</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-3">Описание</p>
                     <p className="text-[var(--text-primary)] text-base leading-relaxed whitespace-pre-wrap">{project.description}</p>
                   </div>
                 )}
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Building2 className="w-3.5 h-3.5" /> Контрагент</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Building2 className="w-3.5 h-3.5" /> Контрагент</p>
                     {counterparty ? (
                       <>
                         <p className="text-[var(--text-primary)] font-semibold text-base">{counterparty.name}</p>
                         {counterparty.legal_name && <p className="text-[var(--text-primary)]/50 text-sm mt-1">{counterparty.legal_name}</p>}
-                        {counterparty.inn && <p className="text-[var(--text-primary)]/30 text-sm mt-1.5 font-mono">ИНН {counterparty.inn}</p>}
+                        {counterparty.inn && <p className="text-[var(--text-primary)]/40 text-sm mt-1.5 font-mono">ИНН {counterparty.inn}</p>}
                       </>
-                    ) : <p className="text-[var(--text-primary)]/30 text-base">Не указан</p>}
+                    ) : <p className="text-[var(--text-primary)]/40 text-base">Не указан</p>}
                   </div>
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Crown className="w-3.5 h-3.5" /> Владелец</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Crown className="w-3.5 h-3.5" /> Владелец</p>
                     {ownerDisplay ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={ownerDisplay.name} />
@@ -954,14 +1004,14 @@ export default function ProjectDetailPage() {
                           {ownerDisplay.email && <a href={`mailto:${ownerDisplay.email}`} className="text-[var(--text-primary)]/40 text-sm hover:text-[var(--text-primary)]/60 truncate block">{ownerDisplay.email}</a>}
                         </div>
                       </div>
-                    ) : <p className="text-[var(--text-primary)]/30 text-base">Не указан</p>}
+                    ) : <p className="text-[var(--text-primary)]/40 text-base">Не указан</p>}
                   </div>
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Дата создания</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Дата создания</p>
                     <p className="text-[var(--text-primary)] text-base font-medium">{fmtDateTime(project.created_at)}</p>
                   </div>
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><User className="w-3.5 h-3.5" /> Создатель</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><User className="w-3.5 h-3.5" /> Создатель</p>
                     {creatorDisplay ? (
                       <div className="flex items-center gap-3">
                         <Avatar name={creatorDisplay.name} />
@@ -970,7 +1020,7 @@ export default function ProjectDetailPage() {
                           {creatorDisplay.email && <a href={`mailto:${creatorDisplay.email}`} className="text-[var(--text-primary)]/40 text-sm hover:text-[var(--text-primary)]/60 truncate block">{creatorDisplay.email}</a>}
                         </div>
                       </div>
-                    ) : <p className="text-[var(--text-primary)]/30 text-base">Не удалось определить</p>}
+                    ) : <p className="text-[var(--text-primary)]/40 text-base">Не удалось определить</p>}
                   </div>
                 </div>
 
@@ -981,7 +1031,7 @@ export default function ProjectDetailPage() {
                     { icon: Ticket, value: projectTickets.length, label: 'Заявок' },
                   ].map(s => (
                     <div key={s.label} className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5 text-center">
-                      <s.icon className="w-5 h-5 text-[var(--text-primary)]/30 mx-auto mb-3" />
+                      <s.icon className="w-5 h-5 text-[var(--text-primary)]/40 mx-auto mb-3" />
                       <p className="text-3xl font-bold text-[var(--text-primary)] mb-1">{s.value}</p>
                       <p className="text-sm text-[var(--text-primary)]/40">{s.label}</p>
                     </div>
@@ -1049,10 +1099,12 @@ export default function ProjectDetailPage() {
                   <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2.5">
                     <Ticket className="w-5 h-5 text-[var(--text-primary)]/40" /> Заявки
                   </h2>
-                  <Link to={`/tickets/new?project_id=${project.id}`}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-base font-medium shadow-[var(--shadow-md)]">
-                    <Plus className="w-4 h-4" /> Создать
-                  </Link>
+                  {(isSupportOrHigher || project?.owner_id === user?.user_id) && (
+        <Link to={`/tickets/new?project_id=${project.id}`}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-base font-medium shadow-[var(--shadow-md)]">
+          <Plus className="w-4 h-4" /> Создать
+        </Link>
+      )}
                 </div>
                 <div className="p-6">
                   {loadingTickets ? (
@@ -1074,7 +1126,7 @@ export default function ProjectDetailPage() {
                               <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border ${priorityClr(ticket.priority)}`}>{ticket.priority}</span>
                             </div>
                             <p className="text-[var(--text-primary)] font-medium text-base group-hover:text-[var(--accent)] truncate">{ticket.title}</p>
-                            <p className="text-[var(--text-primary)]/30 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
+                            <p className="text-[var(--text-primary)]/40 text-sm mt-1">{fmtDate(ticket.created_at)}</p>
                           </div>
                           <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-[var(--accent)] flex-shrink-0 mt-1" />
                         </Link>
@@ -1090,7 +1142,7 @@ export default function ProjectDetailPage() {
           {/* ═══ SIDEBAR ═══ */}
           <div className="space-y-5">
             <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-5 flex items-center gap-2"><Settings className="w-3.5 h-3.5" /> Информация</p>
+              <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-5 flex items-center gap-2"><Settings className="w-3.5 h-3.5" /> Информация</p>
               <div className="divide-y divide-white/[0.06]">
                 {[
                   { label: 'Ключ', value: <span className="font-mono text-[var(--text-primary)]/80">{project.key}</span> },
@@ -1109,10 +1161,10 @@ export default function ProjectDetailPage() {
             </div>
             {counterparty && (
               <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Building2 className="w-3.5 h-3.5" /> Контрагент</p>
+                <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Building2 className="w-3.5 h-3.5" /> Контрагент</p>
                 <p className="text-[var(--text-primary)] font-semibold text-base">{counterparty.name}</p>
                 {counterparty.legal_name && <p className="text-[var(--text-primary)]/50 text-sm mt-1">{counterparty.legal_name}</p>}
-                {counterparty.inn && <p className="text-[var(--text-primary)]/30 text-sm mt-1.5 font-mono">ИНН {counterparty.inn}</p>}
+                {counterparty.inn && <p className="text-[var(--text-primary)]/40 text-sm mt-1.5 font-mono">ИНН {counterparty.inn}</p>}
                 <div className="mt-4 space-y-2">
                   {counterparty.phone && <a href={`tel:${counterparty.phone}`} className="flex items-center gap-2 text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 text-base"><Phone className="w-4 h-4" /> {counterparty.phone}</a>}
                   {counterparty.email && <a href={`mailto:${counterparty.email}`} className="flex items-center gap-2 text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 text-base break-all"><Mail className="w-4 h-4" /> {counterparty.email}</a>}
@@ -1169,7 +1221,7 @@ export default function ProjectDetailPage() {
                   Сотрудники {selectedUsers.size > 0 && <span className="ml-2 text-sm text-[var(--accent)]">· {selectedUsers.size} выбрано</span>}
                 </label>
                 <div className="relative mb-3">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/40" />
                   <input value={searchUser} onChange={e => setSearchUser(e.target.value)} placeholder="Поиск по имени или email..."
                     className="w-full pl-10 pr-4 py-3 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-[var(--text-primary)] text-base placeholder-white/25 focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)]" />
                 </div>

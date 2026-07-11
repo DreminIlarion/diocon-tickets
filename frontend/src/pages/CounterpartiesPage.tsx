@@ -166,7 +166,7 @@ function FilterDropdown({
 
   return (
     <div ref={containerRef} className="relative">
-      <p className="text-sm uppercase tracking-wider text-[var(--text-primary)]/30 mb-1.5 flex items-center gap-2">
+      <p className="text-sm uppercase tracking-wider text-[var(--text-primary)]/40 mb-1.5 flex items-center gap-2">
         {icon}
         {label}
       </p>
@@ -197,7 +197,7 @@ function FilterDropdown({
                 onChange('');
                 setOpen(false);
               }}
-              className="p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 transition-colors cursor-pointer"
+              className="p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 transition-colors cursor-pointer"
             >
               <X size={14} />
             </span>
@@ -255,7 +255,7 @@ function FilterDropdown({
             <div className="h-px bg-[var(--hover-2)] mx-3 my-1" />
 
             {filtered.length === 0 ? (
-              <div className="px-4 py-6 text-center text-sm text-[var(--text-primary)]/30">
+              <div className="px-4 py-6 text-center text-sm text-[var(--text-primary)]/40">
                 Ничего не найдено
               </div>
             ) : (
@@ -285,7 +285,7 @@ function FilterDropdown({
                     <div className="min-w-0">
                       <span className="block truncate">{opt.label}</span>
                       {opt.sublabel && (
-                        <span className="block text-sm text-[var(--text-primary)]/30 truncate">
+                        <span className="block text-sm text-[var(--text-primary)]/40 truncate">
                           {opt.sublabel}
                         </span>
                       )}
@@ -609,7 +609,7 @@ export default function CounterpartiesPage() {
       <div className="space-y-4">
         <div className="flex flex-col xl:flex-row gap-3">
           <div className="flex-1 relative mt-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/30 pointer-events-none" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-primary)]/40 pointer-events-none" />
             <input
               type="text"
               placeholder="Поиск по названию, ИНН, email или подразделению..."
@@ -630,7 +630,7 @@ export default function CounterpartiesPage() {
                 type="button"
                 onClick={() => setSearch('')}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                           text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
+                           text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
               >
                 <X size={14} />
               </button>
@@ -667,7 +667,7 @@ export default function CounterpartiesPage() {
                     «{search}»
                     <span
                       onClick={() => setSearch('')}
-                      className="cursor-pointer text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"
+                      className="cursor-pointer text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60"
                     >
                       <X size={14} />
                     </span>
@@ -700,7 +700,7 @@ export default function CounterpartiesPage() {
                   Найдено: <span className="text-[var(--text-primary)] font-semibold">{filteredCompanies.length}</span>
                 </span>
                 {loading && isSearchMode && scanProgress && (
-                  <span className="text-[var(--text-primary)]/30">
+                  <span className="text-[var(--text-primary)]/40">
                     · Поиск по базе {scanProgress.loaded}/{scanProgress.total}
                   </span>
                 )}

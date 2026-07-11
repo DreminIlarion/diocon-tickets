@@ -116,12 +116,12 @@ function FilterDropdown({
         {value ? (
           <span
             onClick={e => { e.stopPropagation(); onChange(''); setOpen(false); }}
-            className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors"
+            className="ml-1 p-0.5 rounded-md hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors"
           >
             <X size={14} />
           </span>
         ) : (
-          <ChevronDown size={16} className={`text-[var(--text-primary)]/30 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown size={16} className={`text-[var(--text-primary)]/40 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         )}
       </button>
 
@@ -193,7 +193,7 @@ function ActiveFilters({
         <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${catInfo.bg} border border-[var(--border-color)] text-base ${catInfo.color}`}>
           <catInfo.icon size={14} />
           {catInfo.label}
-          <span onClick={onClearCategory} className="ml-0.5 p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
+          <span onClick={onClearCategory} className="ml-0.5 p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
             <X size={12} />
           </span>
         </span>
@@ -202,7 +202,7 @@ function ActiveFilters({
         <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--hover-2)] border border-[var(--border-color)] text-base text-[var(--text-primary)]/80">
           <span className={`w-2.5 h-2.5 rounded-full ${sInfo.dot}`} />
           {sInfo.label}
-          <span onClick={onClearStatus} className="ml-0.5 p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
+          <span onClick={onClearStatus} className="ml-0.5 p-0.5 rounded hover:bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 cursor-pointer transition-colors">
             <X size={12} />
           </span>
         </span>
@@ -247,7 +247,7 @@ const ProductRow = ({ product, onClick }: { product: any; onClick: () => void })
       </div>
       <div className="flex items-center gap-5 flex-shrink-0">
         <span className="text-base text-[var(--text-primary)]/50 hidden md:block w-[110px] truncate text-right">{product.vendor}</span>
-        <span className="text-base text-[var(--text-primary)]/30 hidden lg:block w-[70px] text-right font-mono">
+        <span className="text-base text-[var(--text-primary)]/40 hidden lg:block w-[70px] text-right font-mono">
           {product.version ? `v${product.version}` : '—'}
         </span>
         <span className={`text-base px-2.5 py-1 rounded-lg ${cat?.bg || 'bg-[var(--hover-2)]'} ${cat?.color || 'text-[var(--text-primary)]/50'} hidden sm:block w-[90px] text-center`}>
@@ -323,14 +323,14 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
 
           {product.description && (
             <div>
-              <div className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3 font-semibold">Описание</div>
+              <div className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-3 font-semibold">Описание</div>
               <p className="text-base text-[var(--text-primary)]/70 leading-relaxed whitespace-pre-wrap">{product.description}</p>
             </div>
           )}
 
           {attrEntries.length > 0 && (
             <div>
-              <div className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3 font-semibold">Характеристики</div>
+              <div className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-3 font-semibold">Характеристики</div>
               <div className="rounded-xl border border-[var(--border-color)] divide-y divide-[var(--border-color)] bg-[var(--hover-1)]">
                 {attrEntries.map(([key, value]) => (
                   <div key={key} className="flex items-start gap-4 px-5 py-3.5">
@@ -343,7 +343,7 @@ const ProductModal = ({ product, onClose }: { product: any; onClose: () => void 
           )}
 
           {!product.description && attrEntries.length === 0 && (
-            <div className="text-center py-12 text-[var(--text-primary)]/30 text-base">Нет дополнительной информации</div>
+            <div className="text-center py-12 text-[var(--text-primary)]/40 text-base">Нет дополнительной информации</div>
           )}
         </div>
       </div>
@@ -435,7 +435,7 @@ export default function ProductsPage() {
       <div className="flex flex-wrap items-center gap-2.5">
         {/* Поиск — единый визуал */}
         <div className="relative flex-1 min-w-[220px]">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 pointer-events-none" />
           <input
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
@@ -450,7 +450,7 @@ export default function ProductsPage() {
               type="button"
               onClick={() => setSearchQuery('')}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                         text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
+                         text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-2)] transition-colors"
             >
               <X size={14} />
             </button>
@@ -483,7 +483,7 @@ export default function ProductsPage() {
 
       {/* ── Заголовок таблицы ────────────────────────────────────────────── */}
       <div className="flex items-center gap-4 px-5 py-2.5 text-xs uppercase
-                      tracking-wider text-[var(--text-primary)]/30 border-b border-[var(--border-color)] font-semibold">
+                      tracking-wider text-[var(--text-primary)]/40 border-b border-[var(--border-color)] font-semibold">
         <div className="w-10" />
         <div className="flex-1">Название</div>
         <div className="hidden md:block w-[110px] text-right">Вендор</div>
@@ -500,7 +500,7 @@ export default function ProductsPage() {
       ) : error ? (
         <div className="px-5 py-10 text-base text-[var(--accent)]">{error}</div>
       ) : filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center py-24 text-[var(--text-primary)]/30">
+        <div className="flex flex-col items-center py-24 text-[var(--text-primary)]/40">
           <Package size={40} className="mb-4 text-[var(--text-primary)]/15" />
           <p className="text-base">
             {searchQuery ? 'На текущей странице ничего не найдено' : 'Нет продуктов'}

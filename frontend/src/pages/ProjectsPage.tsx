@@ -15,8 +15,8 @@ import type { Project } from '../types';
     */
 
 const ROLE_OPTIONS = [
-  { value: 'all',    label: 'Все мои проекты' },
-  { value: 'owner',  label: 'Где я владелец' },
+  { value: 'all', label: 'Все мои проекты' },
+  { value: 'owner', label: 'Где я владелец' },
   { value: 'member', label: 'Где я участник' },
 ] as const;
 
@@ -25,8 +25,8 @@ type ProjectRole = typeof ROLE_OPTIONS[number]['value'];
 function RoleDropdown({ value, onChange }: { value: ProjectRole; onChange: (v: ProjectRole) => void }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const btnRef       = useRef<HTMLButtonElement>(null);
-  const [openUp, setOpenUp]       = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUp, setOpenUp] = useState(false);
   const [alignRight, setAlignRight] = useState(false);
 
   useEffect(() => {
@@ -167,8 +167,8 @@ function ProjectCard({ project, userRole, formatDate, getParticipantsCount }: {
                                         flex items-center justify-center flex-shrink-0
                                         ring-1 ring-[var(--status-open-border)]
                                         group-hover:ring-[var(--status-open-text)]/30 transition-all">
-                          <FolderOpen className="w-5 h-5 text-[var(--status-open-text)]/70 group-hover:text-[var(--status-open-text)] transition-colors" />
-                        </div>
+              <FolderOpen className="w-5 h-5 text-[var(--status-open-text)]/70 group-hover:text-[var(--status-open-text)] transition-colors" />
+            </div>
 
             <div className="min-w-0">
               <h3 className="text-lg font-bold text-[var(--text-primary)] leading-snug
@@ -281,20 +281,20 @@ export default function ProjectsPage() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
-  const [projects,    setProjects]    = useState<Project[]>([]);
-  const [loading,     setLoading]     = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [search,      setSearch]      = useState('');
+  const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [page,        setPage]        = useState(1);
-  const [totalPages,  setTotalPages]  = useState(1);
-  const [totalItems,  setTotalItems]  = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [projectRole, setProjectRole] = useState<ProjectRole>('all');
 
-  const isCustomer      = user?.role === 'customer';
+  const isCustomer = user?.role === 'customer';
   const isCustomerAdmin = user?.role === 'customer_admin';
-  const isSupport       = user?.role === 'support_agent' || user?.role === 'support_manager';
-  const isAdmin         = user?.role === 'admin';
+  const isSupport = user?.role === 'support_agent' || user?.role === 'support_manager';
+  const isAdmin = user?.role === 'admin';
   const canCreateProject = isSupport || isAdmin;
 
   /* ── Debounce поиска  */
@@ -311,7 +311,8 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       let response;
-      if (isCustomer) {
+      const isCustomerOrAdmin = isCustomer || isCustomerAdmin;
+      if (isCustomerOrAdmin) {
         response = await projectsApi.getMyProjects(projectRole, page, 20);
       } else {
         response = await projectsApi.getAll(page, 20);
@@ -409,14 +410,14 @@ export default function ProjectsPage() {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Всего"       value={totalItems}
-          icon={FolderOpen}  color="text-[var(--status-open-text)]/70"  bg="bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]  "/>
-        <StatCard label="Активных"    value={getActiveCount()}
-          icon={Check}    color="text-[var(--success)]"         bg="bg-emerald-500/10" />
-        <StatCard label="В архиве"    value={totalItems - getActiveCount()}
-          icon={Archive}     color="text-[var(--text-muted)]"      bg="bg-[var(--hover-1)]" />
-        <StatCard label="Участников"  value={getTotalParticipants()}
-          icon={Users}       color="text-[var(--info)]"            bg="bg-blue-500/10" />
+        <StatCard label="Всего" value={totalItems}
+          icon={FolderOpen} color="text-[var(--status-open-text)]/70" bg="bg-gradient-to-br from-[var(--status-open-bg)] to-[var(--status-agreement-bg)]  " />
+        <StatCard label="Активных" value={getActiveCount()}
+          icon={Check} color="text-[var(--success)]" bg="bg-emerald-500/10" />
+        <StatCard label="В архиве" value={totalItems - getActiveCount()}
+          icon={Archive} color="text-[var(--text-muted)]" bg="bg-[var(--hover-1)]" />
+        <StatCard label="Участников" value={getTotalParticipants()}
+          icon={Users} color="text-[var(--info)]" bg="bg-blue-500/10" />
       </div>
 
       {/* ── Search + Filters ───────────────────────────────────────── */}
@@ -424,7 +425,7 @@ export default function ProjectsPage() {
         <div className="flex flex-wrap gap-2.5">
           <div className="flex-1 min-w-[220px] relative">
             <Search size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none" />
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 pointer-events-none" />
 
             <input
               type="text"
@@ -445,7 +446,7 @@ export default function ProjectsPage() {
             {!isSearching && search && (
               <button type="button" onClick={() => setSearch('')}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-md
-                           text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60
+                           text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60
                            hover:bg-[var(--hover-2)] transition-colors">
                 <X size={14} />
               </button>

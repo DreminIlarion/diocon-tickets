@@ -402,7 +402,7 @@ function CustomSelect({
           {!value && <Check className="w-3.5 h-3.5 text-[var(--accent)]" />}
         </div>
         {filtered.length === 0 && search && (
-          <div className="px-3 py-4 text-center text-base text-[var(--text-primary)]/30">Ничего не найдено</div>
+          <div className="px-3 py-4 text-center text-base text-[var(--text-primary)]/40">Ничего не найдено</div>
         )}
         {filtered.map(opt => {
           const isSelected = opt.value === value;
@@ -413,7 +413,7 @@ function CustomSelect({
               {opt.icon && <span className="flex-shrink-0">{opt.icon}</span>}
               <div className="flex-1 text-left min-w-0">
                 <span className="block truncate">{opt.label}</span>
-                {opt.sublabel && <span className="block text-xs text-[var(--text-primary)]/30 truncate">{opt.sublabel}</span>}
+                {opt.sublabel && <span className="block text-xs text-[var(--text-primary)]/40 truncate">{opt.sublabel}</span>}
               </div>
               {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent)] flex-shrink-0" />}
             </div>
@@ -432,7 +432,7 @@ function CustomSelect({
         className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 bg-[var(--hover-2)] border rounded-xl text-base text-left transition-all select-none
                    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--hover-3)]'}
                    ${open ? 'border-[var(--accent)]/30 ring-2 ring-[var(--accent-ring)]' : 'border-[var(--border-color)]'}`}>
-        {LeadIcon && <LeadIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />}
+        {LeadIcon && <LeadIcon className="w-4 h-4 text-[var(--text-primary)]/40 flex-shrink-0" />}
         <span className={`flex-1 truncate ${selected ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/25'}`}>
           {selected ? selected.label : (placeholder || '— Выберите —')}
         </span>
@@ -555,7 +555,7 @@ function AsyncSelect({
         </div>
         {loading && <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-[var(--text-primary)]/25" /></div>}
         {!loading && options.length === 0 && (
-          <div className="px-3 py-4 text-center text-base text-[var(--text-primary)]/30">{search ? 'Ничего не найдено' : 'Нет данных'}</div>
+          <div className="px-3 py-4 text-center text-base text-[var(--text-primary)]/40">{search ? 'Ничего не найдено' : 'Нет данных'}</div>
         )}
         {!loading && options.map(opt => {
           const isSelected = opt.value === value;
@@ -567,7 +567,7 @@ function AsyncSelect({
               {opt.icon && <span className="flex-shrink-0">{opt.icon}</span>}
               <div className="flex-1 text-left min-w-0">
                 <span className="block truncate">{opt.label}</span>
-                {opt.sublabel && <span className="block text-xs text-[var(--text-primary)]/30 truncate">{opt.sublabel}</span>}
+                {opt.sublabel && <span className="block text-xs text-[var(--text-primary)]/40 truncate">{opt.sublabel}</span>}
               </div>
               {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent)] flex-shrink-0" />}
             </div>
@@ -575,7 +575,7 @@ function AsyncSelect({
         })}
         {!loading && hasNext && (
           <div role="button" tabIndex={0} onClick={() => !loadingMore && doLoad(search, page + 1, true)}
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-base text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/50 hover:bg-[var(--hover-2)] cursor-pointer">
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-base text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/50 hover:bg-[var(--hover-2)] cursor-pointer">
             {loadingMore ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ChevronDown className="w-3.5 h-3.5" />}
             Загрузить ещё
           </div>
@@ -593,7 +593,7 @@ function AsyncSelect({
         className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 bg-[var(--hover-2)] border rounded-xl text-base text-left transition-all select-none
                    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--hover-3)]'}
                    ${open ? 'border-[var(--accent)]/30 ring-2 ring-[var(--accent-ring)]' : 'border-[var(--border-color)]'}`}>
-        {LeadIcon && <LeadIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />}
+        {LeadIcon && <LeadIcon className="w-4 h-4 text-[var(--text-primary)]/40 flex-shrink-0" />}
         <span className={`flex-1 truncate ${selectedLabel ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/25'}`}>
           {selectedLabel || (placeholder || '— Выберите —')}
         </span>
@@ -726,7 +726,7 @@ function TaskCard({
         )}
 
         <div className="flex items-center gap-2">
-          {task.ticket_id && <Ticket className="w-5 h-5 text-[var(--text-primary)]/30 flex-shrink-0" />}
+          {task.ticket_id && <Ticket className="w-5 h-5 text-[var(--text-primary)]/40 flex-shrink-0" />}
           {task.due_date && (
             <span className={`inline-flex items-center gap-1 text-[11px] font-medium whitespace-nowrap ${od ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/40'}`}>
               <Calendar className="w-4 h-4" />
@@ -805,7 +805,7 @@ function KColumn({
       {/* Cards */}
       <div className="p-3 flex-1 space-y-2.5 overflow-y-auto scrollbar-thin scrollbar-thumb-[var(--hover-3)] scrollbar-track-transparent">
         {column.tasks.items.length === 0 && !isDragOver ? (
-          <div className="h-32 flex flex-col items-center justify-center text-[var(--text-primary)]/30 border-2 border-dashed border-[var(--border-color)] rounded-xl">
+          <div className="h-32 flex flex-col items-center justify-center text-[var(--text-primary)]/40 border-2 border-dashed border-[var(--border-color)] rounded-xl">
             <Milestone className="w-6 h-6 mb-1.5" />
             <span className="text-xs">{m.empty}</span>
           </div>
@@ -849,7 +849,7 @@ function KColumn({
       <div className="px-3 pb-3 flex-shrink-0">
         <button
           onClick={() => onAdd(column.status)}
-          className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-[var(--border-color)] text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)] hover:border-[var(--accent)]/30 text-xs transition-all"
+          className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-[var(--border-color)] text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/60 hover:bg-[var(--hover-1)] hover:border-[var(--accent)]/30 text-xs transition-all"
         >
           <Plus className="w-4 h-4" /> Добавить задачу
         </button>
@@ -1284,7 +1284,7 @@ function DetailModal({
               {task.story_points != null && <SPBadge v={task.story_points} />}
               {canEdit && (
                 <button onClick={() => setEditing(v => !v)}
-                  className={`p-1 rounded-lg transition-colors ml-auto ${editing ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'hover:bg-[var(--hover-2)] text-[var(--text-primary)]/30'}`}>
+                  className={`p-1 rounded-lg transition-colors ml-auto ${editing ? 'bg-[var(--accent)]/15 text-[var(--accent)]' : 'hover:bg-[var(--hover-2)] text-[var(--text-primary)]/40'}`}>
                   <Pencil className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -1353,7 +1353,7 @@ function DetailModal({
 
           <div className="grid grid-cols-2 gap-2.5">
             <div className="bg-[var(--hover-2)] rounded-xl border border-[var(--border-color)] p-3">
-              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/30 mb-1.5">Статус</p>
+              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/40 mb-1.5">Статус</p>
               <div className="relative">
                 <button onClick={() => allowed.length > 0 && setShowStatus(v => !v)} disabled={busy !== '' || !allowed.length}
                   className={`flex items-center gap-1.5 text-base font-semibold ${cm.textColor} disabled:opacity-40`}>
@@ -1393,7 +1393,7 @@ function DetailModal({
             </div>
 
             <div className="bg-[var(--hover-2)] rounded-xl border border-[var(--border-color)] p-3">
-              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/30 mb-1.5">Срок</p>
+              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/40 mb-1.5">Срок</p>
               {task.due_date
                 ? <span className={`flex items-center gap-1 text-base font-semibold ${isOverdue(task.due_date) ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/70'}`}>
                   <Calendar className="w-3.5 h-3.5" />
@@ -1403,7 +1403,7 @@ function DetailModal({
             </div>
 
             <div className="bg-[var(--hover-2)] rounded-xl border border-[var(--border-color)] p-3">
-              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/30 mb-1.5">Исполнитель</p>
+              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/40 mb-1.5">Исполнитель</p>
               {assignee
                 ? <div className="flex items-center gap-1.5">
                   <Ava name={assignee.full_name || assignee.username} url={assignee.avatar_url} size="xs" />
@@ -1415,7 +1415,7 @@ function DetailModal({
             </div>
 
             <div className="bg-[var(--hover-2)] rounded-xl border border-[var(--border-color)] p-3">
-              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/30 mb-1.5">Создана</p>
+              <p className="text-[13px] uppercase tracking-widest text-[var(--text-primary)]/40 mb-1.5">Создана</p>
               <span className="text-base text-[var(--text-primary)]/70">
                 {new Date(task.created_at).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
@@ -1832,7 +1832,7 @@ const onDrop = useCallback(async (e: React.DragEvent, to: TaskStatus) => {
                 {total}
               </span>
             )}
-            {refreshing && <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--text-primary)]/30" />}
+            {refreshing && <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--text-primary)]/40" />}
           </div>
           {!loading && (
             <p className="text-base text-[var(--text-primary)]/35 mt-0.5">
@@ -1956,7 +1956,7 @@ const onDrop = useCallback(async (e: React.DragEvent, to: TaskStatus) => {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <Loader2 className="w-8 h-8 text-[var(--accent)] animate-spin mx-auto mb-3" />
-            <p className="text-[var(--text-primary)]/30 text-base">Загрузка...</p>
+            <p className="text-[var(--text-primary)]/40 text-base">Загрузка...</p>
           </div>
         </div>
       ) : !cols.length ? (
@@ -1964,7 +1964,7 @@ const onDrop = useCallback(async (e: React.DragEvent, to: TaskStatus) => {
           <div className="text-center max-w-xs">
             <FolderOpen className="w-12 h-12 text-[var(--text-primary)]/10 mx-auto mb-3" />
             <p className="text-base font-semibold text-[var(--text-primary)]/60 mb-1">Нет данных</p>
-            <p className="text-base text-[var(--text-primary)]/30 mb-4">
+            <p className="text-base text-[var(--text-primary)]/40 mb-4">
               {mode === 'project' && !selPid ? 'Выберите проект'
                 : mode === 'assignee' && !selAid ? 'Выберите исполнителя'
                   : 'Задачи не найдены'}

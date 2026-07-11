@@ -66,120 +66,131 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   ];
 
   // ─── Nav item ───
-const NavItem = ({
-  to,
-  icon: Icon,
-  label,
-  badge,
-}: {
-  to: string;
-  icon: any;
-  label: string;
-  badge?: number;
-}) => (
+  const NavItem = ({
+    to,
+    icon: Icon,
+    label,
+    badge,
+  }: {
+    to: string;
+    icon: any;
+    label: string;
+    badge?: number;
+  }) => (
     <NavLink
       to={to}
       onClick={onClose}
       title={isCollapsed ? label : undefined}
       className={({ isActive }) =>
-        `group relative flex items-center gap-3 rounded-xl text-l font-medium
-         transition-all duration-200 ${isCollapsed ? 'justify-center px-2 py-4.5 mx-auto w-11 h-11' : 'px-4 py-3.5'}
+        `group relative flex items-center rounded-xl font-medium
+         transition-all duration-200 
+         ${isCollapsed 
+           ? 'justify-center w-12 h-12 mx-auto' // Фиксированный квадрат 48px
+           : 'px-4 h-12 w-full' // Фиксированная высота 48px
+         }
          ${isActive
-          ? 'bg-[var(--hover-1)] '
+          ? 'bg-[var(--hover-1)] text-[var(--text-primary)]'
           : 'text-[var(--text-secondary)] hover:bg-[var(--hover-1)] hover:text-[var(--text-primary)]'
         }`
       }
     >
       {({ isActive }) => (
-  <>
-    {isActive && !isCollapsed && (
-      <span
-        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full
-                   bg-gradient-to-b from-[var(--accent-light)] to-[var(--accent)]"
-        style={{ boxShadow: '0 0 8px var(--accent-glow)' }}
-      />
-    )}
+        <>
+          {/* Активный индикатор (полоска слева) */}
+          {isActive && !isCollapsed && (
+            <span
+              className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full
+                         bg-gradient-to-b from-[var(--accent-light)] to-[var(--accent)]"
+              style={{ boxShadow: '0 0 8px var(--accent-glow)' }}
+            />
+          )}
 
-    <div className="relative flex-shrink-0">
-      <Icon
-        className={`w-6 h-6 transition-transform group-hover:scale-110
-                   ${isActive ? 'text-[var(--accent-light)]' : ''}`}
-      />
-      {badge != null && badge > 0 && isCollapsed && (
-        <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1
-                         flex items-center justify-center rounded-full
-                         bg-[var(--accent)] text-white text-[10px] font-bold
-                         ring-2 ring-[var(--bg-primary)] animate-pulse">
-          {badge > 99 ? '99+' : badge}
-        </span>
+          {/* Контейнер иконки */}
+          <div className="relative flex-shrink-0 flex items-center justify-center w-6 h-6">
+            <Icon
+              className={`w-6 h-6 transition-transform duration-200 
+                         ${isActive ? 'text-[var(--accent-light)]' : ''}
+                         ${!isCollapsed ? 'group-hover:scale-110' : ''}`}
+            />
+            
+            {/* Бейдж в свернутом режиме */}
+            {badge != null && badge > 0 && isCollapsed && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1
+                               flex items-center justify-center rounded-full
+                               bg-[var(--accent)] text-white text-[10px] font-bold
+                               ring-2 ring-[var(--bg-primary)] animate-pulse">
+                {badge > 99 ? '99+' : badge}
+              </span>
+            )}
+          </div>
+
+          {/* Текст и бейдж в развернутом режиме */}
+          {!isCollapsed && (
+            <>
+              <span className="truncate ml-3 flex-1">{label}</span>
+              {badge != null && badge > 0 && (
+                <span className="ml-auto px-2 py-0.5 min-w-[22px] text-center
+                                 rounded-full bg-[var(--accent)] text-white
+                                 text-xs font-bold animate-pulse">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
+            </>
+          )}
+
+          {/* Тултип в свернутом режиме */}
+          {isCollapsed && (
+            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg
+                             bg-[var(--bg-card)] border border-[var(--border-color)]
+                             text-xs font-medium text-[var(--text-primary)] whitespace-nowrap
+                             opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                             shadow-lg z-50 flex items-center gap-2">
+              {label}
+              {badge != null && badge > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold">
+                  {badge}
+                </span>
+              )}
+            </span>
+          )}
+        </>
       )}
-    </div>
-
-    {!isCollapsed && (
-      <>
-        <span className="truncate flex-1">{label}</span>
-        {badge != null && badge > 0 && (
-          <span className="ml-auto px-2 py-0.5 min-w-[22px] text-center
-                           rounded-full bg-[var(--accent)] text-white
-                           text-xs font-bold animate-pulse">
-            {badge > 99 ? '99+' : badge}
-          </span>
-        )}
-      </>
-    )}
-
-    {isCollapsed && (
-      <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1.5 rounded-lg
-                       bg-[var(--bg-card)] border border-[var(--border-color)]
-                       text-xs font-medium text-[var(--text-primary)] whitespace-nowrap
-                       opacity-0 group-hover:opacity-100 transition-opacity duration-150
-                       shadow-lg z-50 flex items-center gap-2">
-        {label}
-        {badge != null && badge > 0 && (
-          <span className="px-1.5 py-0.5 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold">
-            {badge}
-          </span>
-        )}
-      </span>
-    )}
-  </>
-)}
     </NavLink>
   );
 
   // ─── Section label ───
   const SectionLabel = ({ children }: { children: React.ReactNode }) => (
     !isCollapsed ? (
-      <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+      <p className="px-4 mb-2 mt-4 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
         {children}
       </p>
     ) : (
-      <div className="mx-auto w-8 h-px bg-[var(--border-color)] my-2" />
+      <div className="mx-auto w-8 h-px bg-[var(--border-color)] my-4" />
     )
   );
 
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <div className="sidebar-bg flex flex-col h-full relative">
       {/* Header */}
-      <div className={`flex items-center border-b border-[var(--border-color)]
-                      ${isCollapsed && !isMobile ? 'p-4 justify-center' : 'p-4 justify-between gap-2'}`}>
+      <div className={`flex items-center border-b border-[var(--border-color)] transition-all duration-300
+                      ${isCollapsed && !isMobile ? 'p-5 justify-center ' : 'p-5 justify-between '}`}>
         <NavLink
           to="/dashboard"
           onClick={onClose}
           className={`flex items-center gap-3 min-w-0 group
                      ${isCollapsed && !isMobile ? '' : 'flex-1'}`}
         >
-          <div className="relative flex-shrink-0">
+          <div className="relative flex-shrink-0 flex items-center justify-center">
             <div className="absolute inset-0 bg-[var(--accent)]/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             <img
               src="http://80.93.62.177:8000/media/images/Logo_bez_fona_bez_teksta.width-80.height-80.png"
               alt="ДИО-Консалт"
-              className="relative w-12 h-12 object-contain"
+              className="relative w-10 h-10 object-contain"
             />
           </div>
           {(!isCollapsed || isMobile) && (
-            <div className="min-w-0">
-              <h1 className="text-[var(--text-primary)] text-2xl">ДИО Деск</h1>
+            <div className="min-w-0 overflow-hidden">
+              <h1 className="text-[var(--text-primary)] text-xl font-bold truncate">ДИО Деск</h1>
             </div>
           )}
         </NavLink>
@@ -220,7 +231,7 @@ const NavItem = ({
       <aside
         className={`hidden lg:flex z-40 flex-col h-screen sticky top-0 border-r border-[var(--border-color)]
                    transition-all duration-300 sidebar-bg relative
-                   ${isCollapsed ? 'w-20' : 'w-72'}`}
+                   ${isCollapsed ? 'w-20' : 'w-66'}`}
       >
         <SidebarContent />
 
@@ -232,7 +243,7 @@ const NavItem = ({
                      flex items-center justify-center
                      text-[var(--text-muted)] hover:text-[var(--accent-light)]
                      hover:border-[var(--accent)]/40 hover:scale-110
-                     shadow-md transition-all duration-200"
+                     shadow-md transition-all duration-200 z-50"
         >
           <ChevronLeft
             className={`w-3.5 h-3.5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}

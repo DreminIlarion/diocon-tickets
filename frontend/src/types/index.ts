@@ -97,6 +97,7 @@ export interface Counterparty {
   address: string;
   avatar_url?: string | null;
   contact_person?: ContactPerson | null;
+  contact_persons?: ContactPerson[];
   parent_id?: string | null;
   is_active: boolean;
   is_head: boolean;

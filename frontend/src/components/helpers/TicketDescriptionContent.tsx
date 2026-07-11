@@ -146,7 +146,7 @@ function RemoteImage({ attachmentId }: { attachmentId: string }) {
 
   if (loading) return (
     <div className="my-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-      <Loader2 className="w-4 h-4 animate-spin text-[var(--text-primary)]/30" />
+      <Loader2 className="w-4 h-4 animate-spin text-[var(--text-primary)]/40" />
       <span className="text-sm text-[var(--text-primary)]/40">Загрузка изображения...</span>
     </div>
   );

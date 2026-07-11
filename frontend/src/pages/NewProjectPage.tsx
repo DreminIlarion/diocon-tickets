@@ -594,7 +594,7 @@ const checkKeyAvailability = async () => {
                     <div className="p-8 text-center">
                       <User className="w-12 h-12 mx-auto mb-3 text-[var(--text-primary)]/20" />
                       <p className="text-[var(--text-primary)]/50 text-lg">Нет пользователей</p>
-                      <p className="text-[var(--text-primary)]/30 text-sm mt-1">Вы будете владельцем проекта</p>
+                      <p className="text-[var(--text-primary)]/40 text-sm mt-1">Вы будете владельцем проекта</p>
                     </div>
                   ) : (
                     users.map((u) => {

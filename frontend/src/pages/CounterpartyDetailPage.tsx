@@ -472,7 +472,7 @@ function ContactsTab({ counterpartyId, persons, onRefresh }: {
           <div className="text-center py-16">
             <User size={36} className="text-[var(--text-primary)]/15 mx-auto mb-4" />
             <p className="text-[var(--text-primary)]/50 text-base font-semibold mb-1">Контактные лица не указаны</p>
-            <p className="text-[var(--text-primary)]/30 text-sm mb-5">Добавьте контактное лицо для связи</p>
+            <p className="text-[var(--text-primary)]/40 text-sm mb-5">Добавьте контактное лицо для связи</p>
             <button onClick={() => setShowForm(true)}
               className="text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors text-base">
               Добавить контактное лицо →
@@ -491,49 +491,49 @@ function ContactsTab({ counterpartyId, persons, onRefresh }: {
                     </div>
                   </div>
                   <button onClick={() => setConfirmDelete(confirmDelete?.full_name === person.full_name ? null : person)}
-                    className="p-2 rounded-xl hover:bg-[var(--accent)]/10 text-[var(--text-primary)]/30 hover:text-[var(--accent)] transition-colors flex-shrink-0" title="Удалить">
+                    className="p-2 bg-[var(--text-primary)]/10 rounded-xl hover:bg-[var(--accent)]/10 text-[var(--text-primary)]/40 hover:text-[var(--accent)] transition-colors flex-shrink-0" title="Удалить">
                     <Trash2 size={16} />
                   </button>
                 </div>
                 <div className="p-4 grid md:grid-cols-2 gap-3">
                   {person.phone && (
                     <div className="flex items-start gap-3 p-3.5 ">
-                      <Phone size={15} className="text-[var(--text-primary)]/30 mt-0.5 flex-shrink-0" />
+                      <Phone size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-xs text-[var(--text-primary)]/30 mb-0.5">Телефон</p>
+                        <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Телефон</p>
                         <a href={`tel:${person.phone}`} className="text-sm text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors">{person.phone}</a>
                       </div>
                     </div>
                   )}
                   {person.email && (
                     <div className="flex items-start gap-3 p-3.5 ">
-                      <Mail size={15} className="text-[var(--text-primary)]/30 mt-0.5 flex-shrink-0" />
+                      <Mail size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-xs text-[var(--text-primary)]/30 mb-0.5">Email</p>
+                        <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Email</p>
                         <a href={`mailto:${person.email}`} className="text-sm text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors break-all">{person.email}</a>
                       </div>
                     </div>
                   )}
                   {person.messengers?.telegram && (
                     <div className="flex items-start gap-3 p-3.5 ">
-                      <MessageSquare size={15} className="text-[var(--text-primary)]/30 mt-0.5 flex-shrink-0" />
+                      <MessageSquare size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-xs text-[var(--text-primary)]/30 mb-0.5">Telegram</p>
+                        <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">Telegram</p>
                         <a href={`https://t.me/${person.messengers.telegram.replace('@', '')}`} target="_blank" rel="noopener noreferrer"
                           className="text-sm text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5">
-                          @{person.messengers.telegram.replace('@', '')} <ExternalLink size={12} className="text-[var(--text-primary)]/30" />
+                          @{person.messengers.telegram.replace('@', '')} <ExternalLink size={12} className="text-[var(--text-primary)]/40" />
                         </a>
                       </div>
                     </div>
                   )}
                   {person.messengers?.vk && (
                     <div className="flex items-start gap-3 p-3.5 ">
-                      <Globe size={15} className="text-[var(--text-primary)]/30 mt-0.5 flex-shrink-0" />
+                      <Globe size={15} className="text-[var(--text-primary)]/40 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-xs text-[var(--text-primary)]/30 mb-0.5">ВКонтакте</p>
+                        <p className="text-xs text-[var(--text-primary)]/40 mb-0.5">ВКонтакте</p>
                         <a href={`https://vk.com/${person.messengers.vk}`} target="_blank" rel="noopener noreferrer"
                           className="text-sm text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1.5">
-                          {person.messengers.vk} <ExternalLink size={12} className="text-[var(--text-primary)]/30" />
+                          {person.messengers.vk} <ExternalLink size={12} className="text-[var(--text-primary)]/40" />
                         </a>
                       </div>
                     </div>
@@ -731,7 +731,7 @@ function BranchesTab({ counterpartyId, counterpartyName }: {
                 </span>
               </div>
               <p className="text-sm text-[var(--text-primary)]/40 truncate">{branch.legal_name || '—'}</p>
-              <div className="flex items-center gap-4 mt-1.5 text-xs text-[var(--text-primary)]/30">
+              <div className="flex items-center gap-4 mt-1.5 text-xs text-[var(--text-primary)]/40">
                 {branch.inn && <span className="font-mono">ИНН {branch.inn}</span>}
                 {branch.kpp && <span className="font-mono">КПП {branch.kpp}</span>}
                 {branch.address && (
@@ -849,12 +849,12 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                   <p className="text-base font-medium text-[var(--text-primary)] truncate">{selectedProduct.display_name || selectedProduct.name}</p>
                   <p className="text-sm text-[var(--text-primary)]/40">{selectedProduct.vendor}</p>
                 </div>
-                <button onClick={() => { setSelectedProduct(null); setFilterQuery(''); }} className="p-1.5 rounded-lg text-[var(--text-primary)]/30 hover:text-[var(--accent)] transition-colors"><X size={16} /></button>
+                <button onClick={() => { setSelectedProduct(null); setFilterQuery(''); }} className="p-1.5 rounded-lg text-[var(--text-primary)]/40 hover:text-[var(--accent)] transition-colors"><X size={16} /></button>
               </div>
             ) : (
               <div className="space-y-3">
                 <div className="relative">
-                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 pointer-events-none" />
+                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 pointer-events-none" />
                   <input value={filterQuery} onChange={e => setFilterQuery(e.target.value)} placeholder="Фильтр по названию..."
                     className="w-full pl-10 pr-4 py-3 bg-[var(--hover-2)] border border-[var(--border-color)] rounded-xl text-base text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/30 focus:ring-2 focus:ring-[var(--accent-ring)] transition-all" />
                 </div>
@@ -866,7 +866,7 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                         return (
                           <button key={p.id} onClick={() => { setSelectedProduct(p); setFilterQuery(''); }}
                             className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-[var(--hover-2)] transition-colors">
-                            <div className={`w-10 h-10 rounded-lg ${c?.bg || 'bg-[var(--hover-2)]'} flex items-center justify-center ${c?.color || 'text-[var(--text-primary)]/30'} flex-shrink-0`}><I size={18} /></div>
+                            <div className={`w-10 h-10 rounded-lg ${c?.bg || 'bg-[var(--hover-2)]'} flex items-center justify-center ${c?.color || 'text-[var(--text-primary)]/40'} flex-shrink-0`}><I size={18} /></div>
                             <div className="flex-1 min-w-0"><p className="text-base text-[var(--text-primary)] truncate">{p.display_name || p.name}</p><p className="text-sm text-[var(--text-primary)]/40">{p.vendor}</p></div>
                             <div className={`w-2 h-2 rounded-full ${statusDot(p.status)} flex-shrink-0`} />
                           </button>
@@ -943,10 +943,10 @@ function ProductsTab({ counterpartyId }: { counterpartyId: string }) {
                         <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--hover-2)] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)]"><Building2 size={16} className="text-[var(--text-primary)]/40" />{product.vendor}</span>
                         {product.version && <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--hover-2)] text-base text-[var(--text-primary)]/60 border border-[var(--border-color)] font-mono"><Tag size={16} className="text-[var(--text-primary)]/40" />v{product.version}</span>}
                       </div>
-                      {product.description && <div><p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-2 font-semibold">Описание</p><p className="text-base text-[var(--text-primary)]/70 leading-relaxed whitespace-pre-wrap">{product.description}</p></div>}
+                      {product.description && <div><p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-2 font-semibold">Описание</p><p className="text-base text-[var(--text-primary)]/70 leading-relaxed whitespace-pre-wrap">{product.description}</p></div>}
                       {attrs.length > 0 && (
                         <div>
-                          <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-3 font-semibold">Характеристики</p>
+                          <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-3 font-semibold">Характеристики</p>
                           <div className="rounded-xl border border-[var(--border-color)] divide-y divide-white/[0.06] bg-[var(--hover-1)]">
                             {attrs.map(([key, value]) => (
                               <div key={key} className="flex items-start gap-4 px-5 py-3.5">
@@ -1079,8 +1079,8 @@ export default function CounterpartyDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--accent)] flex items-center justify-center shadow-[var(--shadow-md)] flex-shrink-0">
-              <Building2 className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center  flex-shrink-0">
+              <Building2 className="w-10 h-10 text-[var(--text-primary)]" />
             </div>
             <div>
               <div className="flex items-center gap-3 flex-wrap mb-2">
@@ -1148,41 +1148,41 @@ export default function CounterpartyDetailPage() {
             <div className="space-y-6 animate-in fade-in duration-500">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Hash className="w-3.5 h-3.5" /> ИНН</p>
+                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Hash className="w-3.5 h-3.5" /> ИНН</p>
                   <p className="text-[var(--text-primary)] text-base font-mono">{counterparty.inn || '—'}</p>
                 </div>
                 {shouldShowKpp(counterparty.counterparty_type) && counterparty.kpp && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><CreditCard className="w-3.5 h-3.5" /> КПП</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><CreditCard className="w-3.5 h-3.5" /> КПП</p>
                     <p className="text-[var(--text-primary)] text-base font-mono">{counterparty.kpp}</p>
                   </div>
                 )}
                 {counterparty.okpo && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Briefcase className="w-3.5 h-3.5" /> ОКПО</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Briefcase className="w-3.5 h-3.5" /> ОКПО</p>
                     <p className="text-[var(--text-primary)] text-base font-mono">{counterparty.okpo}</p>
                   </div>
                 )}
                 {counterparty.phone && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><PhoneCall className="w-3.5 h-3.5" /> Телефон</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><PhoneCall className="w-3.5 h-3.5" /> Телефон</p>
                     <a href={`tel:${counterparty.phone}`} className="text-[var(--text-primary)] text-base hover:text-[var(--accent)] transition-colors">{counterparty.phone}</a>
                   </div>
                 )}
                 {counterparty.email && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><AtSign className="w-3.5 h-3.5" /> Email</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><AtSign className="w-3.5 h-3.5" /> Email</p>
                     <a href={`mailto:${counterparty.email}`} className="text-[var(--text-primary)] text-base hover:text-[var(--accent)] transition-colors break-all">{counterparty.email}</a>
                   </div>
                 )}
                 {counterparty.address && (
                   <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><MapPinned className="w-3.5 h-3.5" /> Адрес</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><MapPinned className="w-3.5 h-3.5" /> Адрес</p>
                     <p className="text-[var(--text-primary)] text-base leading-relaxed">{counterparty.address}</p>
                   </div>
                 )}
                 <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Создан</p>
+                  <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4 flex items-center gap-2"><Calendar className="w-3.5 h-3.5" /> Создан</p>
                   <p className="text-[var(--text-primary)] text-base">{fmtDate(counterparty.created_at)}</p>
                 </div>
               </div>
@@ -1210,9 +1210,13 @@ export default function CounterpartyDetailPage() {
                   <Users size={18} className="text-[var(--text-primary)]/40" /> Сотрудники
                   {customers.length > 0 && <span className="px-2 py-0.5 rounded-full bg-[var(--hover-3)] text-sm text-[var(--text-primary)]/50">{customers.length}</span>}
                 </h2>
-                <button className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-base font-medium shadow-md">
+                <button
+                  onClick={() => navigate('/invitations')}
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--accent)] text-white text-base font-medium shadow-md hover:bg-[var(--accent-light)] transition-all"
+                >
                   <UserPlus size={16} /> Пригласить
                 </button>
+
               </div>
               <div className="p-6">
                 {customers.length === 0 ? (
@@ -1263,7 +1267,7 @@ export default function CounterpartyDetailPage() {
                             <span className={`px-2.5 py-0.5 rounded-lg text-sm font-medium border ${priorityClr(ticket.priority)}`}>{ticket.priority}</span>
                           </div>
                           <p className="text-base font-medium text-[var(--text-primary)] truncate group-hover:text-[var(--accent)] transition-colors">{ticket.title}</p>
-                          <p className="text-sm text-[var(--text-primary)]/30 mt-1">{fmtDateShort(ticket.created_at)}</p>
+                          <p className="text-sm text-[var(--text-primary)]/40 mt-1">{fmtDateShort(ticket.created_at)}</p>
                         </div>
                         <ChevronRight className="w-4 h-4 text-[var(--text-primary)]/20 group-hover:text-[var(--accent)] flex-shrink-0 mt-1" />
                       </Link>
@@ -1301,7 +1305,7 @@ export default function CounterpartyDetailPage() {
         {/* ── Sidebar ── */}
         <div className="space-y-5">
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-5 flex items-center gap-2"><Info className="w-3.5 h-3.5" /> Сводка</p>
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-5 flex items-center gap-2"><Info className="w-3.5 h-3.5" /> Сводка</p>
             <div className="divide-y divide-white/[0.06]">
               {[
                 { label: 'Тип', value: <span className="text-[var(--text-primary)]/80 text-sm">{counterparty.counterparty_type}</span> },
@@ -1323,7 +1327,7 @@ export default function CounterpartyDetailPage() {
 
           {/* Быстрые действия */}
           <div className="bg-[var(--hover-2)] rounded-2xl border border-[var(--border-color)] p-5">
-            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/30 mb-4">Действия</p>
+            <p className="text-xs uppercase tracking-widest text-[var(--text-primary)]/40 mb-4">Действия</p>
             <div className="space-y-1">
               <button onClick={() => setShowEditModal(true)}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[var(--hover-3)] text-[var(--text-primary)]/70 hover:text-[var(--text-primary)] text-sm font-medium transition-colors text-left">

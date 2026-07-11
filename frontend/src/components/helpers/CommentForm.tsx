@@ -351,7 +351,7 @@ export const CommentForm = React.memo(({
               accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
             />
 
-            <span className="text-l text-[var(--text-primary)]/30 self-center">
+            <span className="text-l text-[var(--text-primary)]/40 self-center">
               Ctrl+Enter для отправки
             </span>
           </div>

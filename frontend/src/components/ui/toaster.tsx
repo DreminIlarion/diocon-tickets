@@ -103,7 +103,7 @@ export function Toaster() {
                   }
                   dismiss(t.id);
                 }}
-                className="p-0.5 -mt-0.5 -mr-0.5 rounded-md text-[var(--text-primary)]/30 hover:text-[var(--text-primary)] hover:bg-[var(--hover-2)] transition-colors flex-shrink-0"
+                className="p-0.5 -mt-0.5 -mr-0.5 rounded-md text-[var(--text-primary)]/40 hover:text-[var(--text-primary)] hover:bg-[var(--hover-2)] transition-colors flex-shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

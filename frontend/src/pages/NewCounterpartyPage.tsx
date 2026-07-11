@@ -294,10 +294,10 @@ const PRODUCT_CATEGORIES = [
 ] as const;
 
 const ENVIRONMENTS = [
-  { value: 'production', label: 'Production' },
-  { value: 'staging', label: 'Staging' },
-  { value: 'testing', label: 'Testing' },
-  { value: 'development', label: 'Development' },
+  { value: 'production', label: 'Продакшн' },
+  { value: 'staging', label: 'Стенд' },
+  { value: 'testing', label: 'Тестирование' },
+  { value: 'development', label: 'Разработка' },
 ] as const;
 
 const catMeta = (v: string) => PRODUCT_CATEGORIES.find(c => c.value === v);
@@ -307,7 +307,7 @@ const envBadgeClass = (e: string) => {
   if (e === 'production') return 'bg-emerald-500/10 text-[var(--success)] border border-emerald-500/20';
   if (e === 'staging') return 'bg-yellow-500/10 text-[var(--warning)] border border-yellow-500/20';
   if (e === 'testing') return 'bg-blue-500/10 text-[var(--info)] border border-blue-500/20';
-  if (e === 'development') return 'bg-purple-500/10 text-[var(--info)] border border-purple-500/20';
+  if (e === 'development') return 'bg-blue-500/10 text-[var(--info)] border border-blue-500/20';
   return 'bg-[var(--hover-1)] text-[var(--text-primary)]/40 border border-white/10';
 };
 
@@ -544,153 +544,153 @@ export default function NewCounterpartyPage() {
   const removeLinkedProduct = (i: number) =>
     setLinkedProducts(linkedProducts.filter((_, idx) => idx !== i));
 
-const handleSubmit = async () => {
-  // ── Предварительные проверки ─────────────────────────────
-  clearErrors();
+  const handleSubmit = async () => {
+    // ── Предварительные проверки ─────────────────────────────
+    clearErrors();
 
-  // Проверка дубликатов email
-  const dupes = findDuplicateEmails(
-    formData.email, contactPersons, includeContacts, branches, includeBranches,
-  );
-  if (dupes.length > 0) {
-    setGeneralError(
-      `Дубликаты email: ${dupes.map(d => d.email).join(', ')}. ` +
-      'В системе нельзя использовать одинаковые email для разных сущностей.'
+    // Проверка дубликатов email
+    const dupes = findDuplicateEmails(
+      formData.email, contactPersons, includeContacts, branches, includeBranches,
     );
-    return;
-  }
-
-  // Проверка валидности email во всех полях
-  const allEmails = collectAllEmails(
-    formData.email, contactPersons, includeContacts, branches, includeBranches,
-  );
-  const invalidEmail = allEmails.find(e => !isEmailValid(e.email));
-  if (invalidEmail) {
-    setGeneralError(`Некорректный email "${invalidEmail.email}" в: ${invalidEmail.source}`);
-    return;
-  }
-
-  setIsLoading(true);
-
-  try {
-    // ── 1. Подготовка payload ──────────────────────────────
-    const payload: any = {
-      counterparty_type: formData.counterparty_type,
-      name: formData.name.trim(),
-      legal_name: formData.legal_name.trim(),
-      inn: formData.inn,
-      phone: companyPhone.rawValue,
-      email: formData.email.trim(),
-    };
-    if (formData.counterparty_type === 'Юридическое лицо') {
-      if (formData.kpp) payload.kpp = formData.kpp;
-    } else {
-      // Для ИП и Физлица — явно передаем null
-      payload.kpp = 0;
-    }
-    if (isKppAllowed(formData.counterparty_type) && formData.kpp) payload.kpp = formData.kpp;
-    if (formData.okpo) payload.okpo = formData.okpo;
-    if (formData.address?.trim()) payload.address = formData.address.trim();
-
-    if (includeContacts && contactPersons.length > 0) {
-      payload.contact_persons = contactPersons.map(cp => {
-        const p: any = { first_name: cp.first_name, last_name: cp.last_name };
-        if (cp.middle_name) p.middle_name = cp.middle_name;
-        if (cp.phone) p.phone = cp.phone;
-        if (cp.email) p.email = cp.email;
-        const m: any = {};
-        if (cp.messengers?.telegram) m.telegram = cp.messengers.telegram;
-        if (cp.messengers?.vk) m.vk = cp.messengers.vk;
-        if (Object.keys(m).length) p.messengers = m;
-        return p;
-      });
+    if (dupes.length > 0) {
+      setGeneralError(
+        `Дубликаты email: ${dupes.map(d => d.email).join(', ')}. ` +
+        'В системе нельзя использовать одинаковые email для разных сущностей.'
+      );
+      return;
     }
 
-    // ── 2. Создание контрагента ───────────────────────────
-    const created = await counterpartiesApi.create(payload);
+    // Проверка валидности email во всех полях
+    const allEmails = collectAllEmails(
+      formData.email, contactPersons, includeContacts, branches, includeBranches,
+    );
+    const invalidEmail = allEmails.find(e => !isEmailValid(e.email));
+    if (invalidEmail) {
+      setGeneralError(`Некорректный email "${invalidEmail.email}" в: ${invalidEmail.source}`);
+      return;
+    }
 
-    // ── 3. Подразделения (с откатом при ошибке) ───────────
-    if (includeBranches && branches.length > 0) {
-      try {
-        for (const b of branches) {
-          const bp: CreateBranchInput = {
-            name: b.name,
-            legal_name: b.legal_name,
-            kpp: b.kpp,
-            phone: b.phone,
-            email: b.email,
-          };
-          if (b.okpo) bp.okpo = b.okpo;
-          if (b.address) bp.address = b.address;
-          await counterpartiesApi.createBranch(created.id, bp);
-        }
-      } catch (branchErr: any) {
-        // Откатываем — удаляем созданного контрагента
-        try {
-          await counterpartiesApi.delete(created.id);
-        } catch {
-          // Если удаление тоже упало — логируем но показываем оригинальную ошибку
-          console.error('Не удалось откатить создание контрагента', created.id);
-        }
+    setIsLoading(true);
 
-        const parsed = parseBackendErrors(branchErr);
-        setGeneralError(
-          `Ошибка при создании подразделения: ${parsed.general}. ` +
-          'Контрагент НЕ был создан — исправьте ошибку и попробуйте снова.'
-        );
-        setFieldErrors(parsed.fields);
-
-        // Перекинуть на шаг подразделений
-        if (formData.counterparty_type === 'Юридическое лицо') setStep(4);
-        return;
+    try {
+      // ── 1. Подготовка payload ──────────────────────────────
+      const payload: any = {
+        counterparty_type: formData.counterparty_type,
+        name: formData.name.trim(),
+        legal_name: formData.legal_name.trim(),
+        inn: formData.inn,
+        phone: companyPhone.rawValue,
+        email: formData.email.trim(),
+      };
+      if (formData.counterparty_type === 'Юридическое лицо') {
+        if (formData.kpp) payload.kpp = formData.kpp;
+      } else {
+        // Для ИП и Физлица — явно передаем null
+        payload.kpp = 0;
       }
-    }
+      if (isKppAllowed(formData.counterparty_type) && formData.kpp) payload.kpp = formData.kpp;
+      if (formData.okpo) payload.okpo = formData.okpo;
+      if (formData.address?.trim()) payload.address = formData.address.trim();
 
-    // ── 4. Продукты (с откатом при ошибке) ────────────────
-    if (linkedProducts.length > 0) {
-      try {
-        for (const lp of linkedProducts) {
-          await counterpartiesApi.linkProduct(created.id, {
-            product_id: lp.product.id,
-            environment: lp.environment,
-            is_primary: lp.is_primary,
-          });
-        }
-      } catch (productErr: any) {
-        // Откатываем — удаляем контрагента
-        try {
-          await counterpartiesApi.delete(created.id);
-        } catch {
-          console.error('Не удалось откатить создание контрагента', created.id);
-        }
-
-        const parsed = parseBackendErrors(productErr);
-        setGeneralError(
-          `Ошибка при привязке продукта: ${parsed.general}. ` +
-          'Контрагент НЕ был создан — исправьте ошибку и попробуйте снова.'
-        );
-        setFieldErrors(parsed.fields);
-        setStep(productsStep);
-        return;
+      if (includeContacts && contactPersons.length > 0) {
+        payload.contact_persons = contactPersons.map(cp => {
+          const p: any = { first_name: cp.first_name, last_name: cp.last_name };
+          if (cp.middle_name) p.middle_name = cp.middle_name;
+          if (cp.phone) p.phone = cp.phone;
+          if (cp.email) p.email = cp.email;
+          const m: any = {};
+          if (cp.messengers?.telegram) m.telegram = cp.messengers.telegram;
+          if (cp.messengers?.vk) m.vk = cp.messengers.vk;
+          if (Object.keys(m).length) p.messengers = m;
+          return p;
+        });
       }
+
+      // ── 2. Создание контрагента ───────────────────────────
+      const created = await counterpartiesApi.create(payload);
+
+      // ── 3. Подразделения (с откатом при ошибке) ───────────
+      if (includeBranches && branches.length > 0) {
+        try {
+          for (const b of branches) {
+            const bp: CreateBranchInput = {
+              name: b.name,
+              legal_name: b.legal_name,
+              kpp: b.kpp,
+              phone: b.phone,
+              email: b.email,
+            };
+            if (b.okpo) bp.okpo = b.okpo;
+            if (b.address) bp.address = b.address;
+            await counterpartiesApi.createBranch(created.id, bp);
+          }
+        } catch (branchErr: any) {
+          // Откатываем — удаляем созданного контрагента
+          try {
+            await counterpartiesApi.delete(created.id);
+          } catch {
+            // Если удаление тоже упало — логируем но показываем оригинальную ошибку
+            console.error('Не удалось откатить создание контрагента', created.id);
+          }
+
+          const parsed = parseBackendErrors(branchErr);
+          setGeneralError(
+            `Ошибка при создании подразделения: ${parsed.general}. ` +
+            'Контрагент НЕ был создан — исправьте ошибку и попробуйте снова.'
+          );
+          setFieldErrors(parsed.fields);
+
+          // Перекинуть на шаг подразделений
+          if (formData.counterparty_type === 'Юридическое лицо') setStep(4);
+          return;
+        }
+      }
+
+      // ── 4. Продукты (с откатом при ошибке) ────────────────
+      if (linkedProducts.length > 0) {
+        try {
+          for (const lp of linkedProducts) {
+            await counterpartiesApi.linkProduct(created.id, {
+              product_id: lp.product.id,
+              environment: lp.environment,
+              is_primary: lp.is_primary,
+            });
+          }
+        } catch (productErr: any) {
+          // Откатываем — удаляем контрагента
+          try {
+            await counterpartiesApi.delete(created.id);
+          } catch {
+            console.error('Не удалось откатить создание контрагента', created.id);
+          }
+
+          const parsed = parseBackendErrors(productErr);
+          setGeneralError(
+            `Ошибка при привязке продукта: ${parsed.general}. ` +
+            'Контрагент НЕ был создан — исправьте ошибку и попробуйте снова.'
+          );
+          setFieldErrors(parsed.fields);
+          setStep(productsStep);
+          return;
+        }
+      }
+
+      // ── 5. Успех ──────────────────────────────────────────
+      navigate('/counterparties');
+    } catch (err: any) {
+      // Ошибка создания самого контрагента — откат не нужен
+      const parsed = parseBackendErrors(err);
+      setGeneralError(parsed.general);
+      setFieldErrors(parsed.fields);
+
+      const step1Fields = ['inn', 'kpp', 'okpo', 'name', 'legal_name', 'counterparty_type'];
+      const step2Fields = ['phone', 'email', 'address'];
+      if (parsed.fields.some(f => step1Fields.includes(f.field))) setStep(1);
+      else if (parsed.fields.some(f => step2Fields.includes(f.field))) setStep(2);
+    } finally {
+      setIsLoading(false);
     }
-
-    // ── 5. Успех ──────────────────────────────────────────
-    navigate('/counterparties');
-  } catch (err: any) {
-    // Ошибка создания самого контрагента — откат не нужен
-    const parsed = parseBackendErrors(err);
-    setGeneralError(parsed.general);
-    setFieldErrors(parsed.fields);
-
-    const step1Fields = ['inn', 'kpp', 'okpo', 'name', 'legal_name', 'counterparty_type'];
-    const step2Fields = ['phone', 'email', 'address'];
-    if (parsed.fields.some(f => step1Fields.includes(f.field))) setStep(1);
-    else if (parsed.fields.some(f => step2Fields.includes(f.field))) setStep(2);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // ─── Валидация полей ─────────────────────────────────────────────────────
 
@@ -752,17 +752,16 @@ const handleSubmit = async () => {
             <button
               onClick={() => { if (s < step) setStep(s); }}
               disabled={s > step}
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-semibold transition-all ${
-                step === s
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-semibold transition-all ${step === s
                   ? 'bg-[var(--accent)] text-white shadow-[var(--shadow-md)]'
                   : step > s
                     ? 'bg-emerald-600 text-white cursor-pointer hover:bg-emerald-500'
-                    : 'bg-[var(--hover-2)] text-[var(--text-primary)]/30'
-              }`}
+                    : 'bg-[var(--hover-2)] text-[var(--text-primary)]/40'
+                }`}
             >
               {step > s ? <Check className="w-4 h-4" /> : s}
             </button>
-            <span className={`text-sm font-medium hidden sm:block ${step >= s ? 'text-[var(--text-primary)]/70' : 'text-[var(--text-primary)]/30'}`}>
+            <span className={`text-sm font-medium hidden sm:block ${step >= s ? 'text-[var(--text-primary)]/70' : 'text-[var(--text-primary)]/40'}`}>
               {stepLabels[s]}
             </span>
             {s < totalSteps && <div className="w-6 h-0.5 bg-[var(--hover-3)]" />}
@@ -799,18 +798,17 @@ const handleSubmit = async () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {COUNTERPARTY_TYPES.map(type => (
                 <button key={type.value} type="button" onClick={() => handleTypeChange(type.value)}
-                  className={`p-5 rounded-xl border-2 text-left transition-all ${
-                    formData.counterparty_type === type.value
+                  className={`p-5 rounded-xl border-2 text-left transition-all ${formData.counterparty_type === type.value
                       ? 'border-[var(--accent)]/60 bg-[var(--accent)]/[0.06]'
                       : 'border-[var(--border-color)] bg-[var(--hover-1)] hover:border-[var(--accent)]/20'
-                  }`}>
+                    }`}>
                   <div className={`mb-2 ${formData.counterparty_type === type.value ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]/40'}`}>
                     {type.icon}
                   </div>
                   <p className={`text-base font-semibold ${formData.counterparty_type === type.value ? 'text-[var(--text-primary)]' : 'text-[var(--text-primary)]/70'}`}>
                     {type.label}
                   </p>
-                  <p className="text-sm text-[var(--text-primary)]/30 mt-1">{type.desc}</p>
+                  <p className="text-sm text-[var(--text-primary)]/40 mt-1">{type.desc}</p>
                 </button>
               ))}
             </div>
@@ -825,9 +823,9 @@ const handleSubmit = async () => {
                 value={formData.name}
                 onChange={e => { clearErrors(); setFormData({ ...formData, name: e.target.value }); }}
                 placeholder={
-                  formData.counterparty_type === 'Физическое лицо' ? 'Иванов И.И.'
-                    : formData.counterparty_type === 'Индивидуальный предприниматель' ? 'ИП Иванов'
-                    : 'ООО Компания'
+                  formData.counterparty_type === 'Физическое лицо' ? 'Введите название'
+                    : formData.counterparty_type === 'Индивидуальный предприниматель' ? 'Введите название'
+                      : 'Введите название'
                 }
                 className={inputCls(hasFieldError(fieldErrors, 'name'))}
               />
@@ -839,7 +837,7 @@ const handleSubmit = async () => {
                 type="text"
                 value={formData.legal_name}
                 onChange={e => { clearErrors(); setFormData({ ...formData, legal_name: e.target.value }); }}
-                placeholder={formData.counterparty_type === 'Юридическое лицо' ? 'ООО «Компания»' : 'Полное ФИО'}
+                placeholder={formData.counterparty_type === 'Юридическое лицо' ? 'Введите полное название' : 'Полное ФИО'}
                 className={inputCls(hasFieldError(fieldErrors, 'legal_name'))}
               />
               <FieldErrorMsg fieldErrors={fieldErrors} fieldName="legal_name" />
@@ -917,7 +915,7 @@ const handleSubmit = async () => {
 
             {/* ОКПО */}
             <div>
-              <label className={labelCls}>ОКПО <span className="text-[var(--text-primary)]/30 text-sm font-normal">(необяз.)</span></label>
+              <label className={labelCls}>ОКПО <span className="text-[var(--text-primary)]/40 text-sm font-normal">(необяз.)</span></label>
               <input
                 type="text"
                 inputMode="numeric"
@@ -1010,7 +1008,7 @@ const handleSubmit = async () => {
           <div>
             <label className={labelCls}>
               <MapPin className="w-4 h-4 inline mr-1.5 text-[var(--text-primary)]/40" />
-              Адрес <span className="text-[var(--text-primary)]/30 text-sm font-normal">(необяз.)</span>
+              Адрес <span className="text-[var(--text-primary)]/40 text-sm font-normal">(необяз.)</span>
             </label>
             <textarea
               value={formData.address}
@@ -1067,7 +1065,7 @@ const handleSubmit = async () => {
                 <p className="text-base font-medium text-[var(--text-primary)]">Контакт #{i + 1}</p>
                 {contactPersons.length > 1 && (
                   <button onClick={() => removeContactPerson(i)}
-                    className="p-1.5 text-[var(--text-primary)]/30 hover:text-[var(--accent)] hover:bg-[var(--hover-2)] rounded-lg transition-all">
+                    className="p-1.5 text-[var(--text-primary)]/40 hover:text-[var(--accent)] hover:bg-[var(--hover-2)] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
@@ -1079,19 +1077,19 @@ const handleSubmit = async () => {
                   <label className={labelCls}>Фамилия <span className="text-[var(--accent)]">*</span></label>
                   <input type="text" value={cp.last_name}
                     onChange={e => updateContactPerson(i, { ...cp, last_name: e.target.value })}
-                    placeholder="Иванов" className={inputCls()} />
+                    placeholder="Введите фамилию" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Имя <span className="text-[var(--accent)]">*</span></label>
                   <input type="text" value={cp.first_name}
                     onChange={e => updateContactPerson(i, { ...cp, first_name: e.target.value })}
-                    placeholder="Иван" className={inputCls()} />
+                    placeholder="Введите имя" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Отчество</label>
                   <input type="text" value={cp.middle_name}
                     onChange={e => updateContactPerson(i, { ...cp, middle_name: e.target.value })}
-                    placeholder="Иванович" className={inputCls()} />
+                    placeholder="Введите отчество" className={inputCls()} />
                 </div>
               </div>
 
@@ -1122,7 +1120,7 @@ const handleSubmit = async () => {
                     Telegram
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 text-base select-none">@</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 text-base select-none">@</span>
                     <input
                       type="text"
                       value={(cp.messengers?.telegram || '').replace(/^@/, '')}
@@ -1138,7 +1136,7 @@ const handleSubmit = async () => {
                 <div>
                   <label className={labelCls}>VK</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 text-sm select-none">vk.com/</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/40 text-sm select-none">vk.com/</span>
                     <input
                       type="text"
                       value={(cp.messengers?.vk || '').replace(/^vk\.com\//, '')}
@@ -1163,7 +1161,7 @@ const handleSubmit = async () => {
               <Plus className="w-4 h-4" /> Добавить ещё
             </button>
           )}
-          
+
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(2)}
               className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70
@@ -1209,7 +1207,7 @@ const handleSubmit = async () => {
                 </p>
                 {branches.length > 1 && (
                   <button onClick={() => removeBranch(i)}
-                    className="p-1.5 text-[var(--text-primary)]/30 hover:text-[var(--accent)] hover:bg-[var(--hover-2)] rounded-lg transition-all">
+                    className="p-1.5 text-[var(--text-primary)]/40 hover:text-[var(--accent)] hover:bg-[var(--hover-2)] rounded-lg transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
@@ -1217,7 +1215,7 @@ const handleSubmit = async () => {
 
               {/* ИНН наследуется */}
               <div className="px-3 py-2 bg-[var(--hover-2)] rounded-lg border border-[var(--border-color)] flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />
+                <FileText className="w-4 h-4 text-[var(--text-primary)]/40 flex-shrink-0" />
                 <p className="text-sm text-[var(--text-primary)]/40">
                   ИНН наследуется:{' '}
                   <span className="text-[var(--text-primary)] font-mono tracking-widest">{formData.inn}</span>
@@ -1229,13 +1227,13 @@ const handleSubmit = async () => {
                   <label className={labelCls}>Название <span className="text-[var(--accent)]">*</span></label>
                   <input type="text" value={branch.name}
                     onChange={e => updateBranch(i, { ...branch, name: e.target.value })}
-                    placeholder="Подразделение в СПб" className={inputCls()} />
+                    placeholder="Введите название" className={inputCls()} />
                 </div>
                 <div>
                   <label className={labelCls}>Полное наименование <span className="text-[var(--accent)]">*</span></label>
                   <input type="text" value={branch.legal_name}
                     onChange={e => updateBranch(i, { ...branch, legal_name: e.target.value })}
-                    placeholder="Подразделение ООО «Компания»" className={inputCls()} />
+                    placeholder="Введите полное название" className={inputCls()} />
                 </div>
               </div>
 
@@ -1266,7 +1264,7 @@ const handleSubmit = async () => {
                   )}
                 </div>
                 <div>
-                  <label className={labelCls}>ОКПО <span className="text-[var(--text-primary)]/30 text-sm font-normal">(необяз.)</span></label>
+                  <label className={labelCls}>ОКПО <span className="text-[var(--text-primary)]/40 text-sm font-normal">(необяз.)</span></label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -1309,7 +1307,7 @@ const handleSubmit = async () => {
                   <EmailInput
                     value={branch.email}
                     onChange={v => updateBranch(i, { ...branch, email: v })}
-                    placeholder="branch@company.ru"
+                    placeholder="pochta@company.ru"
                     required
                   />
                 </div>
@@ -1352,7 +1350,7 @@ const handleSubmit = async () => {
         </div>
       )}
 
-      {/* ═══ Шаг «Продукты» ═══ */}
+            {/* ═══ Шаг «Продукты» ═══ */}
       {step === productsStep && (
         <div className="bg-[var(--hover-2)] border border-[var(--border-color)] rounded-2xl p-6 space-y-6">
           <div className="flex items-center justify-between p-4 bg-[var(--hover-1)] rounded-xl border border-[var(--border-color)]">
@@ -1376,7 +1374,7 @@ const handleSubmit = async () => {
                 <p className="text-base font-medium text-[var(--text-primary)]">Выберите продукт</p>
 
                 <div className="relative">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/30 pointer-events-none" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/40 pointer-events-none" />
                   <input
                     value={productFilter}
                     onChange={e => setProductFilter(e.target.value)}
@@ -1397,7 +1395,7 @@ const handleSubmit = async () => {
                   ) : availableProducts.length === 0 ? (
                     <div className="py-10 text-center">
                       <Package className="w-8 h-8 mx-auto mb-2 text-[var(--text-primary)]/10" />
-                      <p className="text-base text-[var(--text-primary)]/30">
+                      <p className="text-base text-[var(--text-primary)]/40">
                         {productFilter ? 'Ничего не найдено' : 'Нет продуктов'}
                       </p>
                     </div>
@@ -1413,12 +1411,12 @@ const handleSubmit = async () => {
                             setProductFilter('');
                           }}
                           className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[var(--hover-2)] transition-colors">
-                          <PIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />
+                          <PIcon className="w-4 h-4 text-[var(--text-primary)]/40 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <p className="text-base text-[var(--text-primary)] truncate">
                               {p.display_name || p.name}
                             </p>
-                            <p className="text-sm text-[var(--text-primary)]/30">{p.vendor}</p>
+                            <p className="text-sm text-[var(--text-primary)]/40">{p.vendor}</p>
                           </div>
                         </button>
                       );
@@ -1426,19 +1424,25 @@ const handleSubmit = async () => {
                   )}
                 </div>
 
-                {/* Среда и флаг «основной» — показываем всегда в форме */}
+                {/* Выбор среды для продукта */}
                 <div>
-                  <label className="block text-sm text-[var(--text-primary)]/40 mb-2">
-                    Среда по умолчанию для новых продуктов
+                  <label className="block text-sm text-[var(--text-primary)]/60 mb-2">
+                    Среда развертывания
                   </label>
+                  <p className="text-sm text-[var(--text-primary)]/40 mb-3">
+                    Выберите окружение, в котором будет использоваться продукт
+                  </p>
                   <div className="grid grid-cols-2 gap-2">
                     {ENVIRONMENTS.map(env => (
-                      <button key={env.value} onClick={() => setProductEnv(env.value)}
+                      <button
+                        key={env.value}
+                        onClick={() => setProductEnv(env.value)}
                         className={`px-3 py-2.5 rounded-xl text-base font-medium transition-all ${
                           productEnv === env.value
                             ? envBadgeClass(env.value)
                             : 'border border-[var(--border-color)] bg-[var(--hover-1)] text-[var(--text-primary)]/40 hover:bg-[var(--hover-2)]'
-                        }`}>
+                        }`}
+                      >
                         {env.label}
                       </button>
                     ))}
@@ -1448,7 +1452,7 @@ const handleSubmit = async () => {
                 <div className="flex items-center justify-between p-3 bg-[var(--hover-1)] rounded-xl border border-[var(--border-color)]">
                   <div>
                     <p className="text-base text-[var(--text-primary)]/70">Основной продукт</p>
-                    <p className="text-sm text-[var(--text-primary)]/30">Отмечать следующие как основные</p>
+                    <p className="text-sm text-[var(--text-primary)]/40">Отмечать следующие как основные</p>
                   </div>
                   <button onClick={() => setProductIsPrimary(!productIsPrimary)}
                     className={`relative w-11 h-6 rounded-full transition-colors ${productIsPrimary ? 'bg-[var(--accent)]' : 'bg-[var(--hover-3)]'}`}>
@@ -1467,7 +1471,7 @@ const handleSubmit = async () => {
                     const PIcon = catMeta(lp.product.category)?.icon || Package;
                     return (
                       <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--hover-1)] border border-[var(--border-color)] rounded-xl">
-                        <PIcon className="w-4 h-4 text-[var(--text-primary)]/30 flex-shrink-0" />
+                        <PIcon className="w-4 h-4 text-[var(--text-primary)]/40 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-base text-[var(--text-primary)] truncate">
                             {lp.product.display_name || lp.product.name}
@@ -1485,7 +1489,7 @@ const handleSubmit = async () => {
                           </div>
                         </div>
                         <button onClick={() => removeLinkedProduct(idx)}
-                          className="p-1.5 text-[var(--text-primary)]/30 hover:text-[var(--accent)] transition-colors">
+                          className="p-1.5 text-[var(--text-primary)]/40 hover:text-[var(--accent)] transition-colors">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -1495,29 +1499,39 @@ const handleSubmit = async () => {
               )}
             </div>
           )}
-          {/* Предупреждение о дубликатах email */}
-        <DuplicateEmailWarning
-          duplicates={findDuplicateEmails(
-            formData.email, contactPersons, includeContacts, branches, includeBranches,
-          )}
-        />
+          
+                   {/* Предупреждение о дубликатах email */}
+          <DuplicateEmailWarning
+            duplicates={findDuplicateEmails(
+              formData.email, contactPersons, includeContacts, branches, includeBranches,
+            )}
+          />
 
+          {/* 🔥 ИСПРАВЛЕННЫЙ БЛОК КНОПОК: Назад слева, Создать справа */}
           <div className="flex justify-between pt-2">
             <button
-            onClick={handleSubmit}
-            disabled={
-              isLoading ||
-              findDuplicateEmails(
-                formData.email, contactPersons, includeContacts, branches, includeBranches,
-              ).length > 0
-            }
-            className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white
-                      bg-[var(--accent)] hover:bg-[var(--accent-light)] rounded-xl transition-all
-                      disabled:opacity-40 disabled:cursor-not-allowed shadow-[var(--shadow-md)]"
-          >
-            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            {isLoading ? 'Сохранение...' : 'Создать контрагента'}
-          </button>
+              onClick={() => setStep(productsPrevStep)}
+              className="px-6 py-3 text-base font-medium text-[var(--text-primary)]/70
+                         bg-[var(--hover-2)] hover:bg-[var(--hover-3)] rounded-xl transition-all"
+            >
+              Назад
+            </button>
+
+            <button
+              onClick={handleSubmit}
+              disabled={
+                isLoading ||
+                findDuplicateEmails(
+                  formData.email, contactPersons, includeContacts, branches, includeBranches,
+                ).length > 0
+              }
+              className="flex items-center gap-2 px-6 py-3 text-base font-semibold text-white
+                        bg-[var(--accent)] hover:bg-[var(--accent-light)] rounded-xl transition-all
+                        disabled:opacity-40 disabled:cursor-not-allowed shadow-[var(--shadow-md)]"
+            >
+              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+              {isLoading ? 'Сохранение...' : 'Создать контрагента'}
+            </button>
           </div>
         </div>
       )}

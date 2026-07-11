@@ -235,7 +235,7 @@ export const SpellCheckDiff: React.FC<SpellCheckDiffProps> = ({
                   <span className="text-sm text-[var(--text-primary)]/50 line-through">
                     {s.original}
                   </span>
-                  <span className="text-sm text-[var(--text-primary)]/30">→</span>
+                  <span className="text-sm text-[var(--text-primary)]/40">→</span>
                   <span className={`text-sm font-medium ${style.text}`}>
                     {s.suggestion}
                   </span>
@@ -275,7 +275,7 @@ export const SpellCheckDiff: React.FC<SpellCheckDiffProps> = ({
                       {s.original}
                     </span>
 
-                    <span className="text-[16px] text-[var(--text-primary)]/30">→</span>
+                    <span className="text-[16px] text-[var(--text-primary)]/40">→</span>
 
                     <span className={`text-[16px] font-medium ${style.text} break-all`}>
                       {s.suggestion}

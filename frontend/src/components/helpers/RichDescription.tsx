@@ -84,7 +84,7 @@ function InlineImage({ attachmentId }: { attachmentId: string }) {
     return (
       <div className="inline-flex items-center gap-2 my-2 px-3 py-2
                       bg-white/[0.04] rounded-lg border border-white/[0.08]">
-        <Loader2 size={16} className="animate-spin text-[var(--text-primary)]/30" />
+        <Loader2 size={16} className="animate-spin text-[var(--text-primary)]/40" />
         <span className="text-sm text-[var(--text-primary)]/40">Загрузка изображения...</span>
       </div>
     );
